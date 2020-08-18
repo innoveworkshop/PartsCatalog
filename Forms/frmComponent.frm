@@ -212,12 +212,18 @@ Public Sub PopulateFromRecordset(rs As ADODB.Recordset)
     Dim strImage As String
     strImage = GetComponentImagePath(txtName.Text, cmbPackage.Text)
     If strImage <> vbNullString Then
+        Dim picBitmap As Picture
         On Error GoTo PictureError
-        picImage.Picture = LoadPicture(strImage)
+        Set picBitmap = LoadPicture(strImage)
+        
+        picImage.AutoRedraw = True
+        picImage.PaintPicture picBitmap, 0, 0, picImage.ScaleWidth, picImage.ScaleHeight
+        Set picImage.Picture = picImage.Image
     End If
     
     Exit Sub
 PictureError:
+    Set picImage.Picture = Nothing
     MsgBox "An error occured while trying to load the image for this component.", _
         vbOKOnly + vbCritical, "Image Loading Error"
 End Sub
@@ -228,4 +234,13 @@ Private Sub cmbCategory_Click()
         LoadSubCategories cmbCategory.ItemData(cmbCategory.ListIndex), _
             cmbSubCategory, True
     End If
+End Sub
+
+' Form just loaded up.
+Private Sub Form_Load()
+    ' Setup the Flex Grid.
+    grdProperties.TextMatrix(0, 0) = "Property"
+    grdProperties.TextMatrix(0, 1) = "Value"
+    grdProperties.ColWidth(0) = (grdProperties.Width / 2) - 45
+    grdProperties.ColWidth(1) = (grdProperties.Width / 2) - 45
 End Sub
