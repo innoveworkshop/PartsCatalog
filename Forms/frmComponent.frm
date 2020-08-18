@@ -14,6 +14,15 @@ Begin VB.Form frmComponent
    ScaleHeight     =   5085
    ScaleWidth      =   8355
    ShowInTaskbar   =   0   'False
+   Begin VB.PictureBox picImage 
+      Height          =   2055
+      Left            =   0
+      ScaleHeight     =   1995
+      ScaleWidth      =   1995
+      TabIndex        =   15
+      Top             =   0
+      Width           =   2055
+   End
    Begin VB.CommandButton cmdDatasheet 
       Caption         =   "Datasheet"
       Height          =   375
@@ -137,12 +146,6 @@ Begin VB.Form frmComponent
       Top             =   0
       Width           =   495
    End
-   Begin VB.Image imgImage 
-      Height          =   2055
-      Left            =   0
-      Top             =   0
-      Width           =   2055
-   End
 End
 Attribute VB_Name = "frmComponent"
 Attribute VB_GlobalNameSpace = False
@@ -156,9 +159,15 @@ Attribute VB_Exposed = False
 
 Option Explicit
 
+' Private methods.
+Private m_lngComponentID As Long
+
 ' Populate Form from Recordset.
 Public Sub PopulateFromRecordset(rs As ADODB.Recordset)
     Dim intIndex As Integer
+    
+    ' Store the component ID.
+    m_lngComponentID = rs.Fields("ID")
     
     ' Set text fields.
     txtQuantity.Text = rs.Fields("Quantity")
@@ -198,6 +207,19 @@ Public Sub PopulateFromRecordset(rs As ADODB.Recordset)
             End If
         Next intIndex
     End If
+    
+    ' Set the component image.
+    Dim strImage As String
+    strImage = GetComponentImagePath(txtName.Text, cmbPackage.Text)
+    If strImage <> vbNullString Then
+        On Error GoTo PictureError
+        picImage.Picture = LoadPicture(strImage)
+    End If
+    
+    Exit Sub
+PictureError:
+    MsgBox "An error occured while trying to load the image for this component.", _
+        vbOKOnly + vbCritical, "Image Loading Error"
 End Sub
 
 ' Category selection updated.

@@ -7,6 +7,7 @@ Form=Forms\frmPartChooser.frm
 Module=modDatabase; Modules\modDatabase.bas
 Form=Forms\frmComponent.frm
 Object={5E9E78A0-531B-11CF-91F6-C2863C385E30}#1.0#0; MSFLXGRD.OCX
+Module=modAssetsHandler; Modules\modAssetsHandler.bas
 Startup="frmMain"
 HelpFile=""
 Command32=""

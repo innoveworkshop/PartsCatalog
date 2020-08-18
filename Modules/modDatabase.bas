@@ -8,12 +8,19 @@ Option Explicit
 
 ' Private variables.
 Private m_strDatabasePath As String
+Private m_strWorkspacePath As String
 Private m_adoConnection As ADODB.Connection
 
 ' Sets the database path.
 Public Sub SetDatabasePath(strPath As String)
     m_strDatabasePath = strPath
+    m_strWorkspacePath = Left(strPath, InStrRev(strPath, "\"))
 End Sub
+
+' Gets the workspace path.
+Public Function GetWorkspacePath() As String
+    GetWorkspacePath = m_strWorkspacePath
+End Function
 
 ' Loads a component by its ID and populates a form.
 Public Function LoadComponentDetail(lngID As Long, frmForm As frmComponent) As Boolean
