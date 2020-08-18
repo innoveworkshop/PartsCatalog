@@ -3,8 +3,8 @@ Begin VB.Form frmPartChooser
    BorderStyle     =   1  'Fixed Single
    Caption         =   "Component Selector"
    ClientHeight    =   8190
-   ClientLeft      =   4500
-   ClientTop       =   3165
+   ClientLeft      =   1470
+   ClientTop       =   4590
    ClientWidth     =   3855
    MaxButton       =   0   'False
    MDIChild        =   -1  'True
@@ -62,3 +62,48 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
+''' frmPartChooser
+''' The part chooser form.
+'''
+''' Author: Nathan Campos <nathan@innoveworkshop.com>
+
+Option Explicit
+
+' Updates the sub-categories list according to the categories selection.
+Private Sub UpdateSubCategories()
+    lstComponents.Clear
+    LoadSubCategories lstCategories.ItemData(lstCategories.ListIndex), _
+        lstSubCategories
+End Sub
+
+' Updates the component list according to the sub-categories selection.
+Private Sub UpdateComponents()
+    LoadComponents lstCategories.ItemData(lstCategories.ListIndex), _
+        lstSubCategories.ItemData(lstSubCategories.ListIndex), lstComponents
+End Sub
+
+' Event fired when the form loads up.
+Private Sub Form_Load()
+    ' Populate our categories list.
+    LoadCategories lstCategories
+End Sub
+
+' Handles the categories list click event.
+Private Sub lstCategories_Click()
+    UpdateSubCategories
+End Sub
+
+' Handles the categories list key press event.
+Private Sub lstCategories_KeyPress(KeyAscii As Integer)
+    UpdateSubCategories
+End Sub
+
+' Handles the sub-categories list click event.
+Private Sub lstSubCategories_Click()
+    UpdateComponents
+End Sub
+
+' Handles the sub-categories list key press event.
+Private Sub lstSubCategories_KeyPress(KeyAscii As Integer)
+    UpdateComponents
+End Sub

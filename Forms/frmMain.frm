@@ -3,10 +3,9 @@ Begin VB.MDIForm frmMain
    BackColor       =   &H8000000C&
    Caption         =   "Parts Catalogger"
    ClientHeight    =   8955
-   ClientLeft      =   165
-   ClientTop       =   735
+   ClientLeft      =   7365
+   ClientTop       =   3675
    ClientWidth     =   14520
-   StartUpPosition =   3  'Windows Default
    Begin VB.Menu mnuFile 
       Caption         =   "&File"
       Begin VB.Menu mniFileOpenDatabase 
@@ -36,11 +35,13 @@ Attribute VB_Exposed = False
 
 Option Explicit
 
+' Event fired when the form loads up.
+Private Sub MDIForm_Load()
+    SetDatabasePath "C:\Documents and Settings\Administrator\My Documents\PartCat Experiment\PartCat.mdb"
+    frmPartChooser.Show
+End Sub
+
 ' Exits the application.
 Private Sub mniFileExit_Click()
     Unload Me
-End Sub
-
-Private Sub mniTestForm_Click()
-    frmPartChooser.Show
 End Sub
