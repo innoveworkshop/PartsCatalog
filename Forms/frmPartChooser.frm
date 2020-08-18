@@ -69,17 +69,24 @@ Attribute VB_Exposed = False
 
 Option Explicit
 
-' Updates the sub-categories list according to the categories selection.
-Private Sub UpdateSubCategories()
-    lstComponents.Clear
-    LoadSubCategories lstCategories.ItemData(lstCategories.ListIndex), _
-        lstSubCategories
-End Sub
+' Opens up a new component view.
+Private Sub ShowComponent()
+    Dim lngComponentID As Long
+    Dim frmForm As frmComponent
+    Set frmForm = frmComponent 'New frmComponent
+    
+    ' Get component ID.
+    lngComponentID = lstComponents.ItemData(lstComponents.ListIndex)
+    
+    ' TODO: Have this form component as a private variable and check if we
+    '       should open a new one based on it's movement previously.
+    If LoadComponentDetail(lngComponentID, frmForm) Then
+        frmForm.Show
+    Else
+        Unload frmForm
+    End If
 
-' Updates the component list according to the sub-categories selection.
-Private Sub UpdateComponents()
-    LoadComponents lstCategories.ItemData(lstCategories.ListIndex), _
-        lstSubCategories.ItemData(lstSubCategories.ListIndex), lstComponents
+    Set frmForm = Nothing
 End Sub
 
 ' Event fired when the form loads up.
@@ -90,20 +97,18 @@ End Sub
 
 ' Handles the categories list click event.
 Private Sub lstCategories_Click()
-    UpdateSubCategories
-End Sub
-
-' Handles the categories list key press event.
-Private Sub lstCategories_KeyPress(KeyAscii As Integer)
-    UpdateSubCategories
+    lstComponents.Clear
+    LoadSubCategories lstCategories.ItemData(lstCategories.ListIndex), _
+        lstSubCategories
 End Sub
 
 ' Handles the sub-categories list click event.
 Private Sub lstSubCategories_Click()
-    UpdateComponents
+    LoadComponents lstCategories.ItemData(lstCategories.ListIndex), _
+        lstSubCategories.ItemData(lstSubCategories.ListIndex), lstComponents
 End Sub
 
-' Handles the sub-categories list key press event.
-Private Sub lstSubCategories_KeyPress(KeyAscii As Integer)
-    UpdateComponents
+' Handles the components list click event.
+Private Sub lstComponents_Click()
+    ShowComponent
 End Sub

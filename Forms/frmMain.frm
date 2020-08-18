@@ -41,6 +41,15 @@ Private Sub MDIForm_Load()
     frmPartChooser.Show
 End Sub
 
+' Event fired when the form is about to be closed.
+Private Sub MDIForm_Unload(Cancel As Integer)
+    Dim frmForm As Form
+    
+    For Each frmForm In Forms
+        Unload frmForm
+    Next
+End Sub
+
 ' Exits the application.
 Private Sub mniFileExit_Click()
     Unload Me
