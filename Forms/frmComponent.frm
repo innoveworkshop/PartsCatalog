@@ -208,6 +208,15 @@ Public Sub PopulateFromRecordset(rs As ADODB.Recordset)
         Next intIndex
     End If
     
+    ' Populate the properties grid.
+    If Not IsNull(rs.Fields("Properties")) Then
+        PopulatePropertiesGrid rs.Fields("Properties")
+    Else
+        grdProperties.Rows = 2
+        grdProperties.TextMatrix(1, 0) = ""
+        grdProperties.TextMatrix(1, 1) = ""
+    End If
+    
     ' Set the component image.
     Dim strImage As String
     strImage = GetComponentImagePath(txtName.Text, cmbPackage.Text)
@@ -227,6 +236,35 @@ PictureError:
     MsgBox "An error occured while trying to load the image for this component.", _
         vbOKOnly + vbCritical, "Image Loading Error"
 End Sub
+
+' Populates the properties grid.
+Public Sub PopulatePropertiesGrid(strProperties As String)
+    Dim astrProperties() As String
+    Dim astrKeyValue() As String
+    
+    ' Split the properties and preparate the grid for the properties.
+    astrProperties = Split(strProperties, vbTab)
+    grdProperties.Rows = UBound(astrProperties) + 2
+    
+    ' Populate the properties.
+    Dim intIndex As Integer
+    For intIndex = 0 To UBound(astrProperties)
+        ' Check if the property is populated.
+        If astrProperties(intIndex) <> "" Then
+            astrKeyValue = Split(astrProperties(intIndex), ": ")
+            grdProperties.TextMatrix(intIndex + 1, 0) = astrKeyValue(0)
+            grdProperties.TextMatrix(intIndex + 1, 1) = astrKeyValue(1)
+        Else
+            grdProperties.TextMatrix(1, 0) = ""
+            grdProperties.TextMatrix(1, 1) = ""
+        End If
+    Next intIndex
+End Sub
+
+' Encodes the properties grid into a string to be stored in the database.
+Public Function EncodePropertiesGrid() As String
+    EncodePropertiesGrid = ""
+End Function
 
 ' Category selection updated.
 Private Sub cmbCategory_Click()
