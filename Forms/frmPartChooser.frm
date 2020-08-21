@@ -1,16 +1,17 @@
 VERSION 5.00
 Begin VB.Form frmPartChooser 
-   BorderStyle     =   1  'Fixed Single
+   BorderStyle     =   0  'None
    Caption         =   "Component Selector"
    ClientHeight    =   8190
-   ClientLeft      =   1470
-   ClientTop       =   4590
+   ClientLeft      =   1425
+   ClientTop       =   4215
    ClientWidth     =   3855
    MaxButton       =   0   'False
    MDIChild        =   -1  'True
    MinButton       =   0   'False
    ScaleHeight     =   8190
    ScaleWidth      =   3855
+   ShowInTaskbar   =   0   'False
    Begin VB.ListBox lstComponents 
       Height          =   2400
       Left            =   0
@@ -69,6 +70,24 @@ Attribute VB_Exposed = False
 
 Option Explicit
 
+' Private variables.
+Private m_frmParent As MDIForm
+
+' Sets the parent form.
+Public Sub SetParent(frmParent As MDIForm)
+    Set m_frmParent = frmParent
+End Sub
+
+' Docks this form in its parent.
+Private Sub DockInParent()
+    ' Position on the top-left corner.
+    Left = 0
+    Top = 0
+    
+    ' Set the height.
+    Height = m_frmParent.ScaleHeight
+End Sub
+
 ' Opens up a new component view.
 Private Sub ShowComponent()
     Dim lngComponentID As Long
@@ -91,6 +110,9 @@ End Sub
 
 ' Event fired when the form loads up.
 Private Sub Form_Load()
+    ' Dock the form.
+    DockInParent
+    
     ' Populate our categories list.
     LoadCategories lstCategories
 End Sub
