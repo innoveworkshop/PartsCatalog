@@ -120,6 +120,11 @@ Private Sub ShowComponent()
     Dim frmForm As frmComponent
     Set frmForm = frmComponent 'New frmComponent
     
+    ' Position the new form.
+    If frmForm.Left < (Me.Left + Me.Width) Then
+        frmForm.Left = frmForm.Left + Me.Left + Me.Width
+    End If
+    
     ' Get component ID.
     lngComponentID = lstComponents.ItemData(lstComponents.ListIndex)
     
