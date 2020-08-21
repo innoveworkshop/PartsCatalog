@@ -75,6 +75,7 @@ Private Const CTRL_MARGIN As Integer = 120
 
 ' Private variables.
 Private m_frmParent As MDIForm
+Private m_frmLastOpened As frmComponent
 
 ' Sets the parent form.
 Public Sub SetParent(frmParent As MDIForm)
@@ -118,7 +119,20 @@ End Sub
 Private Sub ShowComponent()
     Dim lngComponentID As Long
     Dim frmForm As frmComponent
-    Set frmForm = frmComponent 'New frmComponent
+        
+    ' Check if we have a last opened form.
+    If m_frmLastOpened Is Nothing Then
+        Set frmForm = New frmComponent
+        Set m_frmLastOpened = frmForm
+    End If
+    
+    ' Check if the last opened form wants to remain opened.
+    If m_frmLastOpened.StayOpen Then
+        Set frmForm = New frmComponent
+        Set m_frmLastOpened = frmForm
+    Else
+        Set frmForm = m_frmLastOpened
+    End If
     
     ' Position the new form.
     If frmForm.Left < (Me.Left + Me.Width) Then
@@ -141,6 +155,9 @@ End Sub
 
 ' Event fired when the form loads up.
 Private Sub Form_Load()
+    ' Clear the last opened form.
+    Set m_frmLastOpened = Nothing
+
     ' Dock the form.
     DockInParent
     

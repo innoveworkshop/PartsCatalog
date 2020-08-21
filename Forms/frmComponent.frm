@@ -431,3 +431,8 @@ End Sub
 Private Sub txtName_Change()
     Me.Caption = txtName.Text
 End Sub
+
+' Getter for maintaining the window opened.
+Public Property Get StayOpen() As Boolean
+    StayOpen = m_blnKeepOpen
+End Property
