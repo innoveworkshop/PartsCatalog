@@ -2,59 +2,59 @@ VERSION 5.00
 Begin VB.Form frmPartChooser 
    BorderStyle     =   0  'None
    Caption         =   "Component Selector"
-   ClientHeight    =   8190
+   ClientHeight    =   8370
    ClientLeft      =   1425
    ClientTop       =   4215
-   ClientWidth     =   3855
+   ClientWidth     =   4110
    MaxButton       =   0   'False
    MDIChild        =   -1  'True
    MinButton       =   0   'False
-   ScaleHeight     =   8190
-   ScaleWidth      =   3855
+   ScaleHeight     =   8370
+   ScaleWidth      =   4110
    ShowInTaskbar   =   0   'False
    Begin VB.ListBox lstComponents 
       Height          =   2400
-      Left            =   0
+      Left            =   120
       TabIndex        =   5
-      Top             =   5760
+      Top             =   5880
       Width           =   3855
    End
    Begin VB.ListBox lstSubCategories 
       Height          =   2400
-      Left            =   0
+      Left            =   120
       TabIndex        =   3
-      Top             =   3000
+      Top             =   3120
       Width           =   3855
    End
    Begin VB.ListBox lstCategories 
       Height          =   2400
-      Left            =   0
+      Left            =   120
       TabIndex        =   0
-      Top             =   240
+      Top             =   360
       Width           =   3855
    End
-   Begin VB.Label Label3 
+   Begin VB.Label lblComponents 
       Caption         =   "Components:"
       Height          =   255
-      Left            =   0
+      Left            =   120
       TabIndex        =   4
-      Top             =   5520
+      Top             =   5640
       Width           =   3855
    End
-   Begin VB.Label Label2 
+   Begin VB.Label lblSubCategories 
       Caption         =   "Sub-Categories:"
       Height          =   255
-      Left            =   0
+      Left            =   120
       TabIndex        =   2
-      Top             =   2760
+      Top             =   2880
       Width           =   3855
    End
-   Begin VB.Label Label1 
+   Begin VB.Label lblCategories 
       Caption         =   "Categories:"
       Height          =   255
-      Left            =   0
+      Left            =   120
       TabIndex        =   1
-      Top             =   0
+      Top             =   120
       Width           =   3855
    End
 End
@@ -70,6 +70,9 @@ Attribute VB_Exposed = False
 
 Option Explicit
 
+' Private constants.
+Private Const CTRL_MARGIN As Integer = 120
+
 ' Private variables.
 Private m_frmParent As MDIForm
 
@@ -78,14 +81,37 @@ Public Sub SetParent(frmParent As MDIForm)
     Set m_frmParent = frmParent
 End Sub
 
+' Resizes the form to fit its parent.
+Public Sub ResizeToFitParent()
+    DockInParent
+End Sub
+
 ' Docks this form in its parent.
 Private Sub DockInParent()
+    Dim intListHeight As Integer
+    
     ' Position on the top-left corner.
     Left = 0
     Top = 0
     
-    ' Set the height.
-    Height = m_frmParent.ScaleHeight
+    ' Set the height and calculate the height of each control group.
+    Me.Height = m_frmParent.ScaleHeight
+    intListHeight = (Me.Height - (CTRL_MARGIN * 4) - (lblCategories.Height * 3)) / 3
+    
+    ' Position and resize the categories group.
+    lblCategories.Top = CTRL_MARGIN / 2
+    lstCategories.Top = lblCategories.Top + lblCategories.Height
+    lstCategories.Height = intListHeight
+    
+    ' Position and resize the sub-categories group.
+    lblSubCategories.Top = lstCategories.Top + lstCategories.Height + CTRL_MARGIN
+    lstSubCategories.Top = lblSubCategories.Top + lblSubCategories.Height
+    lstSubCategories.Height = intListHeight
+    
+    ' Position and resize the components group.
+    lblComponents.Top = lstSubCategories.Top + lstSubCategories.Height + CTRL_MARGIN
+    lstComponents.Top = lblComponents.Top + lblComponents.Height
+    lstComponents.Height = Me.Height - lstComponents.Top
 End Sub
 
 ' Opens up a new component view.
