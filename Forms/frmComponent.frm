@@ -4,7 +4,7 @@ Object = "{6B7E6392-850A-101B-AFC0-4210102A8DA7}#1.3#0"; "COMCTL32.OCX"
 Begin VB.Form frmComponent 
    BorderStyle     =   4  'Fixed ToolWindow
    Caption         =   "Component"
-   ClientHeight    =   5850
+   ClientHeight    =   5865
    ClientLeft      =   6135
    ClientTop       =   3315
    ClientWidth     =   8505
@@ -12,7 +12,7 @@ Begin VB.Form frmComponent
    MaxButton       =   0   'False
    MDIChild        =   -1  'True
    MinButton       =   0   'False
-   ScaleHeight     =   5850
+   ScaleHeight     =   5865
    ScaleWidth      =   8505
    ShowInTaskbar   =   0   'False
    Begin ComctlLib.Toolbar tlbToolBar 
@@ -30,7 +30,7 @@ Begin VB.Form frmComponent
       ImageList       =   "imlToolBar"
       _Version        =   327682
       BeginProperty Buttons {0713E452-850A-101B-AFC0-4210102A8DA7} 
-         NumButtons      =   4
+         NumButtons      =   6
          BeginProperty Button1 {0713F354-850A-101B-AFC0-4210102A8DA7} 
             Key             =   "Save"
             Description     =   "Save"
@@ -55,19 +55,32 @@ Begin VB.Form frmComponent
             Object.Tag             =   ""
             ImageIndex      =   3
          EndProperty
+         BeginProperty Button5 {0713F354-850A-101B-AFC0-4210102A8DA7} 
+            Key             =   ""
+            Object.Tag             =   ""
+            Style           =   3
+            MixedState      =   -1  'True
+         EndProperty
+         BeginProperty Button6 {0713F354-850A-101B-AFC0-4210102A8DA7} 
+            Key             =   "KeepOpen"
+            Description     =   "Keep Window Opened"
+            Object.Tag             =   ""
+            ImageIndex      =   4
+            Style           =   1
+         EndProperty
       EndProperty
       BorderStyle     =   1
    End
    Begin ComctlLib.StatusBar stbStatusBar 
       Align           =   2  'Align Bottom
       DragMode        =   1  'Automatic
-      Height          =   270
+      Height          =   330
       Left            =   0
       TabIndex        =   16
-      Top             =   5580
+      Top             =   5535
       Width           =   8505
       _ExtentX        =   15002
-      _ExtentY        =   476
+      _ExtentY        =   582
       Style           =   1
       SimpleText      =   ""
       _Version        =   327682
@@ -166,7 +179,7 @@ Begin VB.Form frmComponent
       MaskColor       =   12632256
       _Version        =   327682
       BeginProperty Images {0713E8C2-850A-101B-AFC0-4210102A8DA7} 
-         NumListImages   =   3
+         NumListImages   =   4
          BeginProperty ListImage1 {0713E8C3-850A-101B-AFC0-4210102A8DA7} 
             Picture         =   "frmComponent.frx":0000
             Key             =   "Save"
@@ -178,6 +191,10 @@ Begin VB.Form frmComponent
          BeginProperty ListImage3 {0713E8C3-850A-101B-AFC0-4210102A8DA7} 
             Picture         =   "frmComponent.frx":0224
             Key             =   "Duplicate"
+         EndProperty
+         BeginProperty ListImage4 {0713E8C3-850A-101B-AFC0-4210102A8DA7} 
+            Picture         =   "frmComponent.frx":0336
+            Key             =   "KeepOpen"
          EndProperty
       EndProperty
    End
@@ -252,6 +269,7 @@ Option Explicit
 
 ' Private methods.
 Private m_lngComponentID As Long
+Private m_blnKeepOpen As Boolean
 
 ' Populate Form from Recordset.
 Public Sub PopulateFromRecordset(rs As ADODB.Recordset)
@@ -370,6 +388,11 @@ Private Sub SetStatusMessage(strMessage As String)
     stbStatusBar.SimpleText = strMessage
 End Sub
 
+' Make sure the form is kept opened.
+Private Sub MaintainFormOpened(Optional blnState As Boolean = True)
+    m_blnKeepOpen = blnState
+End Sub
+
 ' Category selection updated.
 Private Sub cmbCategory_Click()
     If cmbSubCategory.ListCount > 0 Then
@@ -380,6 +403,9 @@ End Sub
 
 ' Form just loaded up.
 Private Sub Form_Load()
+    ' Clear the opened status.
+    m_blnKeepOpen = False
+
     ' Setup the Flex Grid.
     grdProperties.TextMatrix(0, 0) = "Property"
     grdProperties.TextMatrix(0, 1) = "Value"
@@ -396,5 +422,12 @@ Private Sub tlbToolBar_ButtonClick(ByVal Button As ComctlLib.Button)
             MsgBox "Delete"
         Case "Duplicate"
             MsgBox "Duplicate"
+        Case "KeepOpen"
+            MaintainFormOpened (Button.Value = tbrPressed)
     End Select
+End Sub
+
+' Name text change event.
+Private Sub txtName_Change()
+    Me.Caption = txtName.Text
 End Sub
