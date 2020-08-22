@@ -167,6 +167,11 @@ End Sub
 
 ' Handles the categories list click event.
 Private Sub lstCategories_Click()
+    ' Check if there's anything selected.
+    If lstCategories.ListIndex < 0 Then
+        Exit Sub
+    End If
+
     lstComponents.Clear
     LoadSubCategories lstCategories.ItemData(lstCategories.ListIndex), _
         lstSubCategories
@@ -174,11 +179,21 @@ End Sub
 
 ' Handles the sub-categories list click event.
 Private Sub lstSubCategories_Click()
+    ' Check if there's anything selected.
+    If lstSubCategories.ListIndex < 0 Then
+        Exit Sub
+    End If
+
     LoadComponents lstCategories.ItemData(lstCategories.ListIndex), _
         lstSubCategories.ItemData(lstSubCategories.ListIndex), lstComponents
 End Sub
 
 ' Handles the components list click event.
 Private Sub lstComponents_Click()
+    ' Check if there's anything selected.
+    If lstComponents.ListIndex < 0 Then
+        Exit Sub
+    End If
+
     ShowComponent
 End Sub
