@@ -1,5 +1,5 @@
 VERSION 5.00
-Object = "{6B7E6392-850A-101B-AFC0-4210102A8DA7}#1.3#0"; "COMCTL32.OCX"
+Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.2#0"; "MSCOMCTL.OCX"
 Begin VB.MDIForm frmMain 
    BackColor       =   &H8000000C&
    Caption         =   "Parts Catalogger"
@@ -7,7 +7,7 @@ Begin VB.MDIForm frmMain
    ClientLeft      =   7365
    ClientTop       =   3675
    ClientWidth     =   14520
-   Begin ComctlLib.StatusBar stbStatusBar 
+   Begin MSComctlLib.StatusBar stbStatusBar 
       Align           =   2  'Align Bottom
       Height          =   315
       Left            =   0
@@ -17,12 +17,10 @@ Begin VB.MDIForm frmMain
       _ExtentX        =   25612
       _ExtentY        =   556
       Style           =   1
-      SimpleText      =   ""
-      _Version        =   327682
-      BeginProperty Panels {0713E89E-850A-101B-AFC0-4210102A8DA7} 
+      _Version        =   393216
+      BeginProperty Panels {8E3867A5-8586-11D1-B16A-00C0F0283628} 
          NumPanels       =   1
-         BeginProperty Panel1 {0713E89F-850A-101B-AFC0-4210102A8DA7} 
-            Object.Tag             =   ""
+         BeginProperty Panel1 {8E3867AB-8586-11D1-B16A-00C0F0283628} 
          EndProperty
       EndProperty
    End

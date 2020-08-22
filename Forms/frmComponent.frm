@@ -1,6 +1,6 @@
 VERSION 5.00
 Object = "{5E9E78A0-531B-11CF-91F6-C2863C385E30}#1.0#0"; "MSFLXGRD.OCX"
-Object = "{6B7E6392-850A-101B-AFC0-4210102A8DA7}#1.3#0"; "COMCTL32.OCX"
+Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.2#0"; "MSCOMCTL.OCX"
 Begin VB.Form frmComponent 
    BorderStyle     =   4  'Fixed ToolWindow
    Caption         =   "Component"
@@ -15,96 +15,105 @@ Begin VB.Form frmComponent
    ScaleHeight     =   5865
    ScaleWidth      =   8505
    ShowInTaskbar   =   0   'False
-   Begin ComctlLib.Toolbar tlbToolBar 
+   Begin MSComctlLib.Toolbar tlbToolBar 
       Align           =   1  'Align Top
-      Height          =   420
+      Height          =   360
       Left            =   0
       TabIndex        =   17
       Top             =   0
       Width           =   8505
       _ExtentX        =   15002
-      _ExtentY        =   741
+      _ExtentY        =   635
       ButtonWidth     =   609
-      ButtonHeight    =   582
-      AllowCustomize  =   0   'False
       Appearance      =   1
-      ImageList       =   "imlToolBar"
-      _Version        =   327682
-      BeginProperty Buttons {0713E452-850A-101B-AFC0-4210102A8DA7} 
+      Style           =   1
+      ImageList       =   "imlToolbar"
+      _Version        =   393216
+      BeginProperty Buttons {66833FE8-8583-11D1-B16A-00C0F0283628} 
          NumButtons      =   7
-         BeginProperty Button1 {0713F354-850A-101B-AFC0-4210102A8DA7} 
-            Caption         =   ""
+         BeginProperty Button1 {66833FEA-8583-11D1-B16A-00C0F0283628} 
             Key             =   "Refresh"
-            Description     =   "Refresh"
-            Object.ToolTipText     =   ""
-            Object.Tag             =   ""
+            Object.ToolTipText     =   "Refresh"
             ImageIndex      =   1
          EndProperty
-         BeginProperty Button2 {0713F354-850A-101B-AFC0-4210102A8DA7} 
-            Key             =   ""
-            Object.Tag             =   ""
+         BeginProperty Button2 {66833FEA-8583-11D1-B16A-00C0F0283628} 
             Style           =   3
-            MixedState      =   -1  'True
          EndProperty
-         BeginProperty Button3 {0713F354-850A-101B-AFC0-4210102A8DA7} 
-            Caption         =   ""
+         BeginProperty Button3 {66833FEA-8583-11D1-B16A-00C0F0283628} 
             Key             =   "Duplicate"
-            Description     =   "Duplicate"
-            Object.ToolTipText     =   ""
-            Object.Tag             =   ""
+            Object.ToolTipText     =   "Duplicate Component With New Name"
             ImageIndex      =   2
          EndProperty
-         BeginProperty Button4 {0713F354-850A-101B-AFC0-4210102A8DA7} 
-            Caption         =   ""
+         BeginProperty Button4 {66833FEA-8583-11D1-B16A-00C0F0283628} 
             Key             =   "Save"
-            Description     =   "Save"
-            Object.ToolTipText     =   ""
-            Object.Tag             =   ""
+            Object.ToolTipText     =   "Save"
             ImageIndex      =   3
          EndProperty
-         BeginProperty Button5 {0713F354-850A-101B-AFC0-4210102A8DA7} 
-            Caption         =   ""
+         BeginProperty Button5 {66833FEA-8583-11D1-B16A-00C0F0283628} 
             Key             =   "Delete"
-            Description     =   "Delete"
-            Object.ToolTipText     =   ""
-            Object.Tag             =   ""
+            Object.ToolTipText     =   "Delete"
             ImageIndex      =   4
          EndProperty
-         BeginProperty Button6 {0713F354-850A-101B-AFC0-4210102A8DA7} 
-            Key             =   ""
-            Object.Tag             =   ""
+         BeginProperty Button6 {66833FEA-8583-11D1-B16A-00C0F0283628} 
             Style           =   3
-            MixedState      =   -1  'True
          EndProperty
-         BeginProperty Button7 {0713F354-850A-101B-AFC0-4210102A8DA7} 
-            Caption         =   ""
+         BeginProperty Button7 {66833FEA-8583-11D1-B16A-00C0F0283628} 
             Key             =   "KeepOpen"
-            Description     =   "Keep Window Opened"
-            Object.ToolTipText     =   ""
-            Object.Tag             =   ""
+            Object.ToolTipText     =   "Maintain Window Opened"
             ImageIndex      =   5
             Style           =   1
          EndProperty
       EndProperty
       BorderStyle     =   1
    End
-   Begin ComctlLib.StatusBar stbStatusBar 
+   Begin MSComctlLib.StatusBar stbStatusBar 
       Align           =   2  'Align Bottom
-      DragMode        =   1  'Automatic
-      Height          =   330
+      Height          =   285
       Left            =   0
       TabIndex        =   16
-      Top             =   5535
+      Top             =   5580
       Width           =   8505
       _ExtentX        =   15002
-      _ExtentY        =   582
+      _ExtentY        =   503
       Style           =   1
-      SimpleText      =   ""
-      _Version        =   327682
-      BeginProperty Panels {0713E89E-850A-101B-AFC0-4210102A8DA7} 
+      _Version        =   393216
+      BeginProperty Panels {8E3867A5-8586-11D1-B16A-00C0F0283628} 
          NumPanels       =   1
-         BeginProperty Panel1 {0713E89F-850A-101B-AFC0-4210102A8DA7} 
-            Object.Tag             =   ""
+         BeginProperty Panel1 {8E3867AB-8586-11D1-B16A-00C0F0283628} 
+         EndProperty
+      EndProperty
+   End
+   Begin MSComctlLib.ImageList imlToolbar 
+      Left            =   720
+      Top             =   3720
+      _ExtentX        =   1005
+      _ExtentY        =   1005
+      BackColor       =   -2147483643
+      ImageWidth      =   16
+      ImageHeight     =   16
+      MaskColor       =   12632256
+      _Version        =   393216
+      BeginProperty Images {2C247F25-8591-11D1-B16A-00C0F0283628} 
+         NumListImages   =   5
+         BeginProperty ListImage1 {2C247F27-8591-11D1-B16A-00C0F0283628} 
+            Picture         =   "frmComponent.frx":0000
+            Key             =   ""
+         EndProperty
+         BeginProperty ListImage2 {2C247F27-8591-11D1-B16A-00C0F0283628} 
+            Picture         =   "frmComponent.frx":6862
+            Key             =   ""
+         EndProperty
+         BeginProperty ListImage3 {2C247F27-8591-11D1-B16A-00C0F0283628} 
+            Picture         =   "frmComponent.frx":D0C4
+            Key             =   ""
+         EndProperty
+         BeginProperty ListImage4 {2C247F27-8591-11D1-B16A-00C0F0283628} 
+            Picture         =   "frmComponent.frx":13926
+            Key             =   ""
+         EndProperty
+         BeginProperty ListImage5 {2C247F27-8591-11D1-B16A-00C0F0283628} 
+            Picture         =   "frmComponent.frx":1A188
+            Key             =   ""
          EndProperty
       EndProperty
    End
@@ -183,40 +192,6 @@ Begin VB.Form frmComponent
       Text            =   "000000"
       Top             =   720
       Width           =   735
-   End
-   Begin ComctlLib.ImageList imlToolBar 
-      Left            =   960
-      Top             =   3720
-      _ExtentX        =   1005
-      _ExtentY        =   1005
-      BackColor       =   -2147483643
-      ImageWidth      =   16
-      ImageHeight     =   16
-      MaskColor       =   12632256
-      _Version        =   327682
-      BeginProperty Images {0713E8C2-850A-101B-AFC0-4210102A8DA7} 
-         NumListImages   =   5
-         BeginProperty ListImage1 {0713E8C3-850A-101B-AFC0-4210102A8DA7} 
-            Picture         =   "frmComponent.frx":0000
-            Key             =   ""
-         EndProperty
-         BeginProperty ListImage2 {0713E8C3-850A-101B-AFC0-4210102A8DA7} 
-            Picture         =   "frmComponent.frx":6862
-            Key             =   ""
-         EndProperty
-         BeginProperty ListImage3 {0713E8C3-850A-101B-AFC0-4210102A8DA7} 
-            Picture         =   "frmComponent.frx":D0C4
-            Key             =   ""
-         EndProperty
-         BeginProperty ListImage4 {0713E8C3-850A-101B-AFC0-4210102A8DA7} 
-            Picture         =   "frmComponent.frx":13926
-            Key             =   ""
-         EndProperty
-         BeginProperty ListImage5 {0713E8C3-850A-101B-AFC0-4210102A8DA7} 
-            Picture         =   "frmComponent.frx":1A188
-            Key             =   ""
-         EndProperty
-      EndProperty
    End
    Begin VB.Label Label7 
       Caption         =   "Properties:"
@@ -434,7 +409,7 @@ Private Sub Form_Load()
 End Sub
 
 ' Handles the toolbar button clicks.
-Private Sub tlbToolBar_ButtonClick(ByVal Button As ComctlLib.Button)
+Private Sub tlbToolBar_ButtonClick(ByVal Button As MSComctlLib.Button)
     Select Case Button.Key
         Case "Refresh"
             MsgBox "Refresh"
