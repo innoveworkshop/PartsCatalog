@@ -11,6 +11,7 @@ Module=modAssetsHandler; Modules\modAssetsHandler.bas
 Object={6B7E6392-850A-101B-AFC0-4210102A8DA7}#1.3#0; COMCTL32.OCX
 Startup="frmMain"
 HelpFile=""
+ExeName32="PartsCatalog.exe"
 Command32=""
 Name="PartsCatalog"
 HelpContextID="0"
