@@ -19,7 +19,7 @@ Begin VB.Form frmComponent
       Align           =   1  'Align Top
       Height          =   360
       Left            =   0
-      TabIndex        =   17
+      TabIndex        =   16
       Top             =   0
       Width           =   8505
       _ExtentX        =   15002
@@ -70,7 +70,7 @@ Begin VB.Form frmComponent
       Align           =   2  'Align Bottom
       Height          =   285
       Left            =   0
-      TabIndex        =   16
+      TabIndex        =   15
       Top             =   5580
       Width           =   8505
       _ExtentX        =   15002
@@ -122,7 +122,7 @@ Begin VB.Form frmComponent
       Left            =   120
       ScaleHeight     =   1995
       ScaleWidth      =   1995
-      TabIndex        =   15
+      TabIndex        =   14
       Top             =   480
       Width           =   2055
    End
@@ -130,20 +130,30 @@ Begin VB.Form frmComponent
       Caption         =   "Datasheet"
       Height          =   375
       Left            =   240
-      TabIndex        =   14
+      TabIndex        =   13
       Top             =   2640
       Width           =   1815
    End
    Begin MSFlexGridLib.MSFlexGrid grdProperties 
-      Height          =   2775
+      Height          =   3015
       Left            =   2280
       TabIndex        =   12
-      Top             =   2760
+      Top             =   2520
       Width           =   6135
       _ExtentX        =   10821
-      _ExtentY        =   4895
+      _ExtentY        =   5318
       _Version        =   393216
       FixedCols       =   0
+      BackColorBkg    =   -2147483644
+      GridColorFixed  =   -2147483644
+      FocusRect       =   0
+      HighLight       =   2
+      GridLinesFixed  =   0
+      SelectionMode   =   1
+      AllowUserResizing=   1
+      BorderStyle     =   0
+      Appearance      =   0
+      FormatString    =   ""
    End
    Begin VB.TextBox txtNotes 
       Height          =   495
@@ -192,14 +202,6 @@ Begin VB.Form frmComponent
       Text            =   "000000"
       Top             =   720
       Width           =   735
-   End
-   Begin VB.Label Label7 
-      Caption         =   "Properties:"
-      Height          =   255
-      Left            =   2280
-      TabIndex        =   13
-      Top             =   2520
-      Width           =   1575
    End
    Begin VB.Label Label6 
       Caption         =   "Notes:"
@@ -388,6 +390,21 @@ Private Sub MaintainFormOpened(Optional blnState As Boolean = True)
     m_blnKeepOpen = blnState
 End Sub
 
+' Setup the properties MSFlexGrid.
+Private Sub SetupPropertiesGrid()
+    ' Setup the columns size
+    grdProperties.ColWidth(0) = (grdProperties.Width / 2) - 1
+    grdProperties.ColWidth(1) = (grdProperties.Width / 2) - 1
+    
+    ' Setup header row.
+    grdProperties.TextMatrix(0, 0) = "Property"
+    grdProperties.ColAlignment(0) = flexAlignLeftCenter
+    grdProperties.ColAlignment(1) = flexAlignLeftCenter
+    grdProperties.FixedAlignment(0) = flexAlignCenterCenter
+    grdProperties.FixedAlignment(1) = flexAlignCenterCenter
+    grdProperties.TextMatrix(0, 1) = "Value"
+End Sub
+
 ' Category selection updated.
 Private Sub cmbCategory_Click()
     If cmbSubCategory.ListCount > 0 Then
@@ -402,10 +419,7 @@ Private Sub Form_Load()
     m_blnKeepOpen = False
 
     ' Setup the Flex Grid.
-    grdProperties.TextMatrix(0, 0) = "Property"
-    grdProperties.TextMatrix(0, 1) = "Value"
-    grdProperties.ColWidth(0) = (grdProperties.Width / 2) - 45
-    grdProperties.ColWidth(1) = (grdProperties.Width / 2) - 45
+    SetupPropertiesGrid
 End Sub
 
 ' Handles the toolbar button clicks.
