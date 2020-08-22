@@ -25,47 +25,64 @@ Begin VB.Form frmComponent
       _ExtentX        =   15002
       _ExtentY        =   741
       ButtonWidth     =   609
+      ButtonHeight    =   582
       AllowCustomize  =   0   'False
       Appearance      =   1
       ImageList       =   "imlToolBar"
       _Version        =   327682
       BeginProperty Buttons {0713E452-850A-101B-AFC0-4210102A8DA7} 
-         NumButtons      =   6
+         NumButtons      =   7
          BeginProperty Button1 {0713F354-850A-101B-AFC0-4210102A8DA7} 
-            Key             =   "Save"
-            Description     =   "Save"
+            Caption         =   ""
+            Key             =   "Refresh"
+            Description     =   "Refresh"
+            Object.ToolTipText     =   ""
             Object.Tag             =   ""
             ImageIndex      =   1
          EndProperty
          BeginProperty Button2 {0713F354-850A-101B-AFC0-4210102A8DA7} 
-            Key             =   "Delete"
-            Description     =   "Delete"
-            Object.Tag             =   ""
-            ImageIndex      =   2
-         EndProperty
-         BeginProperty Button3 {0713F354-850A-101B-AFC0-4210102A8DA7} 
             Key             =   ""
             Object.Tag             =   ""
             Style           =   3
             MixedState      =   -1  'True
          EndProperty
-         BeginProperty Button4 {0713F354-850A-101B-AFC0-4210102A8DA7} 
+         BeginProperty Button3 {0713F354-850A-101B-AFC0-4210102A8DA7} 
+            Caption         =   ""
             Key             =   "Duplicate"
             Description     =   "Duplicate"
+            Object.ToolTipText     =   ""
+            Object.Tag             =   ""
+            ImageIndex      =   2
+         EndProperty
+         BeginProperty Button4 {0713F354-850A-101B-AFC0-4210102A8DA7} 
+            Caption         =   ""
+            Key             =   "Save"
+            Description     =   "Save"
+            Object.ToolTipText     =   ""
             Object.Tag             =   ""
             ImageIndex      =   3
          EndProperty
          BeginProperty Button5 {0713F354-850A-101B-AFC0-4210102A8DA7} 
+            Caption         =   ""
+            Key             =   "Delete"
+            Description     =   "Delete"
+            Object.ToolTipText     =   ""
+            Object.Tag             =   ""
+            ImageIndex      =   4
+         EndProperty
+         BeginProperty Button6 {0713F354-850A-101B-AFC0-4210102A8DA7} 
             Key             =   ""
             Object.Tag             =   ""
             Style           =   3
             MixedState      =   -1  'True
          EndProperty
-         BeginProperty Button6 {0713F354-850A-101B-AFC0-4210102A8DA7} 
+         BeginProperty Button7 {0713F354-850A-101B-AFC0-4210102A8DA7} 
+            Caption         =   ""
             Key             =   "KeepOpen"
             Description     =   "Keep Window Opened"
+            Object.ToolTipText     =   ""
             Object.Tag             =   ""
-            ImageIndex      =   4
+            ImageIndex      =   5
             Style           =   1
          EndProperty
       EndProperty
@@ -87,7 +104,6 @@ Begin VB.Form frmComponent
       BeginProperty Panels {0713E89E-850A-101B-AFC0-4210102A8DA7} 
          NumPanels       =   1
          BeginProperty Panel1 {0713E89F-850A-101B-AFC0-4210102A8DA7} 
-            Key             =   ""
             Object.Tag             =   ""
          EndProperty
       EndProperty
@@ -179,22 +195,26 @@ Begin VB.Form frmComponent
       MaskColor       =   12632256
       _Version        =   327682
       BeginProperty Images {0713E8C2-850A-101B-AFC0-4210102A8DA7} 
-         NumListImages   =   4
+         NumListImages   =   5
          BeginProperty ListImage1 {0713E8C3-850A-101B-AFC0-4210102A8DA7} 
             Picture         =   "frmComponent.frx":0000
-            Key             =   "Save"
+            Key             =   ""
          EndProperty
          BeginProperty ListImage2 {0713E8C3-850A-101B-AFC0-4210102A8DA7} 
-            Picture         =   "frmComponent.frx":0112
-            Key             =   "Delete"
+            Picture         =   "frmComponent.frx":6862
+            Key             =   ""
          EndProperty
          BeginProperty ListImage3 {0713E8C3-850A-101B-AFC0-4210102A8DA7} 
-            Picture         =   "frmComponent.frx":0224
-            Key             =   "Duplicate"
+            Picture         =   "frmComponent.frx":D0C4
+            Key             =   ""
          EndProperty
          BeginProperty ListImage4 {0713E8C3-850A-101B-AFC0-4210102A8DA7} 
-            Picture         =   "frmComponent.frx":0336
-            Key             =   "KeepOpen"
+            Picture         =   "frmComponent.frx":13926
+            Key             =   ""
+         EndProperty
+         BeginProperty ListImage5 {0713E8C3-850A-101B-AFC0-4210102A8DA7} 
+            Picture         =   "frmComponent.frx":1A188
+            Key             =   ""
          EndProperty
       EndProperty
    End
@@ -416,12 +436,14 @@ End Sub
 ' Handles the toolbar button clicks.
 Private Sub tlbToolBar_ButtonClick(ByVal Button As ComctlLib.Button)
     Select Case Button.Key
+        Case "Refresh"
+            MsgBox "Refresh"
+        Case "Duplicate"
+            MsgBox "Duplicate"
         Case "Save"
             MsgBox "Save"
         Case "Delete"
             MsgBox "Delete"
-        Case "Duplicate"
-            MsgBox "Duplicate"
         Case "KeepOpen"
             MaintainFormOpened (Button.Value = tbrPressed)
     End Select
