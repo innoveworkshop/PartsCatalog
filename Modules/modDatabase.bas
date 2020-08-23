@@ -37,6 +37,26 @@ Public Function GetWorkspacePath() As String
     GetWorkspacePath = m_strWorkspacePath
 End Function
 
+' Converts a component properties grid into a tabbed properties string for the database.
+Public Function ComponentTabbedGridProperties(grdProperties As MSFlexGrid) As String
+    Dim strBuffer As String
+    Dim intIndex As Integer
+    
+    ' Go through rows appending them to the string.
+    For intIndex = 1 To grdProperties.Rows - 1
+        ' Append the tab separator.
+        If intIndex > 1 Then
+            strBuffer = strBuffer & vbTab
+        End If
+        
+        ' Append property.
+        strBuffer = strBuffer & grdProperties.TextMatrix(intIndex, 0) & ": " & _
+            grdProperties.TextMatrix(intIndex, 1)
+    Next intIndex
+    
+    ComponentTabbedGridProperties = strBuffer
+End Function
+
 ' Loads a component by its ID and populates a form.
 Public Function LoadComponentDetail(lngID As Long, frmForm As frmComponent) As Boolean
     Dim rs As ADODB.Recordset
