@@ -77,6 +77,17 @@ Private Const CTRL_MARGIN As Integer = 120
 Private m_frmParent As MDIForm
 Private m_frmLastOpened As frmComponent
 
+' Clears the fields in the form.
+Public Sub ClearContents()
+    ' Clear the last opened form.
+    Set m_frmLastOpened = Nothing
+    
+    ' Clear lists.
+    lstCategories.Clear
+    lstSubCategories.Clear
+    lstComponents.Clear
+End Sub
+
 ' Sets the parent form.
 Public Sub SetParent(frmParent As MDIForm)
     Set m_frmParent = frmParent
@@ -155,14 +166,16 @@ End Sub
 
 ' Event fired when the form loads up.
 Private Sub Form_Load()
-    ' Clear the last opened form.
-    Set m_frmLastOpened = Nothing
+    ' Clear the contents.
+    ClearContents
 
     ' Dock the form.
     DockInParent
     
     ' Populate our categories list.
-    LoadCategories lstCategories
+    If IsDatabaseAssociated Then
+        LoadCategories lstCategories
+    End If
 End Sub
 
 ' Handles the categories list click event.

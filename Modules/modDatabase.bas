@@ -11,6 +11,21 @@ Private m_strDatabasePath As String
 Private m_strWorkspacePath As String
 Private m_adoConnection As ADODB.Connection
 
+' Checks if a database is associated.
+Public Function IsDatabaseAssociated() As Boolean
+    If m_strDatabasePath <> vbNullString Then
+        IsDatabaseAssociated = True
+    Else
+        IsDatabaseAssociated = False
+    End If
+End Function
+
+' Clears any database association.
+Public Sub ClearDatabasePath()
+    m_strDatabasePath = vbNullString
+    m_strWorkspacePath = vbNullString
+End Sub
+
 ' Sets the database path.
 Public Sub SetDatabasePath(strPath As String)
     m_strDatabasePath = strPath
