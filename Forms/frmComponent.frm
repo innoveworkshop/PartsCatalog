@@ -284,6 +284,9 @@ Public Sub PopulateFromRecordset(rs As ADODB.Recordset)
     txtNotes.Text = rs.Fields("Notes")
     SetStatusMessage "Loaded text fields"
     
+    ' Check for datasheet.
+    cmdDatasheet.Enabled = ComponentHasDatasheet(rs.Fields("Name"))
+    
     ' Set the categories.
     cmbSubCategory.Clear
     LoadCategories cmbCategory, False
@@ -414,6 +417,11 @@ Private Sub cmbCategory_Click()
         LoadSubCategories cmbCategory.ItemData(cmbCategory.ListIndex), _
             cmbSubCategory, True
     End If
+End Sub
+
+' Open component datasheet.
+Private Sub cmdDatasheet_Click()
+    OpenComponentDatasheet txtName.Text
 End Sub
 
 ' Form just loaded up.
