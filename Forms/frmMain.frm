@@ -30,7 +30,7 @@ Begin VB.MDIForm frmMain
       MaskColor       =   12632256
       _Version        =   393216
       BeginProperty Images {2C247F25-8591-11D1-B16A-00C0F0283628} 
-         NumListImages   =   3
+         NumListImages   =   5
          BeginProperty ListImage1 {2C247F27-8591-11D1-B16A-00C0F0283628} 
             Picture         =   "frmMain.frx":0000
             Key             =   ""
@@ -41,6 +41,14 @@ Begin VB.MDIForm frmMain
          EndProperty
          BeginProperty ListImage3 {2C247F27-8591-11D1-B16A-00C0F0283628} 
             Picture         =   "frmMain.frx":D0C4
+            Key             =   ""
+         EndProperty
+         BeginProperty ListImage4 {2C247F27-8591-11D1-B16A-00C0F0283628} 
+            Picture         =   "frmMain.frx":13926
+            Key             =   ""
+         EndProperty
+         BeginProperty ListImage5 {2C247F27-8591-11D1-B16A-00C0F0283628} 
+            Picture         =   "frmMain.frx":1A188
             Key             =   ""
          EndProperty
       EndProperty
@@ -73,7 +81,9 @@ Begin VB.MDIForm frmMain
             ImageIndex      =   3
          EndProperty
          BeginProperty Button3 {66833FEA-8583-11D1-B16A-00C0F0283628} 
-            Style           =   3
+            Key             =   "ReloadDatabase"
+            Object.ToolTipText     =   "Reload Database"
+            ImageIndex      =   5
          EndProperty
       EndProperty
    End
@@ -99,6 +109,10 @@ Begin VB.MDIForm frmMain
       Begin VB.Menu mniFileOpenDatabase 
          Caption         =   "&Open Database..."
          Shortcut        =   ^O
+      End
+      Begin VB.Menu mniFileReloadDatabase 
+         Caption         =   "&Reload Database"
+         Shortcut        =   ^R
       End
       Begin VB.Menu mniFileCloseDatabase 
          Caption         =   "&Close Database"
@@ -154,6 +168,21 @@ Private Sub CloseDatabase()
     frmPartChooser.ClearContents
 End Sub
 
+' Reloads the database and updates everything in the application.
+Private Sub ReloadDatabase()
+    Dim frmForm As Form
+
+    ' Reload component forms.
+    For Each frmForm In Forms
+        If frmForm.Name = "frmComponent" Then
+            frmForm.Refresh
+        End If
+    Next frmForm
+    
+    ' Reload part chooser form.
+    frmPartChooser.RefreshLists
+End Sub
+
 ' Closes all the child windows that aren't panels.
 Private Sub CloseAllChilds()
     Dim frmForm As Form
@@ -204,11 +233,18 @@ Private Sub mniFileOpenDatabase_Click()
     OpenDatabaseFile
 End Sub
 
+' File > Reload Database menu clicked.
+Private Sub mniFileReloadDatabase_Click()
+    ReloadDatabase
+End Sub
+
 ' Toolbar button clicked event.
 Private Sub tlbToolBar_ButtonClick(ByVal Button As MSComctlLib.Button)
     Select Case Button.Key
         Case "OpenDatabase"
             OpenDatabaseFile
+        Case "ReloadDatabase"
+            ReloadDatabase
         Case "CloseDatabase"
             CloseDatabase
     End Select

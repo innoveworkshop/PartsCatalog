@@ -271,6 +271,12 @@ Option Explicit
 Private m_lngComponentID As Long
 Private m_blnKeepOpen As Boolean
 
+' Refreshes the contents of the component form.
+Public Sub ReloadContent()
+    LoadComponentDetail m_lngComponentID, Me
+    SetStatusMessage "Component reloaded"
+End Sub
+
 ' Populate Form from Recordset.
 Public Sub PopulateFromRecordset(rs As ADODB.Recordset)
     Dim intIndex As Integer
@@ -442,8 +448,7 @@ End Sub
 Private Sub tlbToolBar_ButtonClick(ByVal Button As MSComctlLib.Button)
     Select Case Button.Key
         Case "Refresh"
-            LoadComponentDetail m_lngComponentID, Me
-            SetStatusMessage "Component reloaded"
+            ReloadContent
         Case "Duplicate"
             MsgBox "Duplicate"
         Case "Save"

@@ -77,10 +77,63 @@ Private Const CTRL_MARGIN As Integer = 120
 Private m_frmParent As MDIForm
 Private m_frmLastOpened As frmComponent
 
+' Refreshes the contents of the form.
+Public Sub RefreshLists()
+    Dim lngCategoryID As Long
+    Dim lngSubCategoryID As Long
+    Dim lngIndex As Long
+    
+    ' Reset IDs to invalid state.
+    lngCategoryID = -1
+    lngSubCategoryID = -1
+    
+    ' Check if there are any categories selected.
+    If lstCategories.ListIndex >= 0 Then
+        lngCategoryID = lstCategories.ItemData(lstCategories.ListIndex)
+    End If
+    
+    ' Check if there are any sub-categories selected.
+    If lstSubCategories.ListIndex >= 0 Then
+        lngSubCategoryID = lstSubCategories.ItemData(lstSubCategories.ListIndex)
+    End If
+
+    ' Clear the lists
+    ClearContents False
+    
+    ' Populate our categories list.
+    If IsDatabaseAssociated Then
+        LoadCategories lstCategories
+    Else
+        Exit Sub
+    End If
+    
+    ' Select previously selected category.
+    If lngCategoryID >= 0 Then
+        For lngIndex = 0 To lstCategories.ListCount - 1
+            If lstCategories.ItemData(lngIndex) = lngCategoryID Then
+                lstCategories.ListIndex = lngIndex
+                Exit For
+            End If
+        Next lngIndex
+    End If
+    
+    ' Select previously selected sub-category.
+    If lngSubCategoryID >= 0 Then
+        For lngIndex = 0 To lstSubCategories.ListCount - 1
+            If lstSubCategories.ItemData(lngIndex) = lngSubCategoryID Then
+                lstSubCategories.ListIndex = lngIndex
+                Exit For
+            End If
+        Next lngIndex
+    End If
+End Sub
+
 ' Clears the fields in the form.
-Public Sub ClearContents()
+Public Sub ClearContents(Optional blnClearLastOpenedForm As Boolean = True)
     ' Clear the last opened form.
-    Set m_frmLastOpened = Nothing
+    If blnClearLastOpenedForm Then
+        Set m_frmLastOpened = Nothing
+    End If
     
     ' Clear lists.
     lstCategories.Clear
