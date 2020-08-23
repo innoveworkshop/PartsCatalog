@@ -485,3 +485,15 @@ End Sub
 Public Property Get StayOpen() As Boolean
     StayOpen = m_blnKeepOpen
 End Property
+
+' Validate the quantity input to only contain numbers.
+Private Sub txtQuantity_KeyPress(KeyAscii As Integer)
+    Select Case KeyAscii
+        Case vbKey0 To vbKey9
+        Case vbKeyBack, vbKeyClear, vbKeyDelete
+        Case vbKeyLeft, vbKeyRight, vbKeyUp, vbKeyDown, vbKeyTab
+        Case Else
+            KeyAscii = 0
+            Beep
+    End Select
+End Sub
