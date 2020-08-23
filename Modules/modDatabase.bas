@@ -88,12 +88,17 @@ End Sub
 ' Loads a component by its ID and populates a form.
 Public Function LoadComponentDetail(lngID As Long, frmForm As frmComponent) As Boolean
     Dim rs As ADODB.Recordset
+    Dim stmt As SQLStatement
+    
+    ' Initialize the objects.
     Set rs = New ADODB.Recordset
+    Set stmt = New SQLStatement
     
     ' Open the database and query it.
     OpenConnection
-    rs.Open "SELECT * FROM Components WHERE ID = " & lngID, _
-        m_adoConnection, adOpenForwardOnly, adLockReadOnly
+    stmt.Create "SELECT * FROM Components WHERE ID = [ID]"
+    stmt.Parameter("ID") = lngID
+    rs.Open stmt.Statement, m_adoConnection, adOpenForwardOnly, adLockReadOnly
     
     ' Populate list.
     If Not rs.EOF Then
@@ -141,15 +146,21 @@ End Sub
 Public Sub LoadSubCategories(lngCatID As Long, lstBox As Variant, _
         Optional blnCloseExit As Boolean = True)
     Dim rs As ADODB.Recordset
+    Dim stmt As SQLStatement
+    
+    ' Initialize the objects.
     Set rs = New ADODB.Recordset
+    Set stmt = New SQLStatement
     
     ' Clear the list.
     lstBox.Clear
     
     ' Open the database and query it.
     OpenConnection
-    rs.Open "SELECT ID, Name FROM SubCategories WHERE ParentID = " & lngCatID & _
-        " ORDER BY Name ASC", m_adoConnection, adOpenForwardOnly, adLockReadOnly
+    stmt.Create "SELECT ID, Name FROM SubCategories WHERE ParentID = [ParentID] " & _
+        "ORDER BY Name ASC"
+    stmt.Parameter("ParentID") = lngCatID
+    rs.Open stmt.Statement, m_adoConnection, adOpenForwardOnly, adLockReadOnly
     
     ' Populate list.
     Do While Not rs.EOF
@@ -170,16 +181,22 @@ End Sub
 Public Sub LoadComponents(lngCatID As Long, lngSubCatID As Long, lstBox As Variant, _
         Optional blnCloseExit As Boolean = True)
     Dim rs As ADODB.Recordset
+    Dim stmt As SQLStatement
+    
+    ' Initialize the objects.
     Set rs = New ADODB.Recordset
+    Set stmt = New SQLStatement
     
     ' Clear the list.
     lstBox.Clear
     
     ' Open the database and query it.
     OpenConnection
-    rs.Open "SELECT ID, Name FROM Components WHERE CategoryID = " & lngCatID & _
-        " AND SubCategoryID = " & lngSubCatID & " ORDER BY Name ASC", _
-        m_adoConnection, adOpenForwardOnly, adLockReadOnly
+    stmt.Create "SELECT ID, Name FROM Components WHERE CategoryID = [CategoryID] " & _
+        " AND SubCategoryID = [SubCategoryID] ORDER BY Name ASC"
+    stmt.Parameter("CategoryID") = lngCatID
+    stmt.Parameter("SubCategoryID") = lngSubCatID
+    rs.Open stmt.Statement, m_adoConnection, adOpenForwardOnly, adLockReadOnly
     
     ' Populate list.
     Do While Not rs.EOF
