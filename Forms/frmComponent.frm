@@ -442,7 +442,8 @@ End Sub
 Private Sub tlbToolBar_ButtonClick(ByVal Button As MSComctlLib.Button)
     Select Case Button.Key
         Case "Refresh"
-            MsgBox "Refresh"
+            LoadComponentDetail m_lngComponentID, Me
+            SetStatusMessage "Component reloaded"
         Case "Duplicate"
             MsgBox "Duplicate"
         Case "Save"
