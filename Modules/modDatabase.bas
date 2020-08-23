@@ -57,6 +57,34 @@ Public Function ComponentTabbedGridProperties(grdProperties As MSFlexGrid) As St
     ComponentTabbedGridProperties = strBuffer
 End Function
 
+' Saves a component to the database.
+Public Sub SaveComponent(lngID As Long, strName As String, strQuantity As String, _
+        strNotes As String, lngCategoryID As Long, lngSubCategoryID As Long, _
+        lngPackageID As Long, strProperties As String)
+    Dim stmt As SQLStatement
+    
+    ' Open the database.
+    OpenConnection
+    
+    ' Build up the statement.
+    Set stmt = New SQLStatement
+    stmt.Create "UPDATE Components SET Name = '[Name]', Quantity = [Quantity], " & _
+        "Notes = '[Notes]', CategoryID = [CategoryID], SubCategoryID = [SubCategoryID], " & _
+        "PackageID = [PackageID], Properties = '[Properties]' WHERE ID = [ID]"
+    stmt.Parameter("ID") = lngID
+    stmt.Parameter("Name") = strName
+    stmt.Parameter("Quantity") = strQuantity
+    stmt.Parameter("Notes") = strNotes
+    stmt.Parameter("CategoryID") = lngCategoryID
+    stmt.Parameter("SubCategoryID") = lngSubCategoryID
+    stmt.Parameter("PackageID") = lngPackageID
+    stmt.Parameter("Properties") = strProperties
+    
+    ' Execute the operation and close the connection.
+    m_adoConnection.Execute stmt.Statement
+    CloseConnection
+End Sub
+
 ' Loads a component by its ID and populates a form.
 Public Function LoadComponentDetail(lngID As Long, frmForm As frmComponent) As Boolean
     Dim rs As ADODB.Recordset

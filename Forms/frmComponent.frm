@@ -277,6 +277,20 @@ Public Sub ReloadContent()
     SetStatusMessage "Component reloaded"
 End Sub
 
+' Saves the associated component.
+Public Sub Save()
+    ' Save component and refresh the lists.
+    SaveComponent m_lngComponentID, txtName.Text, txtQuantity.Text, _
+        txtNotes.Text, cmbCategory.ItemData(cmbCategory.ListIndex), _
+        cmbSubCategory.ItemData(cmbSubCategory.ListIndex), _
+        cmbPackage.ItemData(cmbPackage.ListIndex), _
+        ComponentTabbedGridProperties(grdProperties)
+    frmPartChooser.RefreshLists
+    
+    ' Update status bar.
+    SetStatusMessage "Component saved"
+End Sub
+
 ' Populate Form from Recordset.
 Public Sub PopulateFromRecordset(rs As ADODB.Recordset)
     Dim intIndex As Integer
@@ -451,10 +465,12 @@ Private Sub tlbToolBar_ButtonClick(ByVal Button As MSComctlLib.Button)
             ReloadContent
         Case "Duplicate"
             MsgBox "Duplicate"
+            frmPartChooser.RefreshLists
         Case "Save"
-            MsgBox "Save"
+            Save
         Case "Delete"
             MsgBox "Delete"
+            frmPartChooser.RefreshLists
         Case "KeepOpen"
             MaintainFormOpened (Button.Value = tbrPressed)
     End Select
