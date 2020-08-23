@@ -25,6 +25,7 @@ Begin VB.Form frmComponent
       _ExtentX        =   15002
       _ExtentY        =   635
       ButtonWidth     =   609
+      ButtonHeight    =   582
       Appearance      =   1
       Style           =   1
       ImageList       =   "imlToolbar"
@@ -35,6 +36,7 @@ Begin VB.Form frmComponent
             Key             =   "Refresh"
             Object.ToolTipText     =   "Refresh"
             ImageIndex      =   1
+            Object.Width           =   1
          EndProperty
          BeginProperty Button2 {66833FEA-8583-11D1-B16A-00C0F0283628} 
             Style           =   3
@@ -55,7 +57,8 @@ Begin VB.Form frmComponent
             ImageIndex      =   4
          EndProperty
          BeginProperty Button6 {66833FEA-8583-11D1-B16A-00C0F0283628} 
-            Style           =   3
+            Key             =   "Spacer"
+            Style           =   4
          EndProperty
          BeginProperty Button7 {66833FEA-8583-11D1-B16A-00C0F0283628} 
             Key             =   "KeepOpen"
@@ -420,6 +423,11 @@ Private Sub Form_Load()
 
     ' Setup the Flex Grid.
     SetupPropertiesGrid
+    
+    ' Setup the ToolBar placeholder.
+    tlbToolBar.Buttons("Spacer").Width = Me.ScaleWidth - _
+        ((tlbToolBar.Buttons.Count - 1) * tlbToolBar.ButtonWidth) + _
+        (tlbToolBar.ButtonWidth / 2)
 End Sub
 
 ' Handles the toolbar button clicks.
