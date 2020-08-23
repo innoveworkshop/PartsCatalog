@@ -10,6 +10,7 @@ Module=modDatabase; Modules\modDatabase.bas
 Form=Forms\frmComponent.frm
 Module=modAssetsHandler; Modules\modAssetsHandler.bas
 Module=modMain; Modules\modMain.bas
+Module=modSettings; Modules\modSettings.bas
 ResFile32="Resources\resManifest.res"
 IconForm="frmMain"
 Startup="Sub Main"
