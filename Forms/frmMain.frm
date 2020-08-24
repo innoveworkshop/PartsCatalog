@@ -30,7 +30,7 @@ Begin VB.MDIForm frmMain
       MaskColor       =   12632256
       _Version        =   393216
       BeginProperty Images {2C247F25-8591-11D1-B16A-00C0F0283628} 
-         NumListImages   =   5
+         NumListImages   =   8
          BeginProperty ListImage1 {2C247F27-8591-11D1-B16A-00C0F0283628} 
             Picture         =   "frmMain.frx":0000
             Key             =   ""
@@ -51,6 +51,18 @@ Begin VB.MDIForm frmMain
             Picture         =   "frmMain.frx":1A188
             Key             =   ""
          EndProperty
+         BeginProperty ListImage6 {2C247F27-8591-11D1-B16A-00C0F0283628} 
+            Picture         =   "frmMain.frx":209EA
+            Key             =   ""
+         EndProperty
+         BeginProperty ListImage7 {2C247F27-8591-11D1-B16A-00C0F0283628} 
+            Picture         =   "frmMain.frx":2724C
+            Key             =   ""
+         EndProperty
+         BeginProperty ListImage8 {2C247F27-8591-11D1-B16A-00C0F0283628} 
+            Picture         =   "frmMain.frx":2DAAE
+            Key             =   ""
+         EndProperty
       EndProperty
    End
    Begin MSComctlLib.Toolbar tlbToolBar 
@@ -69,21 +81,47 @@ Begin VB.MDIForm frmMain
       ImageList       =   "imlToolBar"
       _Version        =   393216
       BeginProperty Buttons {66833FE8-8583-11D1-B16A-00C0F0283628} 
-         NumButtons      =   3
+         NumButtons      =   9
          BeginProperty Button1 {66833FEA-8583-11D1-B16A-00C0F0283628} 
             Key             =   "OpenDatabase"
             Object.ToolTipText     =   "Open Database"
-            ImageIndex      =   2
+            ImageIndex      =   1
          EndProperty
          BeginProperty Button2 {66833FEA-8583-11D1-B16A-00C0F0283628} 
             Key             =   "CloseDatabase"
             Object.ToolTipText     =   "Close Database"
-            ImageIndex      =   3
+            ImageIndex      =   2
          EndProperty
          BeginProperty Button3 {66833FEA-8583-11D1-B16A-00C0F0283628} 
             Key             =   "ReloadDatabase"
             Object.ToolTipText     =   "Reload Database"
+            ImageIndex      =   3
+         EndProperty
+         BeginProperty Button4 {66833FEA-8583-11D1-B16A-00C0F0283628} 
+            Style           =   3
+         EndProperty
+         BeginProperty Button5 {66833FEA-8583-11D1-B16A-00C0F0283628} 
+            Key             =   "Categories"
+            Object.ToolTipText     =   "Manage (Sub-)Categories"
             ImageIndex      =   5
+         EndProperty
+         BeginProperty Button6 {66833FEA-8583-11D1-B16A-00C0F0283628} 
+            Key             =   "Packages"
+            Object.ToolTipText     =   "Manage Packages"
+            ImageIndex      =   7
+         EndProperty
+         BeginProperty Button7 {66833FEA-8583-11D1-B16A-00C0F0283628} 
+            Key             =   "Components"
+            Object.ToolTipText     =   "Manage Components"
+            ImageIndex      =   8
+         EndProperty
+         BeginProperty Button8 {66833FEA-8583-11D1-B16A-00C0F0283628} 
+            Style           =   3
+         EndProperty
+         BeginProperty Button9 {66833FEA-8583-11D1-B16A-00C0F0283628} 
+            Key             =   "AddComponent"
+            Object.ToolTipText     =   "Add Component"
+            ImageIndex      =   4
          EndProperty
       EndProperty
    End
@@ -123,6 +161,25 @@ Begin VB.MDIForm frmMain
       End
       Begin VB.Menu mniFileExit 
          Caption         =   "E&xit"
+      End
+   End
+   Begin VB.Menu mnuManage 
+      Caption         =   "&Manage"
+      Begin VB.Menu mniManageCategories 
+         Caption         =   "C&ategories..."
+      End
+      Begin VB.Menu mniManagePackages 
+         Caption         =   "&Packages..."
+      End
+      Begin VB.Menu mniManageComponents 
+         Caption         =   "&Components..."
+      End
+      Begin VB.Menu mniManageSeparator1 
+         Caption         =   "-"
+      End
+      Begin VB.Menu mniManageAddComponent 
+         Caption         =   "A&dd Component..."
+         Shortcut        =   ^N
       End
    End
    Begin VB.Menu mnuWindow 
@@ -247,5 +304,13 @@ Private Sub tlbToolBar_ButtonClick(ByVal Button As MSComctlLib.Button)
             ReloadDatabase
         Case "CloseDatabase"
             CloseDatabase
+        Case "Categories"
+            MsgBox "Categories"
+        Case "Packages"
+            MsgBox "Packages"
+        Case "Components"
+            MsgBox "Components"
+        Case "AddComponent"
+            MsgBox "Add Component"
     End Select
 End Sub
