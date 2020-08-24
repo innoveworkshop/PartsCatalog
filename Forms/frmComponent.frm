@@ -121,10 +121,13 @@ Begin VB.Form frmComponent
       EndProperty
    End
    Begin VB.PictureBox picImage 
+      Appearance      =   0  'Flat
+      BackColor       =   &H80000005&
+      ForeColor       =   &H80000008&
       Height          =   2055
       Left            =   120
-      ScaleHeight     =   1995
-      ScaleWidth      =   1995
+      ScaleHeight     =   2025
+      ScaleWidth      =   2025
       TabIndex        =   14
       Top             =   480
       Width           =   2055
@@ -156,7 +159,6 @@ Begin VB.Form frmComponent
       AllowUserResizing=   1
       BorderStyle     =   0
       Appearance      =   0
-      FormatString    =   ""
    End
    Begin VB.TextBox txtNotes 
       Height          =   495
@@ -293,8 +295,8 @@ Public Sub Save()
     If IsRename Then
         RenameComponentDatasheet m_strOriginalName, txtName.Text
         RenameComponentImage m_strOriginalName, txtName.Text
-        m_strOriginalName = txtName.Text
     End If
+    m_strOriginalName = txtName.Text
     
     ' Update status bar.
     SetStatusMessage "Component saved"
@@ -443,6 +445,13 @@ End Sub
 
 ' Is the original name and the name in the TextBox different?
 Private Function IsRename() As Boolean
+    ' Check if we are creating a new component.
+    If m_strOriginalName = vbNullString Then
+        IsRename = False
+        Exit Function
+    End If
+    
+    ' Check for actual component renaming.
     If m_strOriginalName <> txtName.Text Then
         IsRename = True
     Else
