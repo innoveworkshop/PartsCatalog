@@ -280,6 +280,7 @@ Option Explicit
 Private m_lngComponentID As Long
 Private m_strOriginalName As String
 Private m_blnKeepOpen As Boolean
+Private m_blnDirty As Boolean
 
 ' Shows the form keeping some distance from the parts chooser panel.
 Public Sub ShowAligned()
@@ -287,6 +288,9 @@ Public Sub ShowAligned()
     If Me.Left < (frmPartChooser.Left + frmPartChooser.Width) Then
         Me.Left = Me.Left + frmPartChooser.Left + frmPartChooser.Width
     End If
+    
+    ' Set dirtiness.
+    Dirty = False
     
     ' Show it.
     SetupToolBar
@@ -308,8 +312,9 @@ Public Sub ShowNewComponent()
     cmbSubCategory.Text = ""
     LoadPackages cmbPackage, False
     
-    ' Show the form.
+    ' Show the form and set dirtiness.
     ShowAligned
+    Dirty = True
 End Sub
 
 ' Duplicates the component.
@@ -327,12 +332,22 @@ Public Sub ShowNewDuplicate()
     
     ' Show the new component form and delete its local reference.
     frmNewComponent.ShowAligned
+    frmNewComponent.Dirty = True
     Set frmNewComponent = Nothing
 End Sub
 
 ' Refreshes the contents of the component form.
 Public Sub ReloadContent()
+    ' Check with the user for unsaved changes.
+    If AbortUnsavedChanges Then
+        Exit Sub
+    End If
+    
+    ' Reload from the database.
     LoadComponentDetail ComponentID, Me
+    
+    ' Set dirtiness and update the status bar.
+    Dirty = False
     SetStatusMessage "Component reloaded"
 End Sub
 
@@ -368,6 +383,9 @@ Public Sub Save()
         cmbPackage.ItemData(cmbPackage.ListIndex), _
         ComponentTabbedGridProperties(grdProperties))
     frmPartChooser.RefreshLists
+    
+    ' Set dirtiness.
+    Dirty = False
     
     ' Check if we are renaming and make sure to propagate this to the
     ' associated assets.
@@ -498,6 +516,34 @@ Public Function EncodePropertiesGrid() As String
     EncodePropertiesGrid = ""
 End Function
 
+' Aborts the current operation if the user selects Cancel to unsaved changes.
+Private Function AbortUnsavedChanges() As Boolean
+    Dim intResponse As Integer
+    
+    ' Check for dirtiness.
+    If Not Dirty Then
+        AbortUnsavedChanges = False
+        Exit Function
+    End If
+    
+    ' Ask the user.
+    intResponse = MsgBox("You have changed this component." & vbCrLf & _
+        "Do you want to save the changes?", vbYesNoCancel + vbExclamation, _
+        "Save Changes to Component?")
+    
+    ' Decide what to do.
+    If intResponse = vbCancel Then
+        AbortUnsavedChanges = True
+    Else
+        ' Save before continuing.
+        If intResponse = vbYes Then
+            Save
+        End If
+        
+        AbortUnsavedChanges = False
+    End If
+End Function
+
 ' Sets a status message in the statusbar.
 Private Sub SetStatusMessage(strMessage As String)
     stbStatusBar.SimpleText = strMessage
@@ -562,6 +608,21 @@ Private Sub cmbCategory_Click()
     ' from a RecordSet.
     LoadSubCategories cmbCategory.ItemData(cmbCategory.ListIndex), _
         cmbSubCategory, IsNewComponent
+    
+    ' Set dirtiness.
+    Dirty = True
+End Sub
+
+' Package selection updated.
+Private Sub cmbPackage_Change()
+    ' Set dirtiness.
+    Dirty = True
+End Sub
+
+' Sub-category selection updated.
+Private Sub cmbSubCategory_Change()
+    ' Set dirtiness.
+    Dirty = True
 End Sub
 
 ' Open component datasheet.
@@ -582,6 +643,16 @@ Private Sub Form_Load()
     tlbToolBar.Buttons("Spacer").Width = Me.ScaleWidth - _
         ((tlbToolBar.Buttons.Count - 1) * tlbToolBar.ButtonWidth) + _
         (tlbToolBar.ButtonWidth / 2)
+    
+    ' Set dirtiness.
+    Dirty = False
+End Sub
+
+' Form is about to be unloaded.
+Private Sub Form_QueryUnload(Cancel As Integer, UnloadMode As Integer)
+    If AbortUnsavedChanges Then
+        Cancel = 1
+    End If
 End Sub
 
 ' Form just got unloaded.
@@ -614,11 +685,22 @@ End Sub
 
 ' Name text change event.
 Private Sub txtName_Change()
+    ' Change window title.
     Me.Caption = txtName.Text
+    
+    ' Set dirtiness.
+    Dirty = True
+End Sub
+
+' Notes change event.
+Private Sub txtNotes_Change()
+    ' Set dirtiness.
+    Dirty = True
 End Sub
 
 ' Validate the quantity input to only contain numbers.
 Private Sub txtQuantity_KeyPress(KeyAscii As Integer)
+    ' Only accept numbers.
     Select Case KeyAscii
         Case vbKey0 To vbKey9
         Case vbKeyBack, vbKeyClear, vbKeyDelete
@@ -627,6 +709,9 @@ Private Sub txtQuantity_KeyPress(KeyAscii As Integer)
             KeyAscii = 0
             Beep
     End Select
+    
+    ' Set dirtiness.
+    Dirty = True
 End Sub
 
 ' Getter for maintaining the window opened.
@@ -643,6 +728,27 @@ Public Property Let StayOpen(blnKeepOpen As Boolean)
         tlbToolBar.Buttons("KeepOpen").Value = tbrPressed
     Else
         tlbToolBar.Buttons("KeepOpen").Value = tbrUnpressed
+    End If
+End Property
+
+' Getter for the dirty attribute.
+Public Property Get Dirty() As Boolean
+    Dirty = m_blnDirty
+End Property
+
+' Setter for the dirty attribute.
+Public Property Let Dirty(blnDirty As Boolean)
+    m_blnDirty = blnDirty
+    
+    ' Add or remove an asterisk to the window title.
+    If blnDirty Then
+        If Right(Me.Caption, 1) <> "*" Then
+            Me.Caption = Me.Caption & "*"
+        End If
+    Else
+        If Right(Me.Caption, 1) = "*" Then
+            Me.Caption = Left$(Me.Caption, Len(Me.Caption) - 1)
+        End If
     End If
 End Property
 
