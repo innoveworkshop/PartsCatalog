@@ -269,6 +269,7 @@ Option Explicit
 
 ' Private methods.
 Private m_lngComponentID As Long
+Private m_strOriginalName As String
 Private m_blnKeepOpen As Boolean
 
 ' Refreshes the contents of the component form.
@@ -287,6 +288,14 @@ Public Sub Save()
         ComponentTabbedGridProperties(grdProperties)
     frmPartChooser.RefreshLists
     
+    ' Check if we are renaming and make sure to propagate this to the
+    ' associated assets.
+    If IsRename Then
+        RenameComponentDatasheet m_strOriginalName, txtName.Text
+        RenameComponentImage m_strOriginalName, txtName.Text
+        m_strOriginalName = txtName.Text
+    End If
+    
     ' Update status bar.
     SetStatusMessage "Component saved"
 End Sub
@@ -299,8 +308,9 @@ Public Sub PopulateFromRecordset(rs As ADODB.Recordset)
     m_lngComponentID = rs.Fields("ID")
     
     ' Set text fields.
-    txtQuantity.Text = rs.Fields("Quantity")
+    m_strOriginalName = rs.Fields("Name")
     txtName.Text = rs.Fields("Name")
+    txtQuantity.Text = rs.Fields("Quantity")
     txtNotes.Text = rs.Fields("Notes")
     SetStatusMessage "Loaded text fields"
     
@@ -430,6 +440,15 @@ Private Sub SetupPropertiesGrid()
     grdProperties.FixedAlignment(1) = flexAlignCenterCenter
     grdProperties.TextMatrix(0, 1) = "Value"
 End Sub
+
+' Is the original name and the name in the TextBox different?
+Private Function IsRename() As Boolean
+    If m_strOriginalName <> txtName.Text Then
+        IsRename = True
+    Else
+        IsRename = False
+    End If
+End Function
 
 ' Category selection updated.
 Private Sub cmbCategory_Click()

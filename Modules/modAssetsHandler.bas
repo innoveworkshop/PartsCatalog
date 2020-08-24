@@ -24,15 +24,21 @@ Public Function GetDatasheetsDirectory() As String
 End Function
 
 ' Gets the path of a datasheet given a name.
-Public Function GetComponentDatasheetPath(strName As String) As String
+Public Function GetComponentDatasheetPath(strName As String, _
+        Optional blnCheckExists As Boolean = True) As String
     Dim strPath As String
     
-    ' Check if the datasheet exists.
+    ' Build datasheet path.
     strPath = GetDatasheetsDirectory() & strName & DATASHEET_EXT
-    If Dir(strPath) <> vbNullString Then
-        GetComponentDatasheetPath = strPath
-    Else
-        GetComponentDatasheetPath = vbNullString
+    GetComponentDatasheetPath = strPath
+    
+    ' Check if the datasheet exists.
+    If blnCheckExists Then
+        If FileExists(strPath) Then
+            GetComponentDatasheetPath = strPath
+        Else
+            GetComponentDatasheetPath = vbNullString
+        End If
     End If
 End Function
 
@@ -44,6 +50,30 @@ Public Function ComponentHasDatasheet(strName As String) As Boolean
         ComponentHasDatasheet = False
     End If
 End Function
+
+' Renames the datasheet of a component.
+Public Sub RenameComponentDatasheet(strOldName As String, strNewName As String)
+    Dim strOldPath As String
+    Dim strNewPath As String
+    
+    ' Check if it actually exists.
+    If ComponentHasDatasheet(strOldName) Then
+        ' Get new and old paths.
+        strOldPath = GetComponentDatasheetPath(strOldName)
+        strNewPath = GetComponentDatasheetPath(strNewName, False)
+        
+        ' Check if the new path is available.
+        If FileExists(strNewPath) Then
+            MsgBox "Cannot rename datasheet from " & strOldName & " to " & _
+                strNewName & " becase there's another datasheet with that " & _
+                "name already", vbOKOnly + vbCritical, "Datasheet Rename Error"
+            Exit Sub
+        End If
+        
+        ' Rename the file.
+        Name strOldPath As strNewPath
+    End If
+End Sub
 
 ' Opens a component datasheet file.
 Public Sub OpenComponentDatasheet(strName As String)
@@ -59,23 +89,86 @@ Public Function GetImagesDirectory() As String
 End Function
 
 ' Gets the path of an image given a name.
-Public Function GetComponentImagePath(strName As String, strPackage As String) As String
+Public Function GetComponentImagePath(strName As String, strPackage As String, _
+        Optional blnCheckExists As Boolean = True) As String
     Dim strPath As String
     
     ' Check for image by component name.
-    strPath = GetImagesDirectory() & strName & IMAGE_EXT
-    If Dir(strPath, vbNormal) <> vbNullString Then
+    If strName <> vbNullString Then
+        ' Build component image path.
+        strPath = GetImagesDirectory() & strName & IMAGE_EXT
         GetComponentImagePath = strPath
-        Exit Function
+        
+        ' Check if it actually exists.
+        If blnCheckExists Then
+            If FileExists(strPath) Then
+                GetComponentImagePath = strPath
+                Exit Function
+            End If
+        Else
+            Exit Function
+        End If
     End If
     
     ' Check for image by component package.
-    strPath = GetImagesDirectory() & strPackage & IMAGE_EXT
-    If Dir(strPath, vbNormal) <> vbNullString Then
+    If strPackage <> vbNullString Then
+        ' Build package image path.
+        strPath = GetImagesDirectory() & strPackage & IMAGE_EXT
         GetComponentImagePath = strPath
-        Exit Function
+        
+        ' Check if it actually exists.
+        If blnCheckExists Then
+            If FileExists(strPath) Then
+                GetComponentImagePath = strPath
+                Exit Function
+            End If
+        Else
+            Exit Function
+        End If
     End If
     
     GetComponentImagePath = vbNullString
 End Function
 
+' Check if a component has an image associated with it.
+Public Function ComponentHasImage(strName As String, _
+        Optional strPackage As String = vbNullString) As Boolean
+    If GetComponentImagePath(strName, strPackage) <> vbNullString Then
+        ComponentHasImage = True
+    Else
+        ComponentHasImage = False
+    End If
+End Function
+
+' Renames the image of a component.
+Public Sub RenameComponentImage(strOldName As String, strNewName As String)
+    Dim strOldPath As String
+    Dim strNewPath As String
+    
+    ' Check if it actually exists.
+    If ComponentHasImage(strOldName) Then
+        ' Get new and old paths.
+        strOldPath = GetComponentImagePath(strOldName, vbNullString)
+        strNewPath = GetComponentImagePath(strNewName, vbNullString, False)
+        
+        ' Check if the new path is available.
+        If FileExists(strNewPath) Then
+            MsgBox "Cannot rename component image from " & strOldName & " to " & _
+                strNewName & " becase there's another image with that " & _
+                "name already", vbOKOnly + vbCritical, "Image Rename Error"
+            Exit Sub
+        End If
+        
+        ' Rename the file.
+        Name strOldPath As strNewPath
+    End If
+End Sub
+
+' Checks if a file exists.
+Private Function FileExists(strPath) As Boolean
+    If Dir(strPath) <> vbNullString Then
+        FileExists = True
+    Else
+        FileExists = False
+    End If
+End Function
