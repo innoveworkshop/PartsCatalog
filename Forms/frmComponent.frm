@@ -274,6 +274,13 @@ Private m_lngComponentID As Long
 Private m_strOriginalName As String
 Private m_blnKeepOpen As Boolean
 
+' Shows the form keeping some distance from the parts chooser panel.
+Public Sub ShowAligned()
+    If Me.Left < (frmPartChooser.Left + frmPartChooser.Width) Then
+        Me.Left = Me.Left + frmPartChooser.Left + frmPartChooser.Width
+    End If
+End Sub
+
 ' Sets up the form for a new component.
 Public Sub ShowNewComponent()
     ' Setup variables.
@@ -282,7 +289,7 @@ Public Sub ShowNewComponent()
     StayOpen = True
     
     ' Show the form.
-    Show
+    ShowAligned
 End Sub
 
 ' Refreshes the contents of the component form.

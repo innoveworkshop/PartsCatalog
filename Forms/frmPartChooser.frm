@@ -183,7 +183,7 @@ End Sub
 Private Sub ShowComponent()
     Dim lngComponentID As Long
     Dim frmForm As frmComponent
-        
+
     ' Check if we have a last opened form.
     If m_frmLastOpened Is Nothing Then
         Set frmForm = New frmComponent
@@ -198,15 +198,10 @@ Private Sub ShowComponent()
         Set frmForm = m_frmLastOpened
     End If
     
-    ' Position the new form.
-    If frmForm.Left < (Me.Left + Me.Width) Then
-        frmForm.Left = frmForm.Left + Me.Left + Me.Width
-    End If
-    
     ' Get component ID and show the component dialog.
     lngComponentID = lstComponents.ItemData(lstComponents.ListIndex)
     If LoadComponentDetail(lngComponentID, frmForm) Then
-        frmForm.Show
+        frmForm.ShowAligned
     Else
         Unload frmForm
     End If
