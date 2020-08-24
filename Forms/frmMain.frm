@@ -199,6 +199,16 @@ Attribute VB_Exposed = False
 
 Option Explicit
 
+' Shows a component dialog for creating a new component.
+Private Sub NewComponent()
+    Dim frmNewComponent As frmComponent
+    Set frmNewComponent = New frmComponent
+    
+    ' Show the new component form and remove its reference.
+    frmNewComponent.ShowNewComponent
+    Set frmNewComponent = Nothing
+End Sub
+
 ' Open a new database.
 Private Sub OpenDatabaseFile(Optional strPath As String = vbNullString)
     Dim strSetPath As String
@@ -295,6 +305,11 @@ Private Sub mniFileReloadDatabase_Click()
     ReloadDatabase
 End Sub
 
+' Manage > Add Component menu clicked.
+Private Sub mniManageAddComponent_Click()
+    NewComponent
+End Sub
+
 ' Toolbar button clicked event.
 Private Sub tlbToolBar_ButtonClick(ByVal Button As MSComctlLib.Button)
     Select Case Button.Key
@@ -311,6 +326,6 @@ Private Sub tlbToolBar_ButtonClick(ByVal Button As MSComctlLib.Button)
         Case "Components"
             MsgBox "Components"
         Case "AddComponent"
-            MsgBox "Add Component"
+            NewComponent
     End Select
 End Sub

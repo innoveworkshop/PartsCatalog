@@ -274,6 +274,17 @@ Private m_lngComponentID As Long
 Private m_strOriginalName As String
 Private m_blnKeepOpen As Boolean
 
+' Sets up the form for a new component.
+Public Sub ShowNewComponent()
+    ' Setup variables.
+    m_lngComponentID = -1
+    m_strOriginalName = vbNullString
+    StayOpen = True
+    
+    ' Show the form.
+    Show
+End Sub
+
 ' Refreshes the contents of the component form.
 Public Sub ReloadContent()
     LoadComponentDetail m_lngComponentID, Me
@@ -423,11 +434,6 @@ Private Sub SetStatusMessage(strMessage As String)
     stbStatusBar.SimpleText = strMessage
 End Sub
 
-' Make sure the form is kept opened.
-Private Sub MaintainFormOpened(Optional blnState As Boolean = True)
-    m_blnKeepOpen = blnState
-End Sub
-
 ' Setup the properties MSFlexGrid.
 Private Sub SetupPropertiesGrid()
     ' Setup the columns size
@@ -446,7 +452,7 @@ End Sub
 ' Is the original name and the name in the TextBox different?
 Private Function IsRename() As Boolean
     ' Check if we are creating a new component.
-    If m_strOriginalName = vbNullString Then
+    If IsNewComponent Then
         IsRename = False
         Exit Function
     End If
@@ -456,6 +462,15 @@ Private Function IsRename() As Boolean
         IsRename = True
     Else
         IsRename = False
+    End If
+End Function
+
+' Check if this is a new component.
+Private Function IsNewComponent() As Boolean
+    If m_lngComponentID = -1 Then
+        IsNewComponent = True
+    Else
+        IsNewComponent = False
     End If
 End Function
 
@@ -500,7 +515,7 @@ Private Sub tlbToolBar_ButtonClick(ByVal Button As MSComctlLib.Button)
             MsgBox "Delete"
             frmPartChooser.RefreshLists
         Case "KeepOpen"
-            MaintainFormOpened (Button.Value = tbrPressed)
+            StayOpen = (Button.Value = tbrPressed)
     End Select
 End Sub
 
@@ -512,6 +527,18 @@ End Sub
 ' Getter for maintaining the window opened.
 Public Property Get StayOpen() As Boolean
     StayOpen = m_blnKeepOpen
+End Property
+
+' Setter for maintaining the window opened.
+Public Property Let StayOpen(blnKeepOpen As Boolean)
+    m_blnKeepOpen = blnKeepOpen
+    
+    ' Set the toolbar button accordingly.
+    If m_blnKeepOpen Then
+        tlbToolBar.Buttons("KeepOpen").Value = tbrPressed
+    Else
+        tlbToolBar.Buttons("KeepOpen").Value = tbrUnpressed
+    End If
 End Property
 
 ' Validate the quantity input to only contain numbers.
