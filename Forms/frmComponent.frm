@@ -6,7 +6,7 @@ Begin VB.Form frmComponent
    Caption         =   "Component"
    ClientHeight    =   5865
    ClientLeft      =   6135
-   ClientTop       =   3315
+   ClientTop       =   3615
    ClientWidth     =   8505
    LinkTopic       =   "Form1"
    MaxButton       =   0   'False
@@ -255,6 +255,13 @@ Begin VB.Form frmComponent
       TabIndex        =   0
       Top             =   480
       Width           =   495
+   End
+   Begin VB.Menu mnuComponent 
+      Caption         =   "&Component"
+      Begin VB.Menu mniComponentSave 
+         Caption         =   "&Save"
+         Shortcut        =   ^S
+      End
    End
 End
 Attribute VB_Name = "frmComponent"
@@ -582,6 +589,11 @@ Private Sub Form_Unload(Cancel As Integer)
     ' Make sure the parts chooser form doesn't use this form.
     ComponentID = -1
     StayOpen = True
+End Sub
+
+' Component > Save menu clicked.
+Private Sub mniComponentSave_Click()
+    Save
 End Sub
 
 ' Handles the toolbar button clicks.
