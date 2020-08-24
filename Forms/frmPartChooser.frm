@@ -203,11 +203,8 @@ Private Sub ShowComponent()
         frmForm.Left = frmForm.Left + Me.Left + Me.Width
     End If
     
-    ' Get component ID.
+    ' Get component ID and show the component dialog.
     lngComponentID = lstComponents.ItemData(lstComponents.ListIndex)
-    
-    ' TODO: Have this form component as a private variable and check if we
-    '       should open a new one based on it's movement previously.
     If LoadComponentDetail(lngComponentID, frmForm) Then
         frmForm.Show
     Else
