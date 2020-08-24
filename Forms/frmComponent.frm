@@ -288,6 +288,15 @@ Public Sub ShowNewComponent()
     m_strOriginalName = vbNullString
     StayOpen = True
     
+    ' Populate form.
+    txtQuantity.Text = 0
+    txtName.Text = ""
+    txtNotes.Text = ""
+    Set picImage.Picture = Nothing
+    LoadCategories cmbCategory, False
+    cmbSubCategory.Text = ""
+    LoadPackages cmbPackage, False
+    
     ' Show the form.
     ShowAligned
 End Sub
@@ -300,12 +309,18 @@ End Sub
 
 ' Saves the associated component.
 Public Sub Save()
+    ' Setup before creating a new component.
+    If IsNewComponent Then
+        m_strOriginalName = txtName.Text
+    End If
+    
     ' Save component and refresh the lists.
-    SaveComponent m_lngComponentID, txtName.Text, txtQuantity.Text, _
-        txtNotes.Text, cmbCategory.ItemData(cmbCategory.ListIndex), _
+    m_lngComponentID = SaveComponent(m_lngComponentID, txtName.Text, _
+        txtQuantity.Text, txtNotes.Text, _
+        cmbCategory.ItemData(cmbCategory.ListIndex), _
         cmbSubCategory.ItemData(cmbSubCategory.ListIndex), _
         cmbPackage.ItemData(cmbPackage.ListIndex), _
-        ComponentTabbedGridProperties(grdProperties)
+        ComponentTabbedGridProperties(grdProperties))
     frmPartChooser.RefreshLists
     
     ' Check if we are renaming and make sure to propagate this to the
@@ -316,8 +331,9 @@ Public Sub Save()
     End If
     m_strOriginalName = txtName.Text
     
-    ' Update status bar.
+    ' Update status bar and the tool bar.
     SetStatusMessage "Component saved"
+    SetupToolBar
 End Sub
 
 ' Populate Form from Recordset.
@@ -441,6 +457,19 @@ Private Sub SetStatusMessage(strMessage As String)
     stbStatusBar.SimpleText = strMessage
 End Sub
 
+' Sets up the ToolBar.
+Private Sub SetupToolBar()
+    If IsNewComponent Then
+        tlbToolBar.Buttons("Refresh").Enabled = False
+        tlbToolBar.Buttons("Duplicate").Enabled = False
+        tlbToolBar.Buttons("Delete").Enabled = False
+    Else
+        tlbToolBar.Buttons("Refresh").Enabled = True
+        tlbToolBar.Buttons("Duplicate").Enabled = True
+        tlbToolBar.Buttons("Delete").Enabled = True
+    End If
+End Sub
+
 ' Setup the properties MSFlexGrid.
 Private Sub SetupPropertiesGrid()
     ' Setup the columns size
@@ -483,10 +512,10 @@ End Function
 
 ' Category selection updated.
 Private Sub cmbCategory_Click()
-    If cmbSubCategory.ListCount > 0 Then
-        LoadSubCategories cmbCategory.ItemData(cmbCategory.ListIndex), _
-            cmbSubCategory, True
-    End If
+    ' Prevent the database connection from being closed when populating
+    ' from a RecordSet.
+    LoadSubCategories cmbCategory.ItemData(cmbCategory.ListIndex), _
+        cmbSubCategory, IsNewComponent
 End Sub
 
 ' Open component datasheet.
@@ -497,9 +526,10 @@ End Sub
 ' Form just loaded up.
 Private Sub Form_Load()
     ' Clear the opened status.
-    m_blnKeepOpen = False
+    StayOpen = False
 
-    ' Setup the Flex Grid.
+    ' Setup some controls.
+    SetupToolBar
     SetupPropertiesGrid
     
     ' Setup the ToolBar placeholder.

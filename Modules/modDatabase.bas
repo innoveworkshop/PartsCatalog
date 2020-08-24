@@ -57,21 +57,31 @@ Public Function ComponentTabbedGridProperties(grdProperties As MSFlexGrid) As St
     ComponentTabbedGridProperties = strBuffer
 End Function
 
-' Saves a component to the database.
-Public Sub SaveComponent(lngID As Long, strName As String, strQuantity As String, _
+' Saves/creates a component to the database. For component creation lngID should be -1.
+Public Function SaveComponent(lngID As Long, strName As String, strQuantity As String, _
         strNotes As String, lngCategoryID As Long, lngSubCategoryID As Long, _
-        lngPackageID As Long, strProperties As String)
+        lngPackageID As Long, strProperties As String) As Long
     Dim stmt As SQLStatement
     
     ' Open the database.
     OpenConnection
     
-    ' Build up the statement.
+    ' Setup the statement.
     Set stmt = New SQLStatement
-    stmt.Create "UPDATE Components SET Name = '[Name]', Quantity = [Quantity], " & _
-        "Notes = '[Notes]', CategoryID = [CategoryID], SubCategoryID = [SubCategoryID], " & _
-        "PackageID = [PackageID], Properties = '[Properties]' WHERE ID = [ID]"
-    stmt.Parameter("ID") = lngID
+    If lngID = -1 Then
+        ' Create the component.
+        stmt.Create "INSERT INTO Components (Name, Quantity, Notes, CategoryID, " & _
+            "SubCategoryID, PackageID, Properties) VALUES ('[Name]', [Quantity], " & _
+            "'[Notes]', [CategoryID], [SubCategoryID], [PackageID], '[Properties]')"
+    Else
+        ' Update an existing component.
+        stmt.Create "UPDATE Components SET Name = '[Name]', Quantity = [Quantity], " & _
+            "Notes = '[Notes]', CategoryID = [CategoryID], SubCategoryID = [SubCategoryID], " & _
+            "PackageID = [PackageID], Properties = '[Properties]' WHERE ID = [ID]"
+        stmt.Parameter("ID") = lngID
+    End If
+    
+    ' Add parameters.
     stmt.Parameter("Name") = strName
     stmt.Parameter("Quantity") = strQuantity
     stmt.Parameter("Notes") = strNotes
@@ -80,10 +90,32 @@ Public Sub SaveComponent(lngID As Long, strName As String, strQuantity As String
     stmt.Parameter("PackageID") = lngPackageID
     stmt.Parameter("Properties") = strProperties
     
-    ' Execute the operation and close the connection.
+    ' Execute the operation.
     m_adoConnection.Execute stmt.Statement
+    
+    ' Get the component ID.
+    If lngID = -1 Then
+        Dim rs As ADODB.Recordset
+        Set rs = New ADODB.Recordset
+        
+        ' Get the newly added component ID.
+        Set rs = m_adoConnection.Execute("SELECT @@IDENTITY FROM Components")
+        If Not rs.EOF Then
+            SaveComponent = rs(0)
+        Else
+            SaveComponent = -1
+        End If
+        
+        ' Clean up recordset.
+        rs.Close
+        Set rs = Nothing
+    Else
+        SaveComponent = lngID
+    End If
+    
+    ' Close the connection.
     CloseConnection
-End Sub
+End Function
 
 ' Loads a component by its ID and populates a form.
 Public Function LoadComponentDetail(lngID As Long, frmForm As frmComponent) As Boolean
