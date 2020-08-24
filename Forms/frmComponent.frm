@@ -329,6 +329,23 @@ Public Sub ReloadContent()
     SetStatusMessage "Component reloaded"
 End Sub
 
+' Deletes this component.
+Public Sub DeleteMe()
+    Dim intResponse As Integer
+    
+    ' Ask the user for confirmation.
+    intResponse = MsgBox("Are you sure you want to delete this component?", _
+        vbYesNo + vbQuestion, "Delete Component")
+    If intResponse <> vbYes Then
+        Exit Sub
+    End If
+    
+    ' Perform the deletion.
+    DeleteComponent ComponentID
+    Unload Me
+    frmPartChooser.RefreshLists
+End Sub
+
 ' Saves the associated component.
 Public Sub Save()
     ' Setup before creating a new component.
@@ -560,6 +577,13 @@ Private Sub Form_Load()
         (tlbToolBar.ButtonWidth / 2)
 End Sub
 
+' Form just got unloaded.
+Private Sub Form_Unload(Cancel As Integer)
+    ' Make sure the parts chooser form doesn't use this form.
+    ComponentID = -1
+    StayOpen = True
+End Sub
+
 ' Handles the toolbar button clicks.
 Private Sub tlbToolBar_ButtonClick(ByVal Button As MSComctlLib.Button)
     Select Case Button.Key
@@ -570,8 +594,7 @@ Private Sub tlbToolBar_ButtonClick(ByVal Button As MSComctlLib.Button)
         Case "Save"
             Save
         Case "Delete"
-            MsgBox "Delete"
-            frmPartChooser.RefreshLists
+            DeleteMe
         Case "KeepOpen"
             StayOpen = (Button.Value = tbrPressed)
     End Select

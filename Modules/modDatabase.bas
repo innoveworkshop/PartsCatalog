@@ -117,6 +117,23 @@ Public Function SaveComponent(lngID As Long, strName As String, strQuantity As S
     CloseConnection
 End Function
 
+' Deletes a component from the database.
+Public Sub DeleteComponent(lngID As Long)
+    Dim stmt As SQLStatement
+    
+    ' Open the database.
+    OpenConnection
+    
+    ' Setup the statement.
+    Set stmt = New SQLStatement
+    stmt.Create "DELETE * FROM Components Where ID = [ID]"
+    stmt.Parameter("ID") = lngID
+    
+    ' Execute the operation close the connection.
+    m_adoConnection.Execute stmt.Statement
+    CloseConnection
+End Sub
+
 ' Loads a component by its ID and populates a form.
 Public Function LoadComponentDetail(lngID As Long, frmForm As frmComponent) As Boolean
     Dim rs As ADODB.Recordset
