@@ -276,16 +276,20 @@ Private m_blnKeepOpen As Boolean
 
 ' Shows the form keeping some distance from the parts chooser panel.
 Public Sub ShowAligned()
+    ' Move the window if necessary.
     If Me.Left < (frmPartChooser.Left + frmPartChooser.Width) Then
         Me.Left = Me.Left + frmPartChooser.Left + frmPartChooser.Width
     End If
+    
+    ' Show it.
+    SetupToolBar
+    Show
 End Sub
 
 ' Sets up the form for a new component.
 Public Sub ShowNewComponent()
     ' Setup variables.
-    m_lngComponentID = -1
-    m_strOriginalName = vbNullString
+    ComponentID = -1
     StayOpen = True
     
     ' Populate form.
@@ -301,9 +305,27 @@ Public Sub ShowNewComponent()
     ShowAligned
 End Sub
 
+' Duplicates the component.
+Public Sub ShowNewDuplicate()
+    Dim frmNewComponent As frmComponent
+    Set frmNewComponent = New frmComponent
+    
+    ' Populate form.
+    LoadComponentDetail ComponentID, frmNewComponent
+    frmNewComponent.ComponentName = "Duplicate of " & txtName.Text
+    
+    ' Setup for new component.
+    frmNewComponent.StayOpen = True
+    frmNewComponent.ComponentID = -1
+    
+    ' Show the new component form and delete its local reference.
+    frmNewComponent.ShowAligned
+    Set frmNewComponent = Nothing
+End Sub
+
 ' Refreshes the contents of the component form.
 Public Sub ReloadContent()
-    LoadComponentDetail m_lngComponentID, Me
+    LoadComponentDetail ComponentID, Me
     SetStatusMessage "Component reloaded"
 End Sub
 
@@ -315,7 +337,7 @@ Public Sub Save()
     End If
     
     ' Save component and refresh the lists.
-    m_lngComponentID = SaveComponent(m_lngComponentID, txtName.Text, _
+    ComponentID = SaveComponent(ComponentID, txtName.Text, _
         txtQuantity.Text, txtNotes.Text, _
         cmbCategory.ItemData(cmbCategory.ListIndex), _
         cmbSubCategory.ItemData(cmbSubCategory.ListIndex), _
@@ -341,7 +363,7 @@ Public Sub PopulateFromRecordset(rs As ADODB.Recordset)
     Dim intIndex As Integer
     
     ' Store the component ID.
-    m_lngComponentID = rs.Fields("ID")
+    ComponentID = rs.Fields("ID")
     
     ' Set text fields.
     m_strOriginalName = rs.Fields("Name")
@@ -503,7 +525,7 @@ End Function
 
 ' Check if this is a new component.
 Private Function IsNewComponent() As Boolean
-    If m_lngComponentID = -1 Then
+    If ComponentID = -1 Then
         IsNewComponent = True
     Else
         IsNewComponent = False
@@ -544,8 +566,7 @@ Private Sub tlbToolBar_ButtonClick(ByVal Button As MSComctlLib.Button)
         Case "Refresh"
             ReloadContent
         Case "Duplicate"
-            MsgBox "Duplicate"
-            frmPartChooser.RefreshLists
+            ShowNewDuplicate
         Case "Save"
             Save
         Case "Delete"
@@ -559,6 +580,18 @@ End Sub
 ' Name text change event.
 Private Sub txtName_Change()
     Me.Caption = txtName.Text
+End Sub
+
+' Validate the quantity input to only contain numbers.
+Private Sub txtQuantity_KeyPress(KeyAscii As Integer)
+    Select Case KeyAscii
+        Case vbKey0 To vbKey9
+        Case vbKeyBack, vbKeyClear, vbKeyDelete
+        Case vbKeyLeft, vbKeyRight, vbKeyUp, vbKeyDown, vbKeyTab
+        Case Else
+            KeyAscii = 0
+            Beep
+    End Select
 End Sub
 
 ' Getter for maintaining the window opened.
@@ -578,14 +611,27 @@ Public Property Let StayOpen(blnKeepOpen As Boolean)
     End If
 End Property
 
-' Validate the quantity input to only contain numbers.
-Private Sub txtQuantity_KeyPress(KeyAscii As Integer)
-    Select Case KeyAscii
-        Case vbKey0 To vbKey9
-        Case vbKeyBack, vbKeyClear, vbKeyDelete
-        Case vbKeyLeft, vbKeyRight, vbKeyUp, vbKeyDown, vbKeyTab
-        Case Else
-            KeyAscii = 0
-            Beep
-    End Select
-End Sub
+' Getter for the component ID.
+Public Property Get ComponentID() As Long
+    ComponentID = m_lngComponentID
+End Property
+
+' Setter for the component ID.
+Public Property Let ComponentID(lngID As Long)
+    m_lngComponentID = lngID
+    
+    ' Make sure the original name is reset.
+    If IsNewComponent Then
+        m_strOriginalName = vbNullString
+    End If
+End Property
+
+' Getter for the component name.
+Public Property Get ComponentName() As String
+    ComponentName = txtName.Text
+End Property
+
+' Setter for the component name.
+Public Property Let ComponentName(strName As String)
+    txtName.Text = strName
+End Property
