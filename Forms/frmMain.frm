@@ -187,6 +187,13 @@ Begin VB.MDIForm frmMain
       Caption         =   "&Window"
       WindowList      =   -1  'True
    End
+   Begin VB.Menu mnuHelp 
+      Caption         =   "&Help"
+      Begin VB.Menu mniHelpAbout 
+         Caption         =   "&About"
+         Shortcut        =   {F1}
+      End
+   End
 End
 Attribute VB_Name = "frmMain"
 Attribute VB_GlobalNameSpace = False
@@ -325,6 +332,12 @@ End Sub
 ' File > Reload Database menu clicked.
 Private Sub mniFileReloadDatabase_Click()
     ReloadDatabase
+End Sub
+
+' Help > About menu clicked.
+Private Sub mniHelpAbout_Click()
+    frmAbout.Parent = Me
+    frmAbout.Show vbModal, Me
 End Sub
 
 ' Manage > Add Component menu clicked.
