@@ -294,6 +294,18 @@ Begin VB.Form frmComponent
          Shortcut        =   ^S
       End
    End
+   Begin VB.Menu mnuImage 
+      Caption         =   "&Image"
+      Begin VB.Menu mniImageBrowse 
+         Caption         =   "&Browse..."
+      End
+      Begin VB.Menu mniImageSeparator1 
+         Caption         =   "-"
+      End
+      Begin VB.Menu mniImageDelete 
+         Caption         =   "&Delete"
+      End
+   End
 End
 Attribute VB_Name = "frmComponent"
 Attribute VB_GlobalNameSpace = False
@@ -409,6 +421,24 @@ Private Sub DeleteDatasheet()
     If intResponse = vbYes Then
         DeleteComponentDatasheet m_strOriginalName
         SetStatusMessage "Datasheet deleted"
+    End If
+    
+    ' Update controls.
+    UpdateEnabledControls
+End Sub
+
+' Deletes the component image.
+Private Sub DeleteImage()
+    Dim intResponse As Integer
+    
+    ' Check if the user actually wants to do this.
+    intResponse = MsgBox("Are you sure you want to delete this component's image?" & _
+        vbCrLf & vbCrLf & "Remember that this will only delete the component image" & _
+        ", not the related package image.", vbYesNo + vbQuestion, _
+        "Delete " & ComponentName & " Image")
+    If intResponse = vbYes Then
+        DeleteComponentImage m_strOriginalName
+        SetStatusMessage "Component image deleted"
     End If
     
     ' Update controls.
@@ -536,29 +566,8 @@ Public Sub PopulateFromRecordset(rs As ADODB.Recordset)
         SetStatusMessage "No component properties to load"
     End If
     
-    ' Set the component image.
-    Dim strImage As String
-    strImage = GetComponentImagePath(txtName.Text, cmbPackage.Text)
-    If strImage <> vbNullString Then
-        Dim picBitmap As Picture
-        On Error GoTo PictureError
-        Set picBitmap = LoadPicture(strImage)
-        
-        picImage.AutoRedraw = True
-        picImage.PaintPicture picBitmap, 0, 0, picImage.ScaleWidth, picImage.ScaleHeight
-        Set picImage.Picture = picImage.Image
-        SetStatusMessage "Component image loaded"
-    End If
-    
     ' Update controls.
     UpdateEnabledControls
-    
-    Exit Sub
-PictureError:
-    Set picImage.Picture = Nothing
-    MsgBox "An error occured while trying to load the image for this component.", _
-        vbOKOnly + vbCritical, "Image Loading Error"
-    SetStatusMessage "ERROR: Couldn't load the image for this component."
 End Sub
 
 ' Populates the properties grid.
@@ -613,7 +622,7 @@ Public Function AbortUnsavedChanges() As Boolean
     End If
     
     ' Ask the user.
-    intResponse = MsgBox("You have changed this component." & vbCrLf & _
+    intResponse = MsgBox("You have changed this component." & vbCrLf & vbCrLf & _
         "Do you want to save the changes?", vbYesNoCancel + vbExclamation, strTitle)
     
     ' Decide what to do.
@@ -635,12 +644,41 @@ Private Sub SetStatusMessage(strMessage As String)
     stbStatusBar.SimpleText = strMessage
 End Sub
 
+' Shows the component image.
+Private Sub ShowImage()
+    Dim strImage As String
+    
+    ' Get component image.
+    strImage = GetComponentImagePath(m_strOriginalName, cmbPackage.Text)
+    
+    ' Set the component image.
+    If strImage <> vbNullString Then
+        Dim picBitmap As Picture
+        On Error GoTo PictureError
+        Set picBitmap = LoadPicture(strImage)
+        
+        picImage.AutoRedraw = True
+        picImage.PaintPicture picBitmap, 0, 0, picImage.ScaleWidth, picImage.ScaleHeight
+        Set picImage.Picture = picImage.Image
+    End If
+    
+    ' Handle image setting errors.
+    Exit Sub
+PictureError:
+    Set picImage.Picture = Nothing
+    MsgBox "An error occured while trying to load the image for this component.", _
+        vbOKOnly + vbCritical, "Image Loading Error"
+    SetStatusMessage "ERROR: Couldn't load the image for this component."
+End Sub
+
 ' Updates which controls should be enabled/disabled.
 Private Sub UpdateEnabledControls()
     Dim blnHasDatasheet As Boolean
+    Dim blnHasImage As Boolean
     
-    ' Check for datasheet.
+    ' Check for datasheet and image.
     blnHasDatasheet = ComponentHasDatasheet(m_strOriginalName)
+    blnHasImage = ComponentHasImage(m_strOriginalName)
     
     If IsNewComponent Then
         ' New component. Disable all the relevant buttons.
@@ -660,7 +698,13 @@ Private Sub UpdateEnabledControls()
         cmdDatasheet.Enabled = blnHasDatasheet
         tlbToolBar.Buttons("OpenDatasheet").Enabled = blnHasDatasheet
         tlbToolBar.Buttons("DeleteDatasheet").Enabled = blnHasDatasheet
+        
+        ' Handle the absence of an image.
+        mniImageDelete.Enabled = blnHasImage
     End If
+    
+    ' Show component image.
+    ShowImage
 End Sub
 
 ' Setup the properties MSFlexGrid.
@@ -800,6 +844,25 @@ Private Sub mniComponentSave_Click()
     Save
 End Sub
 
+' Image > Delete menu clicked.
+Private Sub mniImageDelete_Click()
+    DeleteImage
+End Sub
+
+' Image double clicked.
+Private Sub picImage_DblClick()
+    MsgBox "TODO: Browse for an image."
+End Sub
+
+' Image was clicked in some way by the mouse.
+Private Sub picImage_MouseDown(Button As Integer, Shift As Integer, X As Single, _
+        Y As Single)
+    ' Detect right click.
+    If Button = vbRightButton Then
+        PopupMenu mnuImage
+    End If
+End Sub
+
 ' Handles the toolbar button clicks.
 Private Sub tlbToolBar_ButtonClick(ByVal Button As MSComctlLib.Button)
     Select Case Button.Key
@@ -816,7 +879,7 @@ Private Sub tlbToolBar_ButtonClick(ByVal Button As MSComctlLib.Button)
         Case "DeleteDatasheet"
             DeleteDatasheet
         Case "DownloadDatasheet"
-            MsgBox "Download datasheet"
+            MsgBox "TODO: Download datasheet"
         Case "KeepOpen"
             StayOpen = (Button.Value = tbrPressed)
     End Select
