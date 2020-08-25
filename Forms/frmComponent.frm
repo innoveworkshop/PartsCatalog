@@ -1,4 +1,5 @@
 VERSION 5.00
+Object = "{F9043C88-F6F2-101A-A3C9-08002B2F49FB}#1.2#0"; "COMDLG32.OCX"
 Object = "{5E9E78A0-531B-11CF-91F6-C2863C385E30}#1.0#0"; "MSFLXGRD.OCX"
 Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.2#0"; "MSCOMCTL.OCX"
 Begin VB.Form frmComponent 
@@ -16,6 +17,16 @@ Begin VB.Form frmComponent
    ScaleHeight     =   5865
    ScaleWidth      =   8505
    ShowInTaskbar   =   0   'False
+   Begin MSComDlg.CommonDialog dlgOpenImage 
+      Left            =   720
+      Top             =   4440
+      _ExtentX        =   847
+      _ExtentY        =   847
+      _Version        =   393216
+      DefaultExt      =   "bmp"
+      DialogTitle     =   "Select New Component Image"
+      Filter          =   "Bitmap Files (*.bmp)|*.bmp|All Files (*.*)|*.*"
+   End
    Begin MSComctlLib.Toolbar tlbToolBar 
       Align           =   1  'Align Top
       Height          =   360
@@ -502,6 +513,11 @@ Private Sub DownloadDatasheet()
     strURL = InputBox("Please enter the URL for " & ComponentName & "'s datasheet:", _
         "Download " & ComponentName & " Datasheet")
     If strURL <> vbNullString Then
+        ' Make sure we have a valid name.
+        If m_strOriginalName = vbNullString Then
+            m_strOriginalName = ComponentName
+        End If
+        
         ' Download the datasheet.
         blnSuccess = DownloadComponentDatasheet(m_strOriginalName, strURL)
         
@@ -711,6 +727,30 @@ End Function
 ' Sets a status message in the statusbar.
 Private Sub SetStatusMessage(strMessage As String)
     stbStatusBar.SimpleText = strMessage
+End Sub
+
+' Selects a new image for the component.
+Private Sub SelectImage()
+    Dim strPath As String
+    
+    ' Show browse dialog.
+    dlgOpenImage.ShowOpen
+    strPath = dlgOpenImage.FileName
+    
+    ' Check if the user selected anything.
+    If strPath <> vbNullString Then
+        ' Make sure we have a valid name.
+        If m_strOriginalName = vbNullString Then
+            m_strOriginalName = ComponentName
+        End If
+        
+        ' Replace image.
+        ReplaceComponentImage m_strOriginalName, strPath
+        SetStatusMessage "Component image changed"
+    End If
+    
+    ' Update controls.
+    UpdateEnabledControls
 End Sub
 
 ' Shows the component image.
@@ -955,6 +995,11 @@ End Sub
 ' Datasheet > Open menu clicked.
 Private Sub mniDatasheetOpen_Click()
     OpenDatasheet
+End Sub
+
+' Image > Browse menu clicked.
+Private Sub mniImageBrowse_Click()
+    SelectImage
 End Sub
 
 ' Image > Delete menu clicked.

@@ -219,6 +219,11 @@ Public Sub DeleteComponentImage(strName As String)
     End If
 End Sub
 
+' Adds a component image.
+Public Sub ReplaceComponentImage(strName As String, strPath As String)
+    FileCopy strPath, GetComponentImagePath(strName, vbNullString, False)
+End Sub
+
 ' Checks if a file exists.
 Private Function FileExists(strPath As String) As Boolean
     If Dir(strPath) <> vbNullString Then
