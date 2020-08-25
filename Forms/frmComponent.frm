@@ -877,13 +877,16 @@ Private Sub cmbCategory_Click()
 End Sub
 
 ' Package selection updated.
-Private Sub cmbPackage_Change()
+Private Sub cmbPackage_Click()
     ' Set dirtiness.
     Dirty = True
+    
+    ' Update controls.
+    UpdateEnabledControls
 End Sub
 
 ' Sub-category selection updated.
-Private Sub cmbSubCategory_Change()
+Private Sub cmbSubCategory_Click()
     ' Set dirtiness.
     Dirty = True
 End Sub
