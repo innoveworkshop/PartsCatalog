@@ -289,9 +289,31 @@ Begin VB.Form frmComponent
    End
    Begin VB.Menu mnuComponent 
       Caption         =   "&Component"
+      Begin VB.Menu mniComponentRefresh 
+         Caption         =   "&Refresh"
+         Shortcut        =   {F5}
+      End
+      Begin VB.Menu mniComponentSeparator1 
+         Caption         =   "-"
+      End
+      Begin VB.Menu mniComponentDuplicate 
+         Caption         =   "&Duplicate..."
+         Shortcut        =   ^D
+      End
       Begin VB.Menu mniComponentSave 
          Caption         =   "&Save"
          Shortcut        =   ^S
+      End
+      Begin VB.Menu mniComponentDelete 
+         Caption         =   "D&elete"
+         Shortcut        =   +{DEL}
+      End
+      Begin VB.Menu mniComponentSeparator2 
+         Caption         =   "-"
+      End
+      Begin VB.Menu mniComponentKeepOpen 
+         Caption         =   "&Keep Open"
+         Shortcut        =   {F2}
       End
    End
    Begin VB.Menu mnuImage 
@@ -305,6 +327,27 @@ Begin VB.Form frmComponent
       Begin VB.Menu mniImageDelete 
          Caption         =   "&Delete"
       End
+   End
+   Begin VB.Menu mnuDatasheet 
+      Caption         =   "&Datasheet"
+      Begin VB.Menu mniDatasheetOpen 
+         Caption         =   "Open..."
+         Shortcut        =   {F4}
+      End
+      Begin VB.Menu mniDatasheetDelete 
+         Caption         =   "&Delete"
+      End
+      Begin VB.Menu mniDatasheetSeparator1 
+         Caption         =   "-"
+      End
+      Begin VB.Menu mniDatasheetDownload 
+         Caption         =   "Do&wnload..."
+         Shortcut        =   {F3}
+      End
+   End
+   Begin VB.Menu mnuWindow 
+      Caption         =   "&Window"
+      WindowList      =   -1  'True
    End
 End
 Attribute VB_Name = "frmComponent"
@@ -448,6 +491,11 @@ End Sub
 ' Opens the component datasheet.
 Public Sub OpenDatasheet()
     OpenComponentDatasheet m_strOriginalName
+End Sub
+
+' Downloads the component datasheet.
+Private Sub DownloadDatasheet()
+    MsgBox "TODO: Download Datasheet"
 End Sub
 
 ' Saves the associated component.
@@ -775,6 +823,15 @@ Private Sub cmdDatasheet_Click()
     OpenDatasheet
 End Sub
 
+' Datasheet button was clicked in some way by the mouse.
+Private Sub cmdDatasheet_MouseDown(Button As Integer, Shift As Integer, X As Single, _
+        Y As Single)
+    ' Detect right click.
+    If Button = vbRightButton Then
+        PopupMenu mnuDatasheet
+    End If
+End Sub
+
 ' Form just loaded up.
 Private Sub Form_Load()
     ' Clear the opened status.
@@ -839,9 +896,44 @@ Private Sub grdProperties_DblClick()
     Set dlgProperty = Nothing
 End Sub
 
+' Component > Delete menu clicked.
+Private Sub mniComponentDelete_Click()
+    DeleteMe
+End Sub
+
+' Component > Duplicate menu clicked.
+Private Sub mniComponentDuplicate_Click()
+    ShowNewDuplicate
+End Sub
+
+' Component > Keep Opened menu clicked.
+Private Sub mniComponentKeepOpen_Click()
+    StayOpen = Not StayOpen
+End Sub
+
+' Component > Refresh menu clicked.
+Private Sub mniComponentRefresh_Click()
+    ReloadContent
+End Sub
+
 ' Component > Save menu clicked.
 Private Sub mniComponentSave_Click()
     Save
+End Sub
+
+' Datasheet > Delete menu clicked.
+Private Sub mniDatasheetDelete_Click()
+    DeleteDatasheet
+End Sub
+
+' Datasheet > Download menu clicked.
+Private Sub mniDatasheetDownload_Click()
+    DownloadDatasheet
+End Sub
+
+' Datasheet > Open menu clicked.
+Private Sub mniDatasheetOpen_Click()
+    OpenDatasheet
 End Sub
 
 ' Image > Delete menu clicked.
@@ -879,7 +971,7 @@ Private Sub tlbToolBar_ButtonClick(ByVal Button As MSComctlLib.Button)
         Case "DeleteDatasheet"
             DeleteDatasheet
         Case "DownloadDatasheet"
-            MsgBox "TODO: Download datasheet"
+            DownloadDatasheet
         Case "KeepOpen"
             StayOpen = (Button.Value = tbrPressed)
     End Select
@@ -887,8 +979,9 @@ End Sub
 
 ' Name text change event.
 Private Sub txtName_Change()
-    ' Change window title.
+    ' Change window title and component menu caption.
     Me.Caption = txtName.Text
+    mnuComponent.Caption = txtName.Text
     
     ' Set dirtiness.
     Dirty = True
@@ -925,7 +1018,8 @@ End Property
 Public Property Let StayOpen(blnKeepOpen As Boolean)
     m_blnKeepOpen = blnKeepOpen
     
-    ' Set the toolbar button accordingly.
+    ' Set the toolbar button and menu item accordingly.
+    mniComponentKeepOpen.Checked = blnKeepOpen
     If m_blnKeepOpen Then
         tlbToolBar.Buttons("KeepOpen").Value = tbrPressed
     Else
