@@ -37,6 +37,7 @@ Begin VB.Form dlgEditProperty
    End
    Begin VB.CommandButton OKButton 
       Caption         =   "OK"
+      Default         =   -1  'True
       Height          =   375
       Left            =   120
       TabIndex        =   0
