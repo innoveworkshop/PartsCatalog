@@ -1,6 +1,6 @@
 # Parts Catalogger
 
-A simple application to browse through your parts bins inside your computer.
+A simple application to browse through your parts bins, inside your computer.
 
 
 ## Why Visual Basic 6?
