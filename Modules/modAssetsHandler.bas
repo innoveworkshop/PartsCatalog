@@ -6,7 +6,7 @@ Attribute VB_Name = "modAssetsHandler"
 
 Option Explicit
 
-' Win32 API imports.
+' Win32 API structures.
 Private Type SHFILEOPTSTRUCT
     hWnd As Long
     wFunc As Long
@@ -17,15 +17,30 @@ Private Type SHFILEOPTSTRUCT
     hNameMappings As Long
     lpszProgressTitle As Long
 End Type
+
+' Win32 API constants.
 Private Const FO_DELETE = &H3
 Private Const FOF_ALLOWUNDO = &H40
 Private Const FOF_NOCONFIRMATION = &H10
+Private Const ERROR_SUCCESS As Long = 0
+Private Const BINDF_GETNEWESTVERSION As Long = &H10
+Private Const INTERNET_FLAG_RELOAD As Long = &H80000000
+
+' Win32 API imports.
 Private Declare Function SHFileOperation Lib "Shell32.dll" _
     Alias "SHFileOperationA" (lpFileOp As SHFILEOPTSTRUCT) As Long
 Private Declare Function ShellExecute Lib "Shell32.dll" Alias "ShellExecuteA" _
     (ByVal hWnd As Long, ByVal lpOperation As String, ByVal lpFile As String, _
     ByVal lpParameters As String, ByVal lpDirectory As String, _
     ByVal nShowCmd As Long) As Long
+Private Declare Function DeleteUrlCacheEntry Lib "Wininet.dll" _
+    Alias "DeleteUrlCacheEntryA" (ByVal lpszUrlName As String) As Long
+Private Declare Function URLDownloadToFile Lib "urlmon" Alias "URLDownloadToFileA" ( _
+    ByVal pCaller As Long, _
+    ByVal szURL As String, _
+    ByVal szFileName As String, _
+    ByVal dwReserved As Long, _
+    ByVal lpfnCB As Long) As Long
 
 ' Constants.
 Private Const IMAGE_FOLDER As String = "Images\"
@@ -105,6 +120,15 @@ Public Sub OpenComponentDatasheet(strName As String)
             vbNullString, vbNullString, 1
     End If
 End Sub
+
+' Downloads a component datasheet.
+Public Function DownloadComponentDatasheet(strName As String, strURL As String) As Boolean
+    Dim blnSuccess As Boolean
+    
+    ' Download the file.
+    blnSuccess = DownloadFile(strURL, GetComponentDatasheetPath(strName, False))
+    DownloadComponentDatasheet = blnSuccess
+End Function
 
 ' Gets the path to the images directory.
 Public Function GetImagesDirectory() As String
@@ -218,3 +242,19 @@ Private Sub DeleteFile(strPath As String)
     ' Execute the operation.
     SHFileOperation shFileOp
 End Sub
+
+' Downloads a file from a source to a destination.
+Private Function DownloadFile(strURL As String, strDestination As String) As Boolean
+    Dim lngStatus As Long
+
+    ' Make sure we flush the download cache before downloading.
+    DeleteUrlCacheEntry strURL
+    lngStatus = URLDownloadToFile(0&, strURL, strDestination, BINDF_GETNEWESTVERSION, 0&)
+    
+    ' Check if we were successful.
+    If lngStatus = ERROR_SUCCESS Then
+        DownloadFile = True
+    Else
+        DownloadFile = False
+    End If
+End Function

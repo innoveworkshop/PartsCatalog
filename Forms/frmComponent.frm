@@ -495,7 +495,28 @@ End Sub
 
 ' Downloads the component datasheet.
 Private Sub DownloadDatasheet()
-    MsgBox "TODO: Download Datasheet"
+    Dim strURL As String
+    Dim blnSuccess As Boolean
+    
+    ' Ask the user for the URL.
+    strURL = InputBox("Please enter the URL for " & ComponentName & "'s datasheet:", _
+        "Download " & ComponentName & " Datasheet")
+    If strURL <> vbNullString Then
+        ' Download the datasheet.
+        blnSuccess = DownloadComponentDatasheet(m_strOriginalName, strURL)
+        
+        ' Check if we were successful.
+        If blnSuccess Then
+            SetStatusMessage "Datasheet downloaded successfully"
+        Else
+            SetStatusMessage "ERROR: Failed to download datasheet"
+            MsgBox "Failed to download " & ComponentName & "'s datasheet", _
+                vbOKOnly + vbExclamation, "Datasheet Download"
+        End If
+    End If
+    
+    ' Update controls.
+    UpdateEnabledControls
 End Sub
 
 ' Saves the associated component.
