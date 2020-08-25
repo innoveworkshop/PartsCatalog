@@ -7,7 +7,22 @@ Attribute VB_Name = "modAssetsHandler"
 Option Explicit
 
 ' Win32 API imports.
-Private Declare Function ShellExecute Lib "shell32.dll" Alias "ShellExecuteA" _
+Private Type SHFILEOPTSTRUCT
+    hWnd As Long
+    wFunc As Long
+    pFrom As String
+    pTo As String
+    fFlags As Integer
+    fAnyOperationsAborted As Long
+    hNameMappings As Long
+    lpszProgressTitle As Long
+End Type
+Private Const FO_DELETE = &H3
+Private Const FOF_ALLOWUNDO = &H40
+Private Const FOF_NOCONFIRMATION = &H10
+Private Declare Function SHFileOperation Lib "Shell32.dll" _
+    Alias "SHFileOperationA" (lpFileOp As SHFILEOPTSTRUCT) As Long
+Private Declare Function ShellExecute Lib "Shell32.dll" Alias "ShellExecuteA" _
     (ByVal hWnd As Long, ByVal lpOperation As String, ByVal lpFile As String, _
     ByVal lpParameters As String, ByVal lpDirectory As String, _
     ByVal nShowCmd As Long) As Long
@@ -72,6 +87,14 @@ Public Sub RenameComponentDatasheet(strOldName As String, strNewName As String)
         
         ' Rename the file.
         Name strOldPath As strNewPath
+    End If
+End Sub
+
+' Deletes the datasheet of a component.
+Public Sub DeleteComponentDatasheet(strName As String)
+    ' Check if it actually exists.
+    If ComponentHasDatasheet(strName) Then
+        DeleteFile GetComponentDatasheetPath(strName, False)
     End If
 End Sub
 
@@ -164,11 +187,34 @@ Public Sub RenameComponentImage(strOldName As String, strNewName As String)
     End If
 End Sub
 
+' Deletes the image of a component.
+Public Sub DeleteComponentImage(strName As String)
+    ' Check if it actually exists.
+    If ComponentHasImage(strName) Then
+        DeleteFile GetComponentImagePath(strName, vbNullString, False)
+    End If
+End Sub
+
 ' Checks if a file exists.
-Private Function FileExists(strPath) As Boolean
+Private Function FileExists(strPath As String) As Boolean
     If Dir(strPath) <> vbNullString Then
         FileExists = True
     Else
         FileExists = False
     End If
 End Function
+
+' Deletes a file to the recycling bin.
+Private Sub DeleteFile(strPath As String)
+    Dim shFileOp As SHFILEOPTSTRUCT
+    
+    ' Set the structure properties for deleting to the recycling bin.
+    With shFileOp
+        .wFunc = FO_DELETE
+        .pFrom = strPath
+        .fFlags = FOF_ALLOWUNDO Or FOF_NOCONFIRMATION
+    End With
+    
+    ' Execute the operation.
+    SHFileOperation shFileOp
+End Sub

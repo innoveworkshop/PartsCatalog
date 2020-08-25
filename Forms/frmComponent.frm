@@ -324,7 +324,7 @@ Public Sub ShowAligned()
     Dirty = False
     
     ' Show it.
-    SetupToolBar
+    UpdateEnabledControls
     Show
 End Sub
 
@@ -394,24 +394,67 @@ Public Sub DeleteMe()
     End If
     
     ' Perform the deletion.
-    DeleteComponent ComponentID
+    DeleteComponent ComponentID, m_strOriginalName
     Unload Me
     frmPartChooser.RefreshLists
 End Sub
 
+' Deletes the component datasheet.
+Private Sub DeleteDatasheet()
+    Dim intResponse As Integer
+    
+    ' Check if the user actually wants to do this.
+    intResponse = MsgBox("Are you sure you want to delete this datasheet?", _
+        vbYesNo + vbQuestion, "Delete " & ComponentName & " Datasheet")
+    If intResponse = vbYes Then
+        DeleteComponentDatasheet m_strOriginalName
+        SetStatusMessage "Datasheet deleted"
+    End If
+    
+    ' Update controls.
+    UpdateEnabledControls
+End Sub
+
+' Opens the component datasheet.
+Public Sub OpenDatasheet()
+    OpenComponentDatasheet m_strOriginalName
+End Sub
+
 ' Saves the associated component.
 Public Sub Save()
+    Dim lngCategoryID As Long
+    Dim lngSubCategoryID As Long
+    Dim lngPackageID As Long
+    
     ' Setup before creating a new component.
     If IsNewComponent Then
         m_strOriginalName = txtName.Text
     End If
     
+    ' Get category ID.
+    If cmbCategory.ListIndex <> -1 Then
+        lngCategoryID = cmbCategory.ItemData(cmbCategory.ListIndex)
+    Else
+        lngCategoryID = -1
+    End If
+    
+    ' Get sub-category ID.
+    If cmbSubCategory.ListIndex <> -1 Then
+        lngSubCategoryID = cmbSubCategory.ItemData(cmbSubCategory.ListIndex)
+    Else
+        lngSubCategoryID = -1
+    End If
+    
+    ' Get package ID.
+    If cmbPackage.ListIndex <> -1 Then
+        lngPackageID = cmbPackage.ItemData(cmbPackage.ListIndex)
+    Else
+        lngPackageID = -1
+    End If
+    
     ' Save component and refresh the lists.
-    ComponentID = SaveComponent(ComponentID, txtName.Text, _
-        txtQuantity.Text, txtNotes.Text, _
-        cmbCategory.ItemData(cmbCategory.ListIndex), _
-        cmbSubCategory.ItemData(cmbSubCategory.ListIndex), _
-        cmbPackage.ItemData(cmbPackage.ListIndex), _
+    ComponentID = SaveComponent(ComponentID, txtName.Text, txtQuantity.Text, _
+        txtNotes.Text, lngCategoryID, lngSubCategoryID, lngPackageID, _
         ComponentTabbedGridProperties(grdProperties))
     frmPartChooser.RefreshLists
     
@@ -428,7 +471,7 @@ Public Sub Save()
     
     ' Update status bar and the tool bar.
     SetStatusMessage "Component saved"
-    SetupToolBar
+    UpdateEnabledControls
 End Sub
 
 ' Populate Form from Recordset.
@@ -444,9 +487,6 @@ Public Sub PopulateFromRecordset(rs As ADODB.Recordset)
     txtQuantity.Text = rs.Fields("Quantity")
     txtNotes.Text = rs.Fields("Notes")
     SetStatusMessage "Loaded text fields"
-    
-    ' Check for datasheet.
-    cmdDatasheet.Enabled = ComponentHasDatasheet(rs.Fields("Name"))
     
     ' Set the categories.
     cmbSubCategory.Clear
@@ -510,6 +550,9 @@ Public Sub PopulateFromRecordset(rs As ADODB.Recordset)
         SetStatusMessage "Component image loaded"
     End If
     
+    ' Update controls.
+    UpdateEnabledControls
+    
     Exit Sub
 PictureError:
     Set picImage.Picture = Nothing
@@ -554,6 +597,7 @@ End Function
 ' Aborts the current operation if the user selects Cancel to unsaved changes.
 Public Function AbortUnsavedChanges() As Boolean
     Dim intResponse As Integer
+    Dim strTitle As String
     
     ' Check for dirtiness.
     If Not Dirty Then
@@ -561,10 +605,16 @@ Public Function AbortUnsavedChanges() As Boolean
         Exit Function
     End If
     
+    ' Define the dialog title.
+    If ComponentName <> vbNullString Then
+        strTitle = "Save Changes to " & ComponentName & "?"
+    Else
+        strTitle = "Save New Component?"
+    End If
+    
     ' Ask the user.
     intResponse = MsgBox("You have changed this component." & vbCrLf & _
-        "Do you want to save the changes?", vbYesNoCancel + vbExclamation, _
-        "Save Changes to " & ComponentName & "?")
+        "Do you want to save the changes?", vbYesNoCancel + vbExclamation, strTitle)
     
     ' Decide what to do.
     If intResponse = vbCancel Then
@@ -585,8 +635,13 @@ Private Sub SetStatusMessage(strMessage As String)
     stbStatusBar.SimpleText = strMessage
 End Sub
 
-' Sets up the ToolBar.
-Private Sub SetupToolBar()
+' Updates which controls should be enabled/disabled.
+Private Sub UpdateEnabledControls()
+    Dim blnHasDatasheet As Boolean
+    
+    ' Check for datasheet.
+    blnHasDatasheet = ComponentHasDatasheet(m_strOriginalName)
+    
     If IsNewComponent Then
         ' New component. Disable all the relevant buttons.
         tlbToolBar.Buttons("Refresh").Enabled = False
@@ -594,6 +649,7 @@ Private Sub SetupToolBar()
         tlbToolBar.Buttons("Delete").Enabled = False
         tlbToolBar.Buttons("OpenDatasheet").Enabled = False
         tlbToolBar.Buttons("DeleteDatasheet").Enabled = False
+        cmdDatasheet.Enabled = False
     Else
         ' Existing component. Enable all the options.
         tlbToolBar.Buttons("Refresh").Enabled = True
@@ -601,13 +657,9 @@ Private Sub SetupToolBar()
         tlbToolBar.Buttons("Delete").Enabled = True
         
         ' Handle the absence of a datasheet.
-        If ComponentHasDatasheet(ComponentName) Then
-            tlbToolBar.Buttons("OpenDatasheet").Enabled = True
-            tlbToolBar.Buttons("DeleteDatasheet").Enabled = True
-        Else
-            tlbToolBar.Buttons("OpenDatasheet").Enabled = False
-            tlbToolBar.Buttons("DeleteDatasheet").Enabled = False
-        End If
+        cmdDatasheet.Enabled = blnHasDatasheet
+        tlbToolBar.Buttons("OpenDatasheet").Enabled = blnHasDatasheet
+        tlbToolBar.Buttons("DeleteDatasheet").Enabled = blnHasDatasheet
     End If
 End Sub
 
@@ -676,7 +728,7 @@ End Sub
 
 ' Open component datasheet.
 Private Sub cmdDatasheet_Click()
-    OpenComponentDatasheet txtName.Text
+    OpenDatasheet
 End Sub
 
 ' Form just loaded up.
@@ -685,7 +737,7 @@ Private Sub Form_Load()
     StayOpen = False
 
     ' Setup some controls.
-    SetupToolBar
+    UpdateEnabledControls
     SetupPropertiesGrid
     
     ' Set dirtiness.
@@ -735,7 +787,8 @@ Private Sub grdProperties_DblClick()
             grdProperties.Rows = grdProperties.Rows + 1
         End If
         
-        ' Set dirtiness.
+        ' Set status and dirtiness.
+        SetStatusMessage dlgProperty.Key & " property edited"
         Dirty = True
     End If
     
@@ -759,9 +812,9 @@ Private Sub tlbToolBar_ButtonClick(ByVal Button As MSComctlLib.Button)
         Case "Delete"
             DeleteMe
         Case "OpenDatasheet"
-            cmdDatasheet_Click
+            OpenDatasheet
         Case "DeleteDatasheet"
-            MsgBox "Delete datasheet"
+            DeleteDatasheet
         Case "DownloadDatasheet"
             MsgBox "Download datasheet"
         Case "KeepOpen"

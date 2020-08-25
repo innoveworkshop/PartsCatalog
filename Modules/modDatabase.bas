@@ -118,7 +118,7 @@ Public Function SaveComponent(lngID As Long, strName As String, strQuantity As S
 End Function
 
 ' Deletes a component from the database.
-Public Sub DeleteComponent(lngID As Long)
+Public Sub DeleteComponent(lngID As Long, Optional strName As String = vbNullString)
     Dim stmt As SQLStatement
     
     ' Open the database.
@@ -132,6 +132,12 @@ Public Sub DeleteComponent(lngID As Long)
     ' Execute the operation close the connection.
     m_adoConnection.Execute stmt.Statement
     CloseConnection
+    
+    ' Delete the component datasheet and image as well.
+    If strName <> vbNullString Then
+        DeleteComponentDatasheet strName
+        DeleteComponentImage strName
+    End If
 End Sub
 
 ' Loads a component by its ID and populates a form.
