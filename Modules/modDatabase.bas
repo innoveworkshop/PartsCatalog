@@ -43,7 +43,7 @@ Public Function ComponentTabbedGridProperties(grdProperties As MSFlexGrid) As St
     Dim intIndex As Integer
     
     ' Go through rows appending them to the string.
-    For intIndex = 1 To grdProperties.Rows - 1
+    For intIndex = 1 To grdProperties.Rows - 2
         ' Append the tab separator.
         If intIndex > 1 Then
             strBuffer = strBuffer & vbTab

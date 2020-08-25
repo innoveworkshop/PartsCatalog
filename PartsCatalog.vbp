@@ -13,6 +13,7 @@ Module=modMain; Modules\modMain.bas
 Module=modSettings; Modules\modSettings.bas
 Class=SQLStatement; Classes\SQLStatement.cls
 ResFile32="Resources\resManifest.res"
+Form=Forms\dlgEditProperty.frm
 IconForm="frmMain"
 Startup="Sub Main"
 HelpFile=""

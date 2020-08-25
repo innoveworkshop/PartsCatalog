@@ -495,7 +495,11 @@ Public Sub PopulatePropertiesGrid(strProperties As String)
     
     ' Split the properties and preparate the grid for the properties.
     astrProperties = Split(strProperties, vbTab)
-    grdProperties.Rows = UBound(astrProperties) + 2
+    If UBound(astrProperties) = 0 Then
+        grdProperties.Rows = UBound(astrProperties) + 2
+    Else
+        grdProperties.Rows = UBound(astrProperties) + 3
+    End If
     
     ' Populate the properties.
     Dim intIndex As Integer
@@ -518,7 +522,7 @@ Public Function EncodePropertiesGrid() As String
 End Function
 
 ' Aborts the current operation if the user selects Cancel to unsaved changes.
-Private Function AbortUnsavedChanges() As Boolean
+Public Function AbortUnsavedChanges() As Boolean
     Dim intResponse As Integer
     
     ' Check for dirtiness.
@@ -541,6 +545,7 @@ Private Function AbortUnsavedChanges() As Boolean
             Save
         End If
         
+        Dirty = False
         AbortUnsavedChanges = False
     End If
 End Function
@@ -661,6 +666,42 @@ Private Sub Form_Unload(Cancel As Integer)
     ' Make sure the parts chooser form doesn't use this form.
     ComponentID = -1
     StayOpen = True
+End Sub
+
+' Properties grid was double clicked.
+Private Sub grdProperties_DblClick()
+    Dim dlgProperty As dlgEditProperty
+    
+    ' Initialize the dialog.
+    Set dlgProperty = New dlgEditProperty
+    dlgProperty.CentralizeInForm frmMain, Me
+
+    ' Determine if we are editing or adding a property.
+    If grdProperties.Row = grdProperties.Rows - 1 Then
+        ' Empty row clicked. Let's add a new entry.
+        dlgProperty.ShowNew
+    Else
+        ' Edit an existing property.
+        dlgProperty.ShowEditor grdProperties.TextMatrix(grdProperties.Row, 0), _
+            grdProperties.TextMatrix(grdProperties.Row, 1)
+    End If
+    
+    ' Should we save the property?
+    If dlgProperty.Save Then
+        ' Edit the current row.
+        grdProperties.TextMatrix(grdProperties.Row, 0) = dlgProperty.Key
+        grdProperties.TextMatrix(grdProperties.Row, 1) = dlgProperty.Value
+        
+        ' Add a new row in case we added a property.
+        If grdProperties.Row = grdProperties.Rows - 1 Then
+            grdProperties.Rows = grdProperties.Rows + 1
+        End If
+        
+        ' Set dirtiness.
+        Dirty = True
+    End If
+    
+    Set dlgProperty = Nothing
 End Sub
 
 ' Component > Save menu clicked.
