@@ -2,12 +2,13 @@ VERSION 5.00
 Object = "{5E9E78A0-531B-11CF-91F6-C2863C385E30}#1.0#0"; "MSFLXGRD.OCX"
 Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.2#0"; "MSCOMCTL.OCX"
 Begin VB.Form frmComponent 
-   BorderStyle     =   4  'Fixed ToolWindow
+   BorderStyle     =   3  'Fixed Dialog
    Caption         =   "Component"
    ClientHeight    =   5865
    ClientLeft      =   6135
-   ClientTop       =   3615
+   ClientTop       =   3675
    ClientWidth     =   8505
+   Icon            =   "frmComponent.frx":0000
    LinkTopic       =   "Form1"
    MaxButton       =   0   'False
    MDIChild        =   -1  'True
@@ -99,23 +100,23 @@ Begin VB.Form frmComponent
       BeginProperty Images {2C247F25-8591-11D1-B16A-00C0F0283628} 
          NumListImages   =   5
          BeginProperty ListImage1 {2C247F27-8591-11D1-B16A-00C0F0283628} 
-            Picture         =   "frmComponent.frx":0000
+            Picture         =   "frmComponent.frx":6852
             Key             =   ""
          EndProperty
          BeginProperty ListImage2 {2C247F27-8591-11D1-B16A-00C0F0283628} 
-            Picture         =   "frmComponent.frx":6862
+            Picture         =   "frmComponent.frx":D0B4
             Key             =   ""
          EndProperty
          BeginProperty ListImage3 {2C247F27-8591-11D1-B16A-00C0F0283628} 
-            Picture         =   "frmComponent.frx":D0C4
+            Picture         =   "frmComponent.frx":13916
             Key             =   ""
          EndProperty
          BeginProperty ListImage4 {2C247F27-8591-11D1-B16A-00C0F0283628} 
-            Picture         =   "frmComponent.frx":13926
+            Picture         =   "frmComponent.frx":1A178
             Key             =   ""
          EndProperty
          BeginProperty ListImage5 {2C247F27-8591-11D1-B16A-00C0F0283628} 
-            Picture         =   "frmComponent.frx":1A188
+            Picture         =   "frmComponent.frx":209DA
             Key             =   ""
          EndProperty
       EndProperty

@@ -9,6 +9,7 @@ Begin VB.MDIForm frmMain
    ClientLeft      =   7365
    ClientTop       =   3675
    ClientWidth     =   14520
+   Icon            =   "frmMain.frx":0000
    Begin MSComDlg.CommonDialog dlgOpenDatabase 
       Left            =   12840
       Top             =   120
@@ -32,35 +33,35 @@ Begin VB.MDIForm frmMain
       BeginProperty Images {2C247F25-8591-11D1-B16A-00C0F0283628} 
          NumListImages   =   8
          BeginProperty ListImage1 {2C247F27-8591-11D1-B16A-00C0F0283628} 
-            Picture         =   "frmMain.frx":0000
+            Picture         =   "frmMain.frx":6852
             Key             =   ""
          EndProperty
          BeginProperty ListImage2 {2C247F27-8591-11D1-B16A-00C0F0283628} 
-            Picture         =   "frmMain.frx":6862
+            Picture         =   "frmMain.frx":D0B4
             Key             =   ""
          EndProperty
          BeginProperty ListImage3 {2C247F27-8591-11D1-B16A-00C0F0283628} 
-            Picture         =   "frmMain.frx":D0C4
+            Picture         =   "frmMain.frx":13916
             Key             =   ""
          EndProperty
          BeginProperty ListImage4 {2C247F27-8591-11D1-B16A-00C0F0283628} 
-            Picture         =   "frmMain.frx":13926
+            Picture         =   "frmMain.frx":1A178
             Key             =   ""
          EndProperty
          BeginProperty ListImage5 {2C247F27-8591-11D1-B16A-00C0F0283628} 
-            Picture         =   "frmMain.frx":1A188
+            Picture         =   "frmMain.frx":209DA
             Key             =   ""
          EndProperty
          BeginProperty ListImage6 {2C247F27-8591-11D1-B16A-00C0F0283628} 
-            Picture         =   "frmMain.frx":209EA
+            Picture         =   "frmMain.frx":2723C
             Key             =   ""
          EndProperty
          BeginProperty ListImage7 {2C247F27-8591-11D1-B16A-00C0F0283628} 
-            Picture         =   "frmMain.frx":2724C
+            Picture         =   "frmMain.frx":2DA9E
             Key             =   ""
          EndProperty
          BeginProperty ListImage8 {2C247F27-8591-11D1-B16A-00C0F0283628} 
-            Picture         =   "frmMain.frx":2DAAE
+            Picture         =   "frmMain.frx":34300
             Key             =   ""
          EndProperty
       EndProperty
