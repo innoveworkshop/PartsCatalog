@@ -272,6 +272,27 @@ Private Sub MDIForm_Load()
     frmPartChooser.Show
 End Sub
 
+' Form is about to be unloaded.
+Private Sub MDIForm_QueryUnload(Cancel As Integer, UnloadMode As Integer)
+    Dim frmForm As Form
+    Dim frmComp As frmComponent
+    
+    ' Go through component forms checking if they have unsaved changes.
+    For Each frmForm In Forms
+        If frmForm.Name = "frmComponent" Then
+            Set frmComp = frmForm
+            If frmComp.AbortUnsavedChanges Then
+                Cancel = 1
+                Set frmComp = Nothing
+                
+                Exit Sub
+            End If
+            
+            Set frmComp = Nothing
+        End If
+    Next
+End Sub
+
 ' Form resized event.
 Private Sub MDIForm_Resize()
     frmPartChooser.ResizeToFitParent
