@@ -509,15 +509,17 @@ Private Sub DownloadDatasheet()
     Dim strURL As String
     Dim blnSuccess As Boolean
     
+    ' Check if we are dirty.
+    If Dirty Then
+        MsgBox "Before downloading a datasheet you must save any changes to this " & _
+            "component.", vbOKOnly + vbExclamation, "Datasheet Download"
+        Exit Sub
+    End If
+    
     ' Ask the user for the URL.
     strURL = InputBox("Please enter the URL for " & ComponentName & "'s datasheet:", _
         "Download " & ComponentName & " Datasheet")
     If strURL <> vbNullString Then
-        ' Make sure we have a valid name.
-        If m_strOriginalName = vbNullString Then
-            m_strOriginalName = ComponentName
-        End If
-        
         ' Download the datasheet.
         blnSuccess = DownloadComponentDatasheet(m_strOriginalName, strURL)
         
@@ -732,6 +734,13 @@ End Sub
 ' Selects a new image for the component.
 Private Sub SelectImage()
     Dim strPath As String
+    
+    ' Check if we are dirty.
+    If Dirty Then
+        MsgBox "Before selecting a new image you must save any changes to this " & _
+            "component.", vbOKOnly + vbExclamation, "Image Selection"
+        Exit Sub
+    End If
     
     ' Show browse dialog.
     dlgOpenImage.ShowOpen
