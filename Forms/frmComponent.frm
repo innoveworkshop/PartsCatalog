@@ -32,7 +32,7 @@ Begin VB.Form frmComponent
       ImageList       =   "imlToolbar"
       _Version        =   393216
       BeginProperty Buttons {66833FE8-8583-11D1-B16A-00C0F0283628} 
-         NumButtons      =   7
+         NumButtons      =   11
          BeginProperty Button1 {66833FEA-8583-11D1-B16A-00C0F0283628} 
             Key             =   "Refresh"
             Object.ToolTipText     =   "Refresh"
@@ -58,10 +58,28 @@ Begin VB.Form frmComponent
             ImageIndex      =   4
          EndProperty
          BeginProperty Button6 {66833FEA-8583-11D1-B16A-00C0F0283628} 
+            Style           =   3
+         EndProperty
+         BeginProperty Button7 {66833FEA-8583-11D1-B16A-00C0F0283628} 
+            Key             =   "OpenDatasheet"
+            Object.ToolTipText     =   "Open Datasheet"
+            ImageIndex      =   6
+         EndProperty
+         BeginProperty Button8 {66833FEA-8583-11D1-B16A-00C0F0283628} 
+            Key             =   "DeleteDatasheet"
+            Object.ToolTipText     =   "Delete Datasheet"
+            ImageIndex      =   7
+         EndProperty
+         BeginProperty Button9 {66833FEA-8583-11D1-B16A-00C0F0283628} 
+            Key             =   "DownloadDatasheet"
+            Object.ToolTipText     =   "Download Datasheet"
+            ImageIndex      =   8
+         EndProperty
+         BeginProperty Button10 {66833FEA-8583-11D1-B16A-00C0F0283628} 
             Key             =   "Spacer"
             Style           =   4
          EndProperty
-         BeginProperty Button7 {66833FEA-8583-11D1-B16A-00C0F0283628} 
+         BeginProperty Button11 {66833FEA-8583-11D1-B16A-00C0F0283628} 
             Key             =   "KeepOpen"
             Object.ToolTipText     =   "Maintain Window Opened"
             ImageIndex      =   5
@@ -98,7 +116,7 @@ Begin VB.Form frmComponent
       MaskColor       =   12632256
       _Version        =   393216
       BeginProperty Images {2C247F25-8591-11D1-B16A-00C0F0283628} 
-         NumListImages   =   5
+         NumListImages   =   8
          BeginProperty ListImage1 {2C247F27-8591-11D1-B16A-00C0F0283628} 
             Picture         =   "frmComponent.frx":6852
             Key             =   ""
@@ -117,6 +135,18 @@ Begin VB.Form frmComponent
          EndProperty
          BeginProperty ListImage5 {2C247F27-8591-11D1-B16A-00C0F0283628} 
             Picture         =   "frmComponent.frx":209DA
+            Key             =   ""
+         EndProperty
+         BeginProperty ListImage6 {2C247F27-8591-11D1-B16A-00C0F0283628} 
+            Picture         =   "frmComponent.frx":2723C
+            Key             =   ""
+         EndProperty
+         BeginProperty ListImage7 {2C247F27-8591-11D1-B16A-00C0F0283628} 
+            Picture         =   "frmComponent.frx":2DA9E
+            Key             =   ""
+         EndProperty
+         BeginProperty ListImage8 {2C247F27-8591-11D1-B16A-00C0F0283628} 
+            Picture         =   "frmComponent.frx":34300
             Key             =   ""
          EndProperty
       EndProperty
@@ -558,13 +588,26 @@ End Sub
 ' Sets up the ToolBar.
 Private Sub SetupToolBar()
     If IsNewComponent Then
+        ' New component. Disable all the relevant buttons.
         tlbToolBar.Buttons("Refresh").Enabled = False
         tlbToolBar.Buttons("Duplicate").Enabled = False
         tlbToolBar.Buttons("Delete").Enabled = False
+        tlbToolBar.Buttons("OpenDatasheet").Enabled = False
+        tlbToolBar.Buttons("DeleteDatasheet").Enabled = False
     Else
+        ' Existing component. Enable all the options.
         tlbToolBar.Buttons("Refresh").Enabled = True
         tlbToolBar.Buttons("Duplicate").Enabled = True
         tlbToolBar.Buttons("Delete").Enabled = True
+        
+        ' Handle the absence of a datasheet.
+        If ComponentHasDatasheet(ComponentName) Then
+            tlbToolBar.Buttons("OpenDatasheet").Enabled = True
+            tlbToolBar.Buttons("DeleteDatasheet").Enabled = True
+        Else
+            tlbToolBar.Buttons("OpenDatasheet").Enabled = False
+            tlbToolBar.Buttons("DeleteDatasheet").Enabled = False
+        End If
     End If
 End Sub
 
@@ -645,11 +688,6 @@ Private Sub Form_Load()
     SetupToolBar
     SetupPropertiesGrid
     
-    ' Setup the ToolBar placeholder.
-    tlbToolBar.Buttons("Spacer").Width = Me.ScaleWidth - _
-        ((tlbToolBar.Buttons.Count - 1) * tlbToolBar.ButtonWidth) + _
-        (tlbToolBar.ButtonWidth / 2)
-    
     ' Set dirtiness.
     Dirty = False
 End Sub
@@ -720,6 +758,12 @@ Private Sub tlbToolBar_ButtonClick(ByVal Button As MSComctlLib.Button)
             Save
         Case "Delete"
             DeleteMe
+        Case "OpenDatasheet"
+            cmdDatasheet_Click
+        Case "DeleteDatasheet"
+            MsgBox "Delete datasheet"
+        Case "DownloadDatasheet"
+            MsgBox "Download datasheet"
         Case "KeepOpen"
             StayOpen = (Button.Value = tbrPressed)
     End Select
