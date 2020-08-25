@@ -534,7 +534,7 @@ Public Function AbortUnsavedChanges() As Boolean
     ' Ask the user.
     intResponse = MsgBox("You have changed this component." & vbCrLf & _
         "Do you want to save the changes?", vbYesNoCancel + vbExclamation, _
-        "Save Changes to Component?")
+        "Save Changes to " & ComponentName & "?")
     
     ' Decide what to do.
     If intResponse = vbCancel Then
