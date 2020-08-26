@@ -207,6 +207,12 @@ Attribute VB_Exposed = False
 
 Option Explicit
 
+' Shows the package manager.
+Private Sub ManagePackages()
+    frmPackageManager.Left = frmPackageManager.Left + frmPartChooser.Width
+    frmPackageManager.Show
+End Sub
+
 ' Shows a component dialog for creating a new component.
 Private Sub NewComponent()
     Dim frmNewComponent As frmComponent
@@ -345,6 +351,11 @@ Private Sub mniManageAddComponent_Click()
     NewComponent
 End Sub
 
+' Manage > Packages menu clicked.
+Private Sub mniManagePackages_Click()
+    ManagePackages
+End Sub
+
 ' Toolbar button clicked event.
 Private Sub tlbToolBar_ButtonClick(ByVal Button As MSComctlLib.Button)
     Select Case Button.Key
@@ -357,7 +368,7 @@ Private Sub tlbToolBar_ButtonClick(ByVal Button As MSComctlLib.Button)
         Case "Categories"
             MsgBox "Categories"
         Case "Packages"
-            MsgBox "Packages"
+            ManagePackages
         Case "Components"
             MsgBox "Components"
         Case "AddComponent"

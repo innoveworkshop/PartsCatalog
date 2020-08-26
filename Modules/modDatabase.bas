@@ -140,6 +140,69 @@ Public Sub DeleteComponent(lngID As Long, Optional strName As String = vbNullStr
     End If
 End Sub
 
+' Saves/creates a package to the database. For package creation lngID should be -1.
+Public Function SavePackage(lngID As Long, strName As String) As Long
+    Dim stmt As SQLStatement
+    
+    ' Open the database.
+    OpenConnection
+    
+    ' Setup the statement.
+    Set stmt = New SQLStatement
+    If lngID = -1 Then
+        ' Create the package.
+        stmt.Create "INSERT INTO Packages (Name) VALUES ('[Name]')"
+    Else
+        ' Update an existing package.
+        stmt.Create "UPDATE Packages SET Name = '[Name]' WHERE ID = [ID]"
+        stmt.Parameter("ID") = lngID
+    End If
+    
+    ' Add parameters and execute the operation.
+    stmt.Parameter("Name") = strName
+    m_adoConnection.Execute stmt.Statement
+    
+    ' Get the component ID.
+    If lngID = -1 Then
+        Dim rs As ADODB.Recordset
+        Set rs = New ADODB.Recordset
+        
+        ' Get the newly added package ID.
+        Set rs = m_adoConnection.Execute("SELECT @@IDENTITY FROM Packages")
+        If Not rs.EOF Then
+            SavePackage = rs(0)
+        Else
+            SavePackage = -1
+        End If
+        
+        ' Clean up recordset.
+        rs.Close
+        Set rs = Nothing
+    Else
+        SavePackage = lngID
+    End If
+    
+    ' Close the connection.
+    CloseConnection
+End Function
+
+' Deletes a package from the database.
+Public Sub DeletePackage(lngID As Long)
+    Dim stmt As SQLStatement
+    
+    ' Open the database.
+    OpenConnection
+    
+    ' Setup the statement.
+    Set stmt = New SQLStatement
+    stmt.Create "DELETE * FROM Packages Where ID = [ID]"
+    stmt.Parameter("ID") = lngID
+    
+    ' Execute the operation close the connection.
+    m_adoConnection.Execute stmt.Statement
+    CloseConnection
+End Sub
+
 ' Loads a component by its ID and populates a form.
 Public Function LoadComponentDetail(lngID As Long, frmForm As frmComponent) As Boolean
     Dim rs As ADODB.Recordset
