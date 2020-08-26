@@ -140,6 +140,135 @@ Public Sub DeleteComponent(lngID As Long, Optional strName As String = vbNullStr
     End If
 End Sub
 
+' Saves/creates a category to the database. For category creation lngID should be -1.
+Public Function SaveCategory(lngID As Long, strName As String) As Long
+    Dim stmt As SQLStatement
+    
+    ' Open the database.
+    OpenConnection
+    
+    ' Setup the statement.
+    Set stmt = New SQLStatement
+    If lngID = -1 Then
+        ' Create the category.
+        stmt.Create "INSERT INTO Categories (Name) VALUES ('[Name]')"
+    Else
+        ' Update an existing category.
+        stmt.Create "UPDATE Categories SET Name = '[Name]' WHERE ID = [ID]"
+        stmt.Parameter("ID") = lngID
+    End If
+    
+    ' Add parameters and execute the operation.
+    stmt.Parameter("Name") = strName
+    m_adoConnection.Execute stmt.Statement
+    
+    ' Get the category ID.
+    If lngID = -1 Then
+        Dim rs As ADODB.Recordset
+        Set rs = New ADODB.Recordset
+        
+        ' Get the newly added category ID.
+        Set rs = m_adoConnection.Execute("SELECT @@IDENTITY FROM Categories")
+        If Not rs.EOF Then
+            SaveCategory = rs(0)
+        Else
+            SaveCategory = -1
+        End If
+        
+        ' Clean up recordset.
+        rs.Close
+        Set rs = Nothing
+    Else
+        SaveCategory = lngID
+    End If
+    
+    ' Close the connection.
+    CloseConnection
+End Function
+
+' Deletes a category from the database.
+Public Sub DeleteCategory(lngID As Long)
+    Dim stmt As SQLStatement
+    
+    ' Open the database.
+    OpenConnection
+    
+    ' Setup the statement.
+    Set stmt = New SQLStatement
+    stmt.Create "DELETE * FROM Categories Where ID = [ID]"
+    stmt.Parameter("ID") = lngID
+    
+    ' Execute the operation close the connection.
+    m_adoConnection.Execute stmt.Statement
+    CloseConnection
+End Sub
+
+' Saves/creates a sub-category to the database. For sub-category creation lngID should be -1.
+Public Function SaveSubCategory(lngID As Long, lngCategoryID, strName As String) As Long
+    Dim stmt As SQLStatement
+    
+    ' Open the database.
+    OpenConnection
+    
+    ' Setup the statement.
+    Set stmt = New SQLStatement
+    If lngID = -1 Then
+        ' Create the sub-category.
+        stmt.Create "INSERT INTO SubCategories (Name, ParentID) VALUES ('[Name]', " & _
+            "'[ParentID]')"
+    Else
+        ' Update an existing sub-category.
+        stmt.Create "UPDATE SubCategories SET Name = '[Name]', ParentID = '[ParentID]' " & _
+            "WHERE ID = [ID]"
+        stmt.Parameter("ID") = lngID
+    End If
+    
+    ' Add parameters and execute the operation.
+    stmt.Parameter("Name") = strName
+    stmt.Parameter("ParentID") = lngCategoryID
+    m_adoConnection.Execute stmt.Statement
+    
+    ' Get the sub-category ID.
+    If lngID = -1 Then
+        Dim rs As ADODB.Recordset
+        Set rs = New ADODB.Recordset
+        
+        ' Get the newly added sub-category ID.
+        Set rs = m_adoConnection.Execute("SELECT @@IDENTITY FROM SubCategories")
+        If Not rs.EOF Then
+            SaveSubCategory = rs(0)
+        Else
+            SaveSubCategory = -1
+        End If
+        
+        ' Clean up recordset.
+        rs.Close
+        Set rs = Nothing
+    Else
+        SaveSubCategory = lngID
+    End If
+    
+    ' Close the connection.
+    CloseConnection
+End Function
+
+' Deletes a sub-category from the database.
+Public Sub DeleteSubCategory(lngID As Long)
+    Dim stmt As SQLStatement
+    
+    ' Open the database.
+    OpenConnection
+    
+    ' Setup the statement.
+    Set stmt = New SQLStatement
+    stmt.Create "DELETE * FROM SubCategories Where ID = [ID]"
+    stmt.Parameter("ID") = lngID
+    
+    ' Execute the operation close the connection.
+    m_adoConnection.Execute stmt.Statement
+    CloseConnection
+End Sub
+
 ' Saves/creates a package to the database. For package creation lngID should be -1.
 Public Function SavePackage(lngID As Long, strName As String) As Long
     Dim stmt As SQLStatement
@@ -162,7 +291,7 @@ Public Function SavePackage(lngID As Long, strName As String) As Long
     stmt.Parameter("Name") = strName
     m_adoConnection.Execute stmt.Statement
     
-    ' Get the component ID.
+    ' Get the package ID.
     If lngID = -1 Then
         Dim rs As ADODB.Recordset
         Set rs = New ADODB.Recordset

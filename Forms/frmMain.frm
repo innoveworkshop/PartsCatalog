@@ -207,6 +207,12 @@ Attribute VB_Exposed = False
 
 Option Explicit
 
+' Shows the category manager.
+Private Sub ManageCategories()
+    frmCategoryManager.Left = frmCategoryManager.Left + frmPartChooser.Width
+    frmCategoryManager.Show
+End Sub
+
 ' Shows the package manager.
 Private Sub ManagePackages()
     frmPackageManager.Left = frmPackageManager.Left + frmPartChooser.Width
@@ -351,6 +357,11 @@ Private Sub mniManageAddComponent_Click()
     NewComponent
 End Sub
 
+' Manage > Categories menu clicked.
+Private Sub mniManageCategories_Click()
+    ManageCategories
+End Sub
+
 ' Manage > Packages menu clicked.
 Private Sub mniManagePackages_Click()
     ManagePackages
@@ -366,11 +377,11 @@ Private Sub tlbToolBar_ButtonClick(ByVal Button As MSComctlLib.Button)
         Case "CloseDatabase"
             CloseDatabase
         Case "Categories"
-            MsgBox "Categories"
+            ManageCategories
         Case "Packages"
             ManagePackages
         Case "Components"
-            MsgBox "Components"
+            MsgBox "TODO: Component manager"
         Case "AddComponent"
             NewComponent
     End Select
