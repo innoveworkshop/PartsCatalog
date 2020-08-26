@@ -207,6 +207,11 @@ End Sub
 
 ' Package selection changed.
 Private Sub lstPackages_Click()
+    ' Check if there's anything selected.
+    If lstPackages.ListIndex < 0 Then
+        Exit Sub
+    End If
+    
     ' Update the text field and ID.
     txtName.Text = lstPackages.Text
     ID = lstPackages.ItemData(lstPackages.ListIndex)

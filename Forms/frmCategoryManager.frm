@@ -328,6 +328,11 @@ End Sub
 
 ' Category selection changed.
 Private Sub lstCategories_Click()
+    ' Check if there's anything selected.
+    If lstCategories.ListIndex < 0 Then
+        Exit Sub
+    End If
+    
     ' Update the text field and ID.
     txtCategoryName.Text = lstCategories.Text
     CategoryID = lstCategories.ItemData(lstCategories.ListIndex)
@@ -338,6 +343,11 @@ End Sub
 
 ' Sub-category selection changed.
 Private Sub lstSubCategories_Click()
+    ' Check if there's anything selected.
+    If lstSubCategories.ListIndex < 0 Then
+        Exit Sub
+    End If
+    
     ' Update the text field and ID.
     txtSubCategoryName.Text = lstSubCategories.Text
     SubCategoryID = lstSubCategories.ItemData(lstSubCategories.ListIndex)
