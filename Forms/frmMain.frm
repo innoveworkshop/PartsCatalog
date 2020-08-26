@@ -277,6 +277,9 @@ End Sub
 
 ' Event fired when the form loads up.
 Private Sub MDIForm_Load()
+    ' Set application icon.
+    SetIcon Me.hWnd, "AAA_APPICON", True
+
     ' Open the last used database.
     OpenDatabaseFile LastUsedDatabasePath
     
