@@ -1021,7 +1021,7 @@ End Sub
 
 ' Image double clicked.
 Private Sub picImage_DblClick()
-    MsgBox "TODO: Browse for an image."
+    SelectImage
 End Sub
 
 ' Image was clicked in some way by the mouse.
