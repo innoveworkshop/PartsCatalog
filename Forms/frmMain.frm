@@ -78,7 +78,7 @@ Begin VB.MDIForm frmMain
       ImageList       =   "imlToolBar"
       _Version        =   393216
       BeginProperty Buttons {66833FE8-8583-11D1-B16A-00C0F0283628} 
-         NumButtons      =   9
+         NumButtons      =   8
          BeginProperty Button1 {66833FEA-8583-11D1-B16A-00C0F0283628} 
             Key             =   "OpenDatabase"
             Object.ToolTipText     =   "Open Database"
@@ -99,7 +99,7 @@ Begin VB.MDIForm frmMain
          EndProperty
          BeginProperty Button5 {66833FEA-8583-11D1-B16A-00C0F0283628} 
             Key             =   "Categories"
-            Object.ToolTipText     =   "Manage (Sub-)Categories"
+            Object.ToolTipText     =   "Manage Categories"
             ImageIndex      =   4
          EndProperty
          BeginProperty Button6 {66833FEA-8583-11D1-B16A-00C0F0283628} 
@@ -108,14 +108,9 @@ Begin VB.MDIForm frmMain
             ImageIndex      =   5
          EndProperty
          BeginProperty Button7 {66833FEA-8583-11D1-B16A-00C0F0283628} 
-            Key             =   "Components"
-            Object.ToolTipText     =   "Manage Components"
-            ImageIndex      =   6
-         EndProperty
-         BeginProperty Button8 {66833FEA-8583-11D1-B16A-00C0F0283628} 
             Style           =   3
          EndProperty
-         BeginProperty Button9 {66833FEA-8583-11D1-B16A-00C0F0283628} 
+         BeginProperty Button8 {66833FEA-8583-11D1-B16A-00C0F0283628} 
             Key             =   "AddComponent"
             Object.ToolTipText     =   "Add Component"
             ImageIndex      =   7
@@ -167,9 +162,6 @@ Begin VB.MDIForm frmMain
       End
       Begin VB.Menu mniManagePackages 
          Caption         =   "&Packages..."
-      End
-      Begin VB.Menu mniManageComponents 
-         Caption         =   "&Components..."
       End
       Begin VB.Menu mniManageSeparator1 
          Caption         =   "-"
@@ -376,8 +368,6 @@ Private Sub tlbToolBar_ButtonClick(ByVal Button As MSComctlLib.Button)
             ManageCategories
         Case "Packages"
             ManagePackages
-        Case "Components"
-            MsgBox "TODO: Component manager"
         Case "AddComponent"
             NewComponent
     End Select
