@@ -31,7 +31,7 @@ Begin VB.MDIForm frmMain
       MaskColor       =   12632256
       _Version        =   393216
       BeginProperty Images {2C247F25-8591-11D1-B16A-00C0F0283628} 
-         NumListImages   =   8
+         NumListImages   =   7
          BeginProperty ListImage1 {2C247F27-8591-11D1-B16A-00C0F0283628} 
             Picture         =   "frmMain.frx":6852
             Key             =   ""
@@ -58,10 +58,6 @@ Begin VB.MDIForm frmMain
          EndProperty
          BeginProperty ListImage7 {2C247F27-8591-11D1-B16A-00C0F0283628} 
             Picture         =   "frmMain.frx":2DA9E
-            Key             =   ""
-         EndProperty
-         BeginProperty ListImage8 {2C247F27-8591-11D1-B16A-00C0F0283628} 
-            Picture         =   "frmMain.frx":34300
             Key             =   ""
          EndProperty
       EndProperty
@@ -104,17 +100,17 @@ Begin VB.MDIForm frmMain
          BeginProperty Button5 {66833FEA-8583-11D1-B16A-00C0F0283628} 
             Key             =   "Categories"
             Object.ToolTipText     =   "Manage (Sub-)Categories"
-            ImageIndex      =   5
+            ImageIndex      =   4
          EndProperty
          BeginProperty Button6 {66833FEA-8583-11D1-B16A-00C0F0283628} 
             Key             =   "Packages"
             Object.ToolTipText     =   "Manage Packages"
-            ImageIndex      =   7
+            ImageIndex      =   5
          EndProperty
          BeginProperty Button7 {66833FEA-8583-11D1-B16A-00C0F0283628} 
             Key             =   "Components"
             Object.ToolTipText     =   "Manage Components"
-            ImageIndex      =   8
+            ImageIndex      =   6
          EndProperty
          BeginProperty Button8 {66833FEA-8583-11D1-B16A-00C0F0283628} 
             Style           =   3
@@ -122,7 +118,7 @@ Begin VB.MDIForm frmMain
          BeginProperty Button9 {66833FEA-8583-11D1-B16A-00C0F0283628} 
             Key             =   "AddComponent"
             Object.ToolTipText     =   "Add Component"
-            ImageIndex      =   4
+            ImageIndex      =   7
          EndProperty
       EndProperty
    End
