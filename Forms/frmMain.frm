@@ -5,10 +5,10 @@ Begin VB.MDIForm frmMain
    Appearance      =   0  'Flat
    BackColor       =   &H8000000C&
    Caption         =   "Parts Catalogger"
-   ClientHeight    =   8955
+   ClientHeight    =   8940
    ClientLeft      =   7365
    ClientTop       =   3675
-   ClientWidth     =   14520
+   ClientWidth     =   16185
    Icon            =   "frmMain.frx":0000
    Begin MSComDlg.CommonDialog dlgOpenDatabase 
       Left            =   12840
@@ -72,8 +72,8 @@ Begin VB.MDIForm frmMain
       Left            =   0
       TabIndex        =   1
       Top             =   0
-      Width           =   14520
-      _ExtentX        =   25612
+      Width           =   16185
+      _ExtentX        =   28549
       _ExtentY        =   635
       ButtonWidth     =   609
       ButtonHeight    =   582
@@ -131,9 +131,9 @@ Begin VB.MDIForm frmMain
       Height          =   315
       Left            =   0
       TabIndex        =   0
-      Top             =   8640
-      Width           =   14520
-      _ExtentX        =   25612
+      Top             =   8625
+      Width           =   16185
+      _ExtentX        =   28549
       _ExtentY        =   556
       Style           =   1
       _Version        =   393216
