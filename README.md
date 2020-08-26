@@ -2,6 +2,8 @@
 
 A simple application to browse through your parts bins, inside your computer.
 
+![Screenshot](/Screenshots/2020-08-26.png)
+
 
 ## Why Visual Basic 6?
 
