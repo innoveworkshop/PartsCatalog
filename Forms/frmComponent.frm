@@ -778,6 +778,8 @@ Private Sub ShowImage()
         picImage.AutoRedraw = True
         picImage.PaintPicture picBitmap, 0, 0, picImage.ScaleWidth, picImage.ScaleHeight
         Set picImage.Picture = picImage.Image
+    Else
+        Set picImage.Picture = Nothing
     End If
     
     ' Handle image setting errors.
