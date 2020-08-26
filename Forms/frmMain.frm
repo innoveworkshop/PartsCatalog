@@ -195,20 +195,26 @@ Attribute VB_Exposed = False
 
 Option Explicit
 
+' Shows the about dialog.
+Public Sub ShowAbout()
+    frmAbout.Parent = Me
+    frmAbout.Show vbModal, Me
+End Sub
+
 ' Shows the category manager.
-Private Sub ManageCategories()
+Public Sub ManageCategories()
     frmCategoryManager.Left = frmCategoryManager.Left + frmPartChooser.Width
     frmCategoryManager.Show
 End Sub
 
 ' Shows the package manager.
-Private Sub ManagePackages()
+Public Sub ManagePackages()
     frmPackageManager.Left = frmPackageManager.Left + frmPartChooser.Width
     frmPackageManager.Show
 End Sub
 
 ' Shows a component dialog for creating a new component.
-Private Sub NewComponent()
+Public Sub NewComponent()
     Dim frmNewComponent As frmComponent
     Set frmNewComponent = New frmComponent
     
@@ -336,8 +342,7 @@ End Sub
 
 ' Help > About menu clicked.
 Private Sub mniHelpAbout_Click()
-    frmAbout.Parent = Me
-    frmAbout.Show vbModal, Me
+    ShowAbout
 End Sub
 
 ' Manage > Add Component menu clicked.

@@ -356,9 +356,32 @@ Begin VB.Form frmComponent
          Shortcut        =   {F3}
       End
    End
+   Begin VB.Menu mnuManage 
+      Caption         =   "&Manage"
+      Begin VB.Menu mniManageCategories 
+         Caption         =   "&Categories..."
+      End
+      Begin VB.Menu mniManagePackages 
+         Caption         =   "&Packages..."
+      End
+      Begin VB.Menu mniManageSeparator1 
+         Caption         =   "-"
+      End
+      Begin VB.Menu mniManageNewComponent 
+         Caption         =   "&New Component..."
+         Shortcut        =   ^N
+      End
+   End
    Begin VB.Menu mnuWindow 
       Caption         =   "&Window"
       WindowList      =   -1  'True
+   End
+   Begin VB.Menu mnuHelp 
+      Caption         =   "&Help"
+      Begin VB.Menu mniHelpAbout 
+         Caption         =   "&About"
+         Shortcut        =   {F1}
+      End
    End
 End
 Attribute VB_Name = "frmComponent"
@@ -1011,6 +1034,11 @@ Private Sub mniDatasheetOpen_Click()
     OpenDatasheet
 End Sub
 
+' Help > About menu clicked.
+Private Sub mniHelpAbout_Click()
+    frmMain.ShowAbout
+End Sub
+
 ' Image > Browse menu clicked.
 Private Sub mniImageBrowse_Click()
     SelectImage
@@ -1019,6 +1047,21 @@ End Sub
 ' Image > Delete menu clicked.
 Private Sub mniImageDelete_Click()
     DeleteImage
+End Sub
+
+' Manage > Categories menu clicked.
+Private Sub mniManageCategories_Click()
+    frmMain.ManageCategories
+End Sub
+
+' Manage > New Component menu clicked.
+Private Sub mniManageNewComponent_Click()
+    frmMain.NewComponent
+End Sub
+
+' Manage > Packages menu clicked.
+Private Sub mniManagePackages_Click()
+    frmMain.ManagePackages
 End Sub
 
 ' Image double clicked.
