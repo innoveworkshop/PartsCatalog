@@ -2,6 +2,7 @@
 *.exe
 *.dll
 *.ocx
+*.oca
 
 # Visual Basic 6
 *.vbw
@@ -12,6 +13,7 @@
 *.dca
 *.scc
 *.tmp
+*.log
 
 # Misc.
 .DS_Store

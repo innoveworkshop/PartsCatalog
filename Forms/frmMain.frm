@@ -1,13 +1,13 @@
 VERSION 5.00
 Object = "{F9043C88-F6F2-101A-A3C9-08002B2F49FB}#1.2#0"; "COMDLG32.OCX"
-Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.2#0"; "MSCOMCTL.OCX"
+Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.0#0"; "MSCOMCTL.OCX"
 Begin VB.MDIForm frmMain 
    Appearance      =   0  'Flat
    BackColor       =   &H8000000C&
    Caption         =   "Parts Catalogger"
    ClientHeight    =   8940
-   ClientLeft      =   7365
-   ClientTop       =   3675
+   ClientLeft      =   870
+   ClientTop       =   1725
    ClientWidth     =   16185
    Icon            =   "frmMain.frx":0000
    Begin MSComDlg.CommonDialog dlgOpenDatabase 
