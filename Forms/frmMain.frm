@@ -171,6 +171,12 @@ Begin VB.MDIForm frmMain
          Shortcut        =   ^N
       End
    End
+   Begin VB.Menu mnuTools 
+      Caption         =   "&Tools"
+      Begin VB.Menu mniToolsPathOptions 
+         Caption         =   "&Path Options..."
+      End
+   End
    Begin VB.Menu mnuWindow 
       Caption         =   "&Window"
       WindowList      =   -1  'True
@@ -278,7 +284,7 @@ End Sub
 ' Event fired when the form loads up.
 Private Sub MDIForm_Load()
     ' Set application icon.
-    SetIcon Me.hWnd, "AAA_APPICON", True
+    SetIcon Me.hwnd, "AAA_APPICON", True
 
     ' Open the last used database.
     OpenDatabaseFile LastUsedDatabasePath
@@ -361,6 +367,11 @@ End Sub
 ' Manage > Packages menu clicked.
 Private Sub mniManagePackages_Click()
     ManagePackages
+End Sub
+
+' Tools > Path Options menu clicked.
+Private Sub mniToolsPathOptions_Click()
+    dlgPathOptions.ShowModal , Me
 End Sub
 
 ' Toolbar button clicked event.
