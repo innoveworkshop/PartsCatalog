@@ -102,13 +102,6 @@ Public Sub ShowEditor(strName As String, strValue As String)
     Show vbModal
 End Sub
 
-' Centralizes the dialog in the middle of the called form.
-Public Sub CentralizeInForm(frmMother As MDIForm, frmParent As Form)
-    Me.Top = frmMother.Top + frmParent.Top + (frmParent.Height / 2)
-    Me.Left = frmMother.Left + frmParent.Left + (frmParent.Width / 2) - _
-        (Me.Width / 2)
-End Sub
-
 ' Property name getter.
 Public Property Get Key() As String
     Key = m_strName

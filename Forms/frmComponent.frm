@@ -1,7 +1,7 @@
 VERSION 5.00
 Object = "{F9043C88-F6F2-101A-A3C9-08002B2F49FB}#1.2#0"; "COMDLG32.OCX"
 Object = "{5E9E78A0-531B-11CF-91F6-C2863C385E30}#1.0#0"; "MSFLXGRD.OCX"
-Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.2#0"; "MSCOMCTL.OCX"
+Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.0#0"; "MSCOMCTL.OCX"
 Begin VB.Form frmComponent 
    BorderStyle     =   3  'Fixed Dialog
    Caption         =   "Component"
@@ -963,7 +963,7 @@ Private Sub grdProperties_DblClick()
     
     ' Initialize the dialog.
     Set dlgProperty = New dlgEditProperty
-    dlgProperty.CentralizeInForm frmMain, Me
+    CentralizeFormInMDIChild dlgProperty, frmMain, Me
 
     ' Determine if we are editing or adding a property.
     If grdProperties.Row = grdProperties.Rows - 1 Then

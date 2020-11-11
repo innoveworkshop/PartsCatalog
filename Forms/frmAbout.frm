@@ -166,8 +166,7 @@ Private Sub Form_Load()
     lblCopyright.Caption = App.LegalCopyright
     
     ' Move the form to the right place.
-    Me.Top = Parent.Top + (Parent.Height / 2) - (Me.Height / 2)
-    Me.Left = Parent.Left + (Parent.Width / 2) - (Me.Width / 2)
+    CentralizeFormInForm Me, Parent
 End Sub
 
 ' Gets the parent form.
