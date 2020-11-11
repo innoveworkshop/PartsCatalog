@@ -136,7 +136,7 @@ Option Explicit
 
 ' Win32 API imports.
 Private Declare Function ShellExecute Lib "Shell32.dll" Alias "ShellExecuteA" _
-    (ByVal hWnd As Long, ByVal lpOperation As String, ByVal lpFile As String, _
+    (ByVal hwnd As Long, ByVal lpOperation As String, ByVal lpFile As String, _
     ByVal lpParameters As String, ByVal lpDirectory As String, _
     ByVal nShowCmd As Long) As Long
 
@@ -150,7 +150,7 @@ End Sub
 
 ' User clicked the Website button.
 Private Sub cmdWebsite_Click()
-    ShellExecute Parent.hWnd, vbNullString, "http://innoveworkshop.com/", _
+    ShellExecute Parent.hwnd, vbNullString, "http://innoveworkshop.com/", _
         vbNullString, vbNullString, vbNormalFocus
 End Sub
 
