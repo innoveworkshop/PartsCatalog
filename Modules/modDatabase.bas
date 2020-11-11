@@ -490,6 +490,13 @@ End Sub
 
 ' Opens a predefined database connection.
 Private Sub OpenConnection()
+    ' Check if there's a database associated.
+    If Not IsDatabaseAssociated Then
+        MsgBox "Can't open a connection to the database because there isn't one associated.", _
+            vbOKOnly + vbCritical, "Database Connection Error"
+    End If
+    
+    ' Check if there's an opened conection already.
     If Not m_adoConnection Is Nothing Then
         Exit Sub
     End If
