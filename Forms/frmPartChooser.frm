@@ -1,4 +1,5 @@
 VERSION 5.00
+Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.0#0"; "MSCOMCTL.OCX"
 Begin VB.Form frmPartChooser 
    BorderStyle     =   0  'None
    Caption         =   "Component Selector"
@@ -12,10 +13,32 @@ Begin VB.Form frmPartChooser
    ScaleHeight     =   8370
    ScaleWidth      =   4110
    ShowInTaskbar   =   0   'False
+   Begin MSComctlLib.ImageList imlFunctions 
+      Left            =   2640
+      Top             =   2640
+      _ExtentX        =   1005
+      _ExtentY        =   1005
+      BackColor       =   -2147483643
+      ImageWidth      =   16
+      ImageHeight     =   16
+      MaskColor       =   12632256
+      _Version        =   393216
+      BeginProperty Images {2C247F25-8591-11D1-B16A-00C0F0283628} 
+         NumListImages   =   2
+         BeginProperty ListImage1 {2C247F27-8591-11D1-B16A-00C0F0283628} 
+            Picture         =   "frmPartChooser.frx":0000
+            Key             =   "Left"
+         EndProperty
+         BeginProperty ListImage2 {2C247F27-8591-11D1-B16A-00C0F0283628} 
+            Picture         =   "frmPartChooser.frx":6862
+            Key             =   "Right"
+         EndProperty
+      EndProperty
+   End
    Begin VB.CommandButton cmdToggleVisibility 
-      Caption         =   "<"
       Height          =   255
       Left            =   3840
+      Style           =   1  'Graphical
       TabIndex        =   6
       Top             =   0
       Width           =   255
@@ -183,10 +206,10 @@ Private Sub DockInParent()
     Width = PanelWidth
     sngListWidth = Width - (CTRL_MARGIN * 2)
     
-    ' Position the visibility toggler and its caption.
+    ' Position the visibility toggler and its caption image.
     cmdToggleVisibility.Top = 0
     cmdToggleVisibility.Left = Width - cmdToggleVisibility.Width
-    cmdToggleVisibility.Caption = "<"
+    cmdToggleVisibility.Picture = imlFunctions.ListImages("Left").ExtractIcon
     
     ' Position and resize the categories group.
     lblCategories.Top = CTRL_MARGIN / 2
@@ -217,8 +240,8 @@ Private Sub HidePanel()
     Height = cmdToggleVisibility.Height
     Width = cmdToggleVisibility.Width
     
-    ' Change the toggler caption.
-    cmdToggleVisibility.Caption = ">"
+    ' Change the toggler image.
+    cmdToggleVisibility.Picture = imlFunctions.ListImages("Right").ExtractIcon
 End Sub
 
 ' Opens up a new component view.
