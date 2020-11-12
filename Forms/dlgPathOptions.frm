@@ -13,21 +13,21 @@ Begin VB.Form dlgPathOptions
    ScaleHeight     =   2925
    ScaleWidth      =   6105
    ShowInTaskbar   =   0   'False
-   Begin VB.Frame fraPrograms 
-      Caption         =   "Programs"
+   Begin VB.Frame fraAppSuite 
+      Caption         =   "Application Suite"
       Height          =   975
       Left            =   120
       TabIndex        =   6
       Top             =   1200
       Width           =   5895
-      Begin VB.TextBox txtAppRoot 
+      Begin VB.TextBox txtOrderImporter 
          Height          =   315
          Left            =   120
          TabIndex        =   8
          Top             =   480
          Width           =   5175
       End
-      Begin VB.CommandButton cmdBrowseAppRoot 
+      Begin VB.CommandButton cmdBrowseOrderImporter 
          Caption         =   "..."
          Height          =   315
          Left            =   5400
@@ -36,7 +36,7 @@ Begin VB.Form dlgPathOptions
          Width           =   375
       End
       Begin VB.Label Label2 
-         Caption         =   "PartCat Application Suite:"
+         Caption         =   "Order Importer:"
          Height          =   255
          Left            =   120
          TabIndex        =   9
@@ -85,7 +85,7 @@ Begin VB.Form dlgPathOptions
       Width           =   1215
    End
    Begin VB.CommandButton OKButton 
-      Caption         =   "Save"
+      Caption         =   "OK"
       Default         =   -1  'True
       Height          =   375
       Left            =   3480
@@ -112,7 +112,19 @@ Public Sub ShowModal(frmParent As Form)
     Show vbModal, frmParent
 End Sub
 
+' Cancel button clicked.
+Private Sub CancelButton_Click()
+    Unload Me
+End Sub
+
 ' Form just loaded.
 Private Sub Form_Load()
-    
+    ' Load settings.
+    txtLastDatabase.Text = LastUsedDatabasePath
+End Sub
+
+' OK button clicked.
+Private Sub OKButton_Click()
+    MsgBox "Nice"
+    Unload Me
 End Sub
