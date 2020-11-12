@@ -2,7 +2,7 @@ VERSION 5.00
 Begin VB.Form dlgPathOptions 
    BorderStyle     =   3  'Fixed Dialog
    Caption         =   "Path Options"
-   ClientHeight    =   2925
+   ClientHeight    =   2895
    ClientLeft      =   2760
    ClientTop       =   3750
    ClientWidth     =   6105
@@ -10,7 +10,7 @@ Begin VB.Form dlgPathOptions
    LinkTopic       =   "Form1"
    MaxButton       =   0   'False
    MinButton       =   0   'False
-   ScaleHeight     =   2925
+   ScaleHeight     =   2895
    ScaleWidth      =   6105
    ShowInTaskbar   =   0   'False
    Begin VB.Frame fraAppSuite 
@@ -112,6 +112,12 @@ Public Sub ShowModal(frmParent As Form)
     Show vbModal, frmParent
 End Sub
 
+' Save all the settings.
+Private Sub SaveSettings()
+    SetLastUsedDatabasePath txtLastDatabase.Text
+    SetOrderImporterPath txtOrderImporter.Text
+End Sub
+
 ' Cancel button clicked.
 Private Sub CancelButton_Click()
     Unload Me
@@ -121,10 +127,11 @@ End Sub
 Private Sub Form_Load()
     ' Load settings.
     txtLastDatabase.Text = LastUsedDatabasePath
+    txtOrderImporter.Text = OrderImporterPath
 End Sub
 
 ' OK button clicked.
 Private Sub OKButton_Click()
-    MsgBox "Nice"
+    SaveSettings
     Unload Me
 End Sub
