@@ -20,6 +20,7 @@ Module=modAppIcon; Modules\modAppIcon.bas
 ResFile32="Resources\resManifest.res"
 Form=Forms\dlgPathOptions.frm
 Module=modFormHelper; Modules\modFormHelper.bas
+Module=modShellOpen; Modules\modShellOpen.bas
 IconForm="frmMain"
 Startup="Sub Main"
 HelpFile=""

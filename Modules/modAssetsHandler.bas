@@ -27,12 +27,8 @@ Private Const BINDF_GETNEWESTVERSION As Long = &H10
 Private Const INTERNET_FLAG_RELOAD As Long = &H80000000
 
 ' Win32 API imports.
-Private Declare Function SHFileOperation Lib "Shell32.dll" _
+Private Declare Function SHFileOperation Lib "shell32.dll" _
     Alias "SHFileOperationA" (lpFileOp As SHFILEOPTSTRUCT) As Long
-Private Declare Function ShellExecute Lib "Shell32.dll" Alias "ShellExecuteA" _
-    (ByVal hWnd As Long, ByVal lpOperation As String, ByVal lpFile As String, _
-    ByVal lpParameters As String, ByVal lpDirectory As String, _
-    ByVal nShowCmd As Long) As Long
 Private Declare Function DeleteUrlCacheEntry Lib "Wininet.dll" _
     Alias "DeleteUrlCacheEntryA" (ByVal lpszUrlName As String) As Long
 Private Declare Function URLDownloadToFile Lib "urlmon" Alias "URLDownloadToFileA" ( _
@@ -116,8 +112,7 @@ End Sub
 ' Opens a component datasheet file.
 Public Sub OpenComponentDatasheet(strName As String)
     If ComponentHasDatasheet(strName) Then
-        ShellExecute Screen.ActiveForm.hWnd, "open", GetComponentDatasheetPath(strName), _
-            vbNullString, vbNullString, 1
+        OpenFile Screen.ActiveForm.hWnd, GetComponentDatasheetPath(strName)
     End If
 End Sub
 
