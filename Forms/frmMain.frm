@@ -173,6 +173,12 @@ Begin VB.MDIForm frmMain
    End
    Begin VB.Menu mnuTools 
       Caption         =   "&Tools"
+      Begin VB.Menu mniToolsOrderImporter 
+         Caption         =   "Order Importer..."
+      End
+      Begin VB.Menu mniToolsSeparator1 
+         Caption         =   "-"
+      End
       Begin VB.Menu mniToolsPathOptions 
          Caption         =   "&Path Options..."
       End
@@ -284,7 +290,7 @@ End Sub
 ' Event fired when the form loads up.
 Private Sub MDIForm_Load()
     ' Set application icon.
-    SetIcon Me.hwnd, "AAA_APPICON", True
+    SetIcon Me.hWnd, "AAA_APPICON", True
 
     ' Open the last used database.
     OpenDatabaseFile LastUsedDatabasePath
@@ -367,6 +373,23 @@ End Sub
 ' Manage > Packages menu clicked.
 Private Sub mniManagePackages_Click()
     ManagePackages
+End Sub
+
+' Tools > Order Importer menu clicked.
+Private Sub mniToolsOrderImporter_Click()
+    Dim strExePath As String
+    strExePath = OrderImporterPath
+    
+    ' Check if it exists.
+    If strExePath = vbNullString Then
+        MsgBox "Couldn't locate the Order Importer executable, try setting its path " & _
+            "using the Path Options dialog.", vbOKOnly + vbExclamation, "Couldn't " & _
+            "Locate Executable"
+        Exit Sub
+    End If
+    
+    ' Fire up the application.
+    RunExecutable Me.hWnd, strExePath
 End Sub
 
 ' Tools > Path Options menu clicked.
