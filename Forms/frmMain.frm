@@ -371,7 +371,7 @@ End Sub
 
 ' Tools > Path Options menu clicked.
 Private Sub mniToolsPathOptions_Click()
-    dlgPathOptions.ShowModal , Me
+    dlgPathOptions.ShowModal Me
 End Sub
 
 ' Toolbar button clicked event.
