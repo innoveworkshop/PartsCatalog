@@ -21,6 +21,7 @@ ResFile32="Resources\resManifest.res"
 Form=Forms\dlgPathOptions.frm
 Module=modFormHelper; Modules\modFormHelper.bas
 Module=modShellOpen; Modules\modShellOpen.bas
+Module=modApplicationSuite; Modules\modApplicationSuite.bas
 IconForm="frmMain"
 Startup="Sub Main"
 HelpFile=""

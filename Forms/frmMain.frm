@@ -391,19 +391,7 @@ End Sub
 
 ' Tools > Order Importer menu clicked.
 Private Sub mniToolsOrderImporter_Click()
-    Dim strExePath As String
-    strExePath = OrderImporterPath
-    
-    ' Check if it exists.
-    If strExePath = vbNullString Then
-        MsgBox "Couldn't locate the Order Importer executable, try setting its path " & _
-            "using the Path Options dialog.", vbOKOnly + vbExclamation, "Couldn't " & _
-            "Locate Executable"
-        Exit Sub
-    End If
-    
-    ' Fire up the application.
-    RunExecutable Me.hWnd, strExePath
+    OpenOrderImporter
 End Sub
 
 ' Tools > Path Options menu clicked.

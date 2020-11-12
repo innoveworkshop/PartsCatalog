@@ -144,7 +144,7 @@ Private Sub BrowseLastDatabase()
 End Sub
 
 ' Browse for the default database.
-Private Sub BrowseOrderImporter()
+Public Sub BrowseOrderImporter()
     ' Setup the dialog.
     dlgOpen.DefaultExt = "exe"
     dlgOpen.DialogTitle = "Find the Order Importer Executable"
