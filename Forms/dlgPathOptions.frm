@@ -1,4 +1,5 @@
 VERSION 5.00
+Object = "{F9043C88-F6F2-101A-A3C9-08002B2F49FB}#1.2#0"; "COMDLG32.OCX"
 Begin VB.Form dlgPathOptions 
    BorderStyle     =   3  'Fixed Dialog
    Caption         =   "Path Options"
@@ -67,7 +68,7 @@ Begin VB.Form dlgPathOptions
          Width           =   5175
       End
       Begin VB.Label Label1 
-         Caption         =   "Last Used Database:"
+         Caption         =   "Default Database:"
          Height          =   255
          Left            =   120
          TabIndex        =   3
@@ -93,6 +94,13 @@ Begin VB.Form dlgPathOptions
       Top             =   2400
       Width           =   1215
    End
+   Begin MSComDlg.CommonDialog dlgOpen 
+      Left            =   240
+      Top             =   2280
+      _ExtentX        =   847
+      _ExtentY        =   847
+      _Version        =   393216
+   End
 End
 Attribute VB_Name = "dlgPathOptions"
 Attribute VB_GlobalNameSpace = False
@@ -106,6 +114,9 @@ Attribute VB_Exposed = False
 
 Option Explicit
 
+' Private variables.
+Private m_strLastDatabasePath As String
+
 ' Show this dialog as a modal in the middle of the parent form.
 Public Sub ShowModal(frmParent As Form)
     CentralizeFormInForm Me, frmParent
@@ -118,9 +129,28 @@ Private Sub SaveSettings()
     SetOrderImporterPath txtOrderImporter.Text
 End Sub
 
+' Browse for the default database.
+Private Sub BrowseLastDatabase()
+    ' Setup the dialog.
+    dlgOpen.DefaultExt = "mdb"
+    dlgOpen.DialogTitle = "Select Default Database"
+    dlgOpen.Filter = "Microsoft Access Databases (*.mdb)|*.mdb|All Files (*.*)|*.*"
+
+    ' Open the dialog and set the selected path.
+    dlgOpen.ShowOpen
+    If dlgOpen.FileName <> vbNullString Then
+        txtLastDatabase.Text = dlgOpen.FileName
+    End If
+End Sub
+
 ' Cancel button clicked.
 Private Sub CancelButton_Click()
     Unload Me
+End Sub
+
+' Browse for the last database used.
+Private Sub cmdBrowseLastDatabase_Click()
+    BrowseLastDatabase
 End Sub
 
 ' Form just loaded.
@@ -128,10 +158,28 @@ Private Sub Form_Load()
     ' Load settings.
     txtLastDatabase.Text = LastUsedDatabasePath
     txtOrderImporter.Text = OrderImporterPath
+    
+    ' Set private variables.
+    m_strLastDatabasePath = txtLastDatabase.Text
 End Sub
 
 ' OK button clicked.
 Private Sub OKButton_Click()
+    Dim intResponse As Integer
+    
+    ' Save settings and close the dialog.
     SaveSettings
     Unload Me
+    
+    ' Check if the user changed the default database and ask for a reload.
+    If m_strLastDatabasePath <> LastUsedDatabasePath Then
+        intResponse = MsgBox("You've changed the default database path. Do you wish " & _
+            "to reload the database and start using the new one?", vbYesNo + vbQuestion, _
+            "Default Database Changed")
+        
+        ' Reload the databse if the user wants to.
+        If intResponse = vbYes Then
+            frmMain.ReloadDatabase LastUsedDatabasePath
+        End If
+    End If
 End Sub

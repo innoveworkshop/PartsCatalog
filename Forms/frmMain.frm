@@ -262,15 +262,24 @@ Private Sub CloseDatabase()
 End Sub
 
 ' Reloads the database and updates everything in the application.
-Private Sub ReloadDatabase()
+Public Sub ReloadDatabase(Optional strNewDatabase As String = vbNullString)
     Dim frmForm As Form
-
-    ' Reload component forms.
-    For Each frmForm In Forms
-        If frmForm.Name = "frmComponent" Then
-            frmForm.Refresh
-        End If
-    Next frmForm
+    
+    ' Check if we are reloading a new database.
+    If strNewDatabase <> vbNullString Then
+        ' Close all the component windows.
+        CloseAllChilds
+        
+        ' Open the new database.
+        OpenDatabaseFile strNewDatabase
+    Else
+        ' Reload component forms.
+        For Each frmForm In Forms
+            If frmForm.Name = "frmComponent" Then
+                frmForm.Refresh
+            End If
+        Next frmForm
+    End If
     
     ' Reload part chooser form.
     frmPartChooser.RefreshLists
