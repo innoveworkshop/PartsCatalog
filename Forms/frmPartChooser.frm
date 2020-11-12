@@ -12,6 +12,14 @@ Begin VB.Form frmPartChooser
    ScaleHeight     =   8370
    ScaleWidth      =   4110
    ShowInTaskbar   =   0   'False
+   Begin VB.CommandButton cmdToggleVisibility 
+      Caption         =   "<"
+      Height          =   255
+      Left            =   3840
+      TabIndex        =   6
+      Top             =   0
+      Width           =   255
+   End
    Begin VB.ListBox lstComponents 
       Height          =   2400
       Left            =   120
@@ -76,6 +84,8 @@ Private Const CTRL_MARGIN As Integer = 120
 ' Private variables.
 Private m_frmParent As MDIForm
 Private m_frmLastOpened As frmComponent
+Private m_sngPanelWidth As Single
+Private m_blnVisibility As Boolean
 
 ' Refreshes the contents of the form.
 Public Sub RefreshLists()
@@ -146,6 +156,11 @@ Public Sub SetParent(frmParent As MDIForm)
     Set m_frmParent = frmParent
 End Sub
 
+' Toggles the panel visibility (normal or minimized).
+Public Sub ToggleVisibility()
+    Visibility = Not Visibility
+End Sub
+
 ' Resizes the form to fit its parent.
 Public Sub ResizeToFitParent()
     DockInParent
@@ -153,30 +168,57 @@ End Sub
 
 ' Docks this form in its parent.
 Private Sub DockInParent()
-    Dim intListHeight As Integer
+    Dim sngListHeight As Single
+    Dim sngListWidth As Single
     
     ' Position on the top-left corner.
     Left = 0
     Top = 0
     
     ' Set the height and calculate the height of each control group.
-    Me.Height = m_frmParent.ScaleHeight
-    intListHeight = (Me.Height - (CTRL_MARGIN * 4) - (lblCategories.Height * 3)) / 3
+    Height = m_frmParent.ScaleHeight
+    sngListHeight = (Height - (CTRL_MARGIN * 4) - (lblCategories.Height * 3)) / 3
+    
+    ' Set the width and calculate the width of each control group.
+    Width = PanelWidth
+    sngListWidth = Width - (CTRL_MARGIN * 2)
+    
+    ' Position the visibility toggler and its caption.
+    cmdToggleVisibility.Top = 0
+    cmdToggleVisibility.Left = Width - cmdToggleVisibility.Width
+    cmdToggleVisibility.Caption = "<"
     
     ' Position and resize the categories group.
     lblCategories.Top = CTRL_MARGIN / 2
     lstCategories.Top = lblCategories.Top + lblCategories.Height
-    lstCategories.Height = intListHeight
+    lstCategories.Height = sngListHeight
+    lstCategories.Width = sngListWidth
     
     ' Position and resize the sub-categories group.
     lblSubCategories.Top = lstCategories.Top + lstCategories.Height + CTRL_MARGIN
     lstSubCategories.Top = lblSubCategories.Top + lblSubCategories.Height
-    lstSubCategories.Height = intListHeight
+    lstSubCategories.Height = sngListHeight
+    lstSubCategories.Width = sngListWidth
     
     ' Position and resize the components group.
     lblComponents.Top = lstSubCategories.Top + lstSubCategories.Height + CTRL_MARGIN
     lstComponents.Top = lblComponents.Top + lblComponents.Height
     lstComponents.Height = Me.Height - lstComponents.Top
+    lstComponents.Width = sngListWidth
+End Sub
+
+' Hides the panel in a minimized state.
+Private Sub HidePanel()
+    ' Position the visibility toggler.
+    cmdToggleVisibility.Top = 0
+    cmdToggleVisibility.Left = 0
+    
+    ' Resize the panel.
+    Height = cmdToggleVisibility.Height
+    Width = cmdToggleVisibility.Width
+    
+    ' Change the toggler caption.
+    cmdToggleVisibility.Caption = ">"
 End Sub
 
 ' Opens up a new component view.
@@ -209,13 +251,19 @@ Private Sub ShowComponent()
     Set frmForm = Nothing
 End Sub
 
+' Toggle visibility event fired.
+Private Sub cmdToggleVisibility_Click()
+    ToggleVisibility
+End Sub
+
 ' Event fired when the form loads up.
 Private Sub Form_Load()
     ' Clear the contents.
     ClearContents
-
-    ' Dock the form.
-    DockInParent
+    
+    ' Set the preffered panel width and show the form in dock.
+    PanelWidth = Width
+    Visibility = True
     
     ' Populate our categories list.
     If IsDatabaseAssociated Then
@@ -255,3 +303,32 @@ Private Sub lstComponents_Click()
 
     ShowComponent
 End Sub
+
+' Visibility flag getter.
+Public Property Get Visibility() As Boolean
+    Visibility = m_blnVisibility
+End Property
+
+' Visibility flag setter.
+Public Property Let Visibility(blnVisibility As Boolean)
+    m_blnVisibility = blnVisibility
+    
+    If blnVisibility Then
+        ' Show panel.
+        DockInParent
+    Else
+        ' Hide panel.
+        HidePanel
+    End If
+End Property
+
+' Panel width getter.
+Public Property Get PanelWidth() As Single
+    PanelWidth = m_sngPanelWidth
+End Property
+
+' Panel width setter.
+Public Property Let PanelWidth(sngPanelWidth As Single)
+    m_sngPanelWidth = sngPanelWidth
+    Width = sngPanelWidth
+End Property
