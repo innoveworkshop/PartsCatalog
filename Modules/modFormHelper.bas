@@ -7,7 +7,7 @@ Attribute VB_Name = "modFormHelper"
 Option Explicit
 
 ' Win32 API stuff.
-Private Declare Function GetWindow Lib "user32" (ByVal hwnd As Long, _
+Private Declare Function GetWindow Lib "user32" (ByVal hWnd As Long, _
     ByVal wCmd As Long) As Long
 Private Const GW_OWNER = 4
 
@@ -17,12 +17,13 @@ Public Function ParentForm(frmChild As Form) As Form
     Dim hwndParent As Long
     
     ' Get the parent window handle.
-    hwndParent = GetWindow(frmChild.hwnd, GW_OWNER)
+    hwndParent = GetWindow(frmChild.hWnd, GW_OWNER)
     
     ' Try to find a matching form in our application.
     For Each frmParent In Forms
-        If frmParent.hwnd = hwndParent Then
+        If frmParent.hWnd = hwndParent Then
             Set ParentForm = frmParent
+        End If
     Next frmParent
     
     ' No owner form found.
