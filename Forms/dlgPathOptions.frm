@@ -143,6 +143,20 @@ Private Sub BrowseLastDatabase()
     End If
 End Sub
 
+' Browse for the default database.
+Private Sub BrowseOrderImporter()
+    ' Setup the dialog.
+    dlgOpen.DefaultExt = "exe"
+    dlgOpen.DialogTitle = "Find the Order Importer Executable"
+    dlgOpen.Filter = "Executable File (*.exe)|*.exe|All Files (*.*)|*.*"
+
+    ' Open the dialog and set the selected path.
+    dlgOpen.ShowOpen
+    If dlgOpen.FileName <> vbNullString Then
+        txtOrderImporter.Text = dlgOpen.FileName
+    End If
+End Sub
+
 ' Cancel button clicked.
 Private Sub CancelButton_Click()
     Unload Me
@@ -151,6 +165,11 @@ End Sub
 ' Browse for the last database used.
 Private Sub cmdBrowseLastDatabase_Click()
     BrowseLastDatabase
+End Sub
+
+' Browse for the Order Importer executable.
+Private Sub cmdBrowseOrderImporter_Click()
+    BrowseOrderImporter
 End Sub
 
 ' Form just loaded.
