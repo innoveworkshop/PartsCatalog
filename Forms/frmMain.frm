@@ -250,6 +250,11 @@ Private Sub OpenDatabaseFile(Optional strPath As String = vbNullString)
     If strSetPath <> vbNullString Then
         SetDatabasePath strSetPath
         SetLastUsedDatabasePath strSetPath
+        
+        ' Reload the workspace if we opened a new database.
+        If strPath = vbNullString Then
+            ReloadDatabase strSetPath
+        End If
     End If
 End Sub
 
