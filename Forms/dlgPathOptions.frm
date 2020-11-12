@@ -2,16 +2,48 @@ VERSION 5.00
 Begin VB.Form dlgPathOptions 
    BorderStyle     =   3  'Fixed Dialog
    Caption         =   "Path Options"
-   ClientHeight    =   3195
+   ClientHeight    =   2925
    ClientLeft      =   2760
    ClientTop       =   3750
-   ClientWidth     =   6135
+   ClientWidth     =   6105
+   Icon            =   "dlgPathOptions.frx":0000
    LinkTopic       =   "Form1"
    MaxButton       =   0   'False
    MinButton       =   0   'False
-   ScaleHeight     =   3195
-   ScaleWidth      =   6135
+   ScaleHeight     =   2925
+   ScaleWidth      =   6105
    ShowInTaskbar   =   0   'False
+   Begin VB.Frame fraPrograms 
+      Caption         =   "Programs"
+      Height          =   975
+      Left            =   120
+      TabIndex        =   6
+      Top             =   1200
+      Width           =   5895
+      Begin VB.TextBox txtAppRoot 
+         Height          =   315
+         Left            =   120
+         TabIndex        =   8
+         Top             =   480
+         Width           =   5175
+      End
+      Begin VB.CommandButton cmdBrowseAppRoot 
+         Caption         =   "..."
+         Height          =   315
+         Left            =   5400
+         TabIndex        =   7
+         Top             =   480
+         Width           =   375
+      End
+      Begin VB.Label Label2 
+         Caption         =   "PartCat Application Suite:"
+         Height          =   255
+         Left            =   120
+         TabIndex        =   9
+         Top             =   240
+         Width           =   1935
+      End
+   End
    Begin VB.Frame fraDatabase 
       Caption         =   "Database"
       Height          =   975
@@ -19,6 +51,21 @@ Begin VB.Form dlgPathOptions
       TabIndex        =   2
       Top             =   120
       Width           =   5895
+      Begin VB.CommandButton cmdBrowseLastDatabase 
+         Caption         =   "..."
+         Height          =   315
+         Left            =   5400
+         TabIndex        =   5
+         Top             =   480
+         Width           =   375
+      End
+      Begin VB.TextBox txtLastDatabase 
+         Height          =   315
+         Left            =   120
+         TabIndex        =   4
+         Top             =   480
+         Width           =   5175
+      End
       Begin VB.Label Label1 
          Caption         =   "Last Used Database:"
          Height          =   255
@@ -29,19 +76,21 @@ Begin VB.Form dlgPathOptions
       End
    End
    Begin VB.CommandButton CancelButton 
+      Cancel          =   -1  'True
       Caption         =   "Cancel"
       Height          =   375
-      Left            =   1560
+      Left            =   4800
       TabIndex        =   1
-      Top             =   2520
+      Top             =   2400
       Width           =   1215
    End
    Begin VB.CommandButton OKButton 
-      Caption         =   "OK"
+      Caption         =   "Save"
+      Default         =   -1  'True
       Height          =   375
-      Left            =   120
+      Left            =   3480
       TabIndex        =   0
-      Top             =   2520
+      Top             =   2400
       Width           =   1215
    End
 End
