@@ -333,7 +333,7 @@ Public Sub DeletePackage(lngID As Long)
 End Sub
 
 ' Loads a component by its ID and populates a form.
-Public Function LoadComponentDetail(lngID As Long, frmForm As frmComponent) As Boolean
+Public Function LoadComponentDetail(lngID As Long, frmForm As Form) As Boolean
     Dim rs As ADODB.Recordset
     Dim stmt As SQLStatement
     
