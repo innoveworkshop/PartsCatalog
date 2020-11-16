@@ -13,6 +13,18 @@ Begin VB.Form frmPartChooser
    ScaleHeight     =   8370
    ScaleWidth      =   4110
    ShowInTaskbar   =   0   'False
+   Begin VB.PictureBox picToggleVisibility 
+      Appearance      =   0  'Flat
+      BackColor       =   &H80000005&
+      ForeColor       =   &H80000008&
+      Height          =   255
+      Left            =   3840
+      ScaleHeight     =   225
+      ScaleWidth      =   225
+      TabIndex        =   6
+      Top             =   0
+      Width           =   255
+   End
    Begin MSComctlLib.ImageList imlFunctions 
       Left            =   2640
       Top             =   2640
@@ -34,14 +46,6 @@ Begin VB.Form frmPartChooser
             Key             =   "Right"
          EndProperty
       EndProperty
-   End
-   Begin VB.CommandButton cmdToggleVisibility 
-      Height          =   255
-      Left            =   3840
-      Style           =   1  'Graphical
-      TabIndex        =   6
-      Top             =   0
-      Width           =   255
    End
    Begin VB.ListBox lstComponents 
       Height          =   2400
@@ -207,9 +211,9 @@ Private Sub DockInParent()
     sngListWidth = Width - (CTRL_MARGIN * 2)
     
     ' Position the visibility toggler and its caption image.
-    cmdToggleVisibility.Top = 0
-    cmdToggleVisibility.Left = Width - cmdToggleVisibility.Width
-    cmdToggleVisibility.Picture = imlFunctions.ListImages("Left").ExtractIcon
+    picToggleVisibility.Top = 0
+    picToggleVisibility.Left = Width - picToggleVisibility.Width
+    picToggleVisibility.Picture = imlFunctions.ListImages("Left").ExtractIcon
     
     ' Position and resize the categories group.
     lblCategories.Top = CTRL_MARGIN / 2
@@ -233,15 +237,15 @@ End Sub
 ' Hides the panel in a minimized state.
 Private Sub HidePanel()
     ' Position the visibility toggler.
-    cmdToggleVisibility.Top = 0
-    cmdToggleVisibility.Left = 0
+    picToggleVisibility.Top = 0
+    picToggleVisibility.Left = 0
     
     ' Resize the panel.
-    Height = cmdToggleVisibility.Height
-    Width = cmdToggleVisibility.Width
+    Height = picToggleVisibility.Height
+    Width = picToggleVisibility.Width
     
     ' Change the toggler image.
-    cmdToggleVisibility.Picture = imlFunctions.ListImages("Right").ExtractIcon
+    picToggleVisibility.Picture = imlFunctions.ListImages("Right").ExtractIcon
 End Sub
 
 ' Opens up a new component view.
@@ -272,11 +276,6 @@ Private Sub ShowComponent()
     End If
 
     Set frmForm = Nothing
-End Sub
-
-' Toggle visibility event fired.
-Private Sub cmdToggleVisibility_Click()
-    ToggleVisibility
 End Sub
 
 ' Event fired when the form loads up.
@@ -355,3 +354,8 @@ Public Property Let PanelWidth(sngPanelWidth As Single)
     m_sngPanelWidth = sngPanelWidth
     Width = sngPanelWidth
 End Property
+
+' Toggle visibility event fired.
+Private Sub picToggleVisibility_Click()
+    ToggleVisibility
+End Sub
