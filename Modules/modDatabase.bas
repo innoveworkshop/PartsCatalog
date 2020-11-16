@@ -337,6 +337,16 @@ Public Function LoadComponentDetail(lngID As Long, frmForm As Form) As Boolean
     Dim rs As ADODB.Recordset
     Dim stmt As SQLStatement
     
+    ' Check if the specified Form is the right one.
+    If frmForm.Name <> "frmComponent" Then
+        MsgBox "Specified form to have component loaded is not correct. Expected " & _
+            "'frmComponent' got '" & frmForm.Name & "'.", vbOKOnly + vbCritical, _
+            "Programming Error"
+        
+        LoadComponentDetail = False
+        Exit Function
+    End If
+    
     ' Initialize the objects.
     Set rs = New ADODB.Recordset
     Set stmt = New SQLStatement
