@@ -1,4 +1,4 @@
-# Parts Catalogger
+# Parts Catalog
 
 A simple application to browse through your parts bins, inside your computer.
 
