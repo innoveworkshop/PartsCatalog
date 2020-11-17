@@ -32,6 +32,11 @@ Public Sub SetDatabasePath(strPath As String)
     m_strWorkspacePath = Left(strPath, InStrRev(strPath, "\"))
 End Sub
 
+' Gets the database path.
+Public Function GetDatabasePath() As String
+    GetDatabasePath = m_strDatabasePath
+End Function
+
 ' Gets the workspace path.
 Public Function GetWorkspacePath() As String
     GetWorkspacePath = m_strWorkspacePath

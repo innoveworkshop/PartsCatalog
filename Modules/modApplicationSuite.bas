@@ -31,5 +31,5 @@ Public Sub OpenOrderImporter()
     End If
     
     ' Fire up the application.
-    RunExecutable frmMain.hWnd, strExePath
+    RunExecutable frmMain.hWnd, strExePath, GetDatabasePath
 End Sub
