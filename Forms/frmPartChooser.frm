@@ -15,12 +15,13 @@ Begin VB.Form frmPartChooser
    ShowInTaskbar   =   0   'False
    Begin VB.PictureBox picToggleVisibility 
       Appearance      =   0  'Flat
-      BackColor       =   &H80000005&
+      BackColor       =   &H80000004&
+      BorderStyle     =   0  'None
       ForeColor       =   &H80000008&
       Height          =   255
       Left            =   3840
-      ScaleHeight     =   225
-      ScaleWidth      =   225
+      ScaleHeight     =   255
+      ScaleWidth      =   255
       TabIndex        =   6
       Top             =   0
       Width           =   255
