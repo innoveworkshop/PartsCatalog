@@ -371,7 +371,8 @@ Public Function LoadComponentDetail(lngID As Long, frmForm As Form) As Boolean
     Dim stmt As SQLStatement
     
     ' Check if the specified Form is the right one.
-    If frmForm.Name <> "frmComponent" Then
+    If (frmForm.Name <> "frmComponent") And _
+            (frmForm.Name <> "frmDuplicateComponent") Then
         MsgBox "Specified form to have component loaded is not correct. Expected " & _
             "'frmComponent' got '" & frmForm.Name & "'.", vbOKOnly + vbCritical, _
             "Programming Error"
