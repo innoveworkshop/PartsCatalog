@@ -88,7 +88,7 @@ Public Function SaveComponent(lngID As Long, strName As String, strQuantity As S
     
     ' Add parameters.
     stmt.Parameter("Name") = strName
-    stmt.Parameter("Quantity") = strQuantity
+    stmt.Parameter("Quantity") = CLng(strQuantity)
     stmt.Parameter("Notes") = strNotes
     stmt.Parameter("CategoryID") = lngCategoryID
     stmt.Parameter("SubCategoryID") = lngSubCategoryID
@@ -120,6 +120,27 @@ Public Function SaveComponent(lngID As Long, strName As String, strQuantity As S
     
     ' Close the connection.
     CloseConnection
+End Function
+
+' Updates a component quantity.
+Public Function UpdateComponentQuantity(lngID As Long, lngQuantity As Long) As Long
+    Dim stmt As SQLStatement
+    
+    ' Open the database.
+    OpenConnection
+    
+    ' Setup the statement.
+    Set stmt = New SQLStatement
+    stmt.Create "UPDATE Components SET Quantity = [Quantity] WHERE ID = [ID]"
+    stmt.Parameter("ID") = lngID
+    stmt.Parameter("Quantity") = lngQuantity
+    
+    ' Execute the operation.
+    m_adoConnection.Execute stmt.Statement
+    
+    ' Close the connection.
+    CloseConnection
+    UpdateComponentQuantity = lngID
 End Function
 
 ' Deletes a component from the database.
