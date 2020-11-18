@@ -337,6 +337,34 @@ Public Sub DeletePackage(lngID As Long)
     CloseConnection
 End Sub
 
+' Searches for a componeny by name and return its ID if there is one. -1 otherwise.
+Public Function FindExistingComponent(strName As String) As Long
+    Dim rs As ADODB.Recordset
+    Dim stmt As SQLStatement
+    
+    ' Initialize the objects.
+    Set rs = New ADODB.Recordset
+    Set stmt = New SQLStatement
+    
+    ' Open the database and query it.
+    OpenConnection
+    stmt.Create "SELECT ID FROM Components WHERE Name = [Name]"
+    stmt.Parameter("Name") = strName
+    rs.Open stmt.Statement, m_adoConnection, adOpenForwardOnly, adLockReadOnly
+    
+    ' Return the component ID if found.
+    If Not rs.EOF Then
+        FindExistingComponent = rs.Fields("ID")
+    Else
+        FindExistingComponent = -1
+    End If
+    
+    ' Close recordset and connection.
+    rs.Close
+    Set rs = Nothing
+    CloseConnection
+End Function
+
 ' Loads a component by its ID and populates a form.
 Public Function LoadComponentDetail(lngID As Long, frmForm As Form) As Boolean
     Dim rs As ADODB.Recordset
