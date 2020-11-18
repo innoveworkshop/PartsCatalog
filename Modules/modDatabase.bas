@@ -76,13 +76,13 @@ Public Function SaveComponent(lngID As Long, strName As String, strQuantity As S
     If lngID = -1 Then
         ' Create the component.
         stmt.Create "INSERT INTO Components (Name, Quantity, Notes, CategoryID, " & _
-            "SubCategoryID, PackageID, Properties) VALUES ('[Name]', [Quantity], " & _
-            "'[Notes]', [CategoryID], [SubCategoryID], [PackageID], '[Properties]')"
+            "SubCategoryID, PackageID, Properties) VALUES ([Name], [Quantity], " & _
+            "[Notes], [CategoryID], [SubCategoryID], [PackageID], [Properties])"
     Else
         ' Update an existing component.
-        stmt.Create "UPDATE Components SET Name = '[Name]', Quantity = [Quantity], " & _
-            "Notes = '[Notes]', CategoryID = [CategoryID], SubCategoryID = [SubCategoryID], " & _
-            "PackageID = [PackageID], Properties = '[Properties]' WHERE ID = [ID]"
+        stmt.Create "UPDATE Components SET Name = [Name], Quantity = [Quantity], " & _
+            "Notes = [Notes], CategoryID = [CategoryID], SubCategoryID = [SubCategoryID], " & _
+            "PackageID = [PackageID], Properties = [Properties] WHERE ID = [ID]"
         stmt.Parameter("ID") = lngID
     End If
     
@@ -177,10 +177,10 @@ Public Function SaveCategory(lngID As Long, strName As String) As Long
     Set stmt = New SQLStatement
     If lngID = -1 Then
         ' Create the category.
-        stmt.Create "INSERT INTO Categories (Name) VALUES ('[Name]')"
+        stmt.Create "INSERT INTO Categories (Name) VALUES ([Name])"
     Else
         ' Update an existing category.
-        stmt.Create "UPDATE Categories SET Name = '[Name]' WHERE ID = [ID]"
+        stmt.Create "UPDATE Categories SET Name = [Name] WHERE ID = [ID]"
         stmt.Parameter("ID") = lngID
     End If
     
@@ -240,11 +240,11 @@ Public Function SaveSubCategory(lngID As Long, lngCategoryID, strName As String)
     Set stmt = New SQLStatement
     If lngID = -1 Then
         ' Create the sub-category.
-        stmt.Create "INSERT INTO SubCategories (Name, ParentID) VALUES ('[Name]', " & _
-            "'[ParentID]')"
+        stmt.Create "INSERT INTO SubCategories (Name, ParentID) VALUES ([Name], " & _
+            "[ParentID])"
     Else
         ' Update an existing sub-category.
-        stmt.Create "UPDATE SubCategories SET Name = '[Name]', ParentID = '[ParentID]' " & _
+        stmt.Create "UPDATE SubCategories SET Name = [Name], ParentID = [ParentID] " & _
             "WHERE ID = [ID]"
         stmt.Parameter("ID") = lngID
     End If
@@ -306,10 +306,10 @@ Public Function SavePackage(lngID As Long, strName As String) As Long
     Set stmt = New SQLStatement
     If lngID = -1 Then
         ' Create the package.
-        stmt.Create "INSERT INTO Packages (Name) VALUES ('[Name]')"
+        stmt.Create "INSERT INTO Packages (Name) VALUES ([Name])"
     Else
         ' Update an existing package.
-        stmt.Create "UPDATE Packages SET Name = '[Name]' WHERE ID = [ID]"
+        stmt.Create "UPDATE Packages SET Name = [Name] WHERE ID = [ID]"
         stmt.Parameter("ID") = lngID
     End If
     
