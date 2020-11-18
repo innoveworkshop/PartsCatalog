@@ -34,7 +34,7 @@ Private Function SanitizeInput(varInput As Variant) As Variant
         Exit Function
     End If
     
-    SanitizeInput = Replace(varInput, "'", "''")
+    SanitizeInput = "'" & Replace(varInput, "'", "''") & "'"
 End Function
 
 ' Statement string getter.
