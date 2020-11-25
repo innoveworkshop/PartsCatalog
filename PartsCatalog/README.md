@@ -2,7 +2,7 @@
 
 A simple application to browse through your parts bins, inside your computer.
 
-![Screenshot](/Screenshots/2020-11-17.png)
+![Screenshot](/Screenshots/PartsCatalog/2020-11-17.png)
 
 
 ## Building

@@ -3,7 +3,7 @@
 The easiest way to import a whole distributor order into a
 [PartsCatalog](https://github.com/innoveworkshop/PartsCatalog) database.
 
-![Screenshot](/Screenshots/2020-11-18.png)
+![Screenshot](/Screenshots/OrderImporter/2020-11-18.png)
 
 ## Supported Distributors
 
