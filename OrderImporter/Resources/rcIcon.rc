@@ -1,0 +1,7 @@
+/// rcIcon.rc
+/// Resource script to set the application icon in modern environments.
+///
+/// @author Nathan Campos <nathan@innoveworkshop.com>
+
+// Icon for the application.
+AAA_APPICON		ICON	MOVEABLE	PRELOAD		"..\Icons\Windows\package.ico"
