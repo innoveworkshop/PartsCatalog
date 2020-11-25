@@ -1,18 +1,21 @@
 # Parts Catalog
 
-A collection of applications to browse through your components, import orders,
-and manage your parts bins.
+A simple application to browse through your parts bins, inside your computer.
 
-For more information on each component of this project, please check the README
-files inside each of the sub-folders of this repository. There you'll get all
-the information about each of the subprojects that make this application
-possible, including some nice **screenshots**.
+![Screenshot](/Screenshots/2020-11-17.png)
 
 
 ## Building
 
-I'm still working on a [NMake](https://docs.microsoft.com/en-us/cpp/build/reference/nmake-reference?view=msvc-160)
-script to automate the build process of the whole project.
+If you want to build this program or contribute to it make sure that you have
+the appropriate environment set up. You'll need a copy of Visual Basic 6.0,
+which you can eaily download from [WinWorld](https://winworldpc.com/product/microsoft-visual-stu/60),
+if you plan on installing it under any modern version of Windows, make sure to
+search for a tutorial first before you litter your system with old, unuseable,
+crap.
+
+If you want to have the complete project to play around with make sure to also
+download [OrderImporter](https://github.com/innoveworkshop/OrderImporter).
 
 
 ## Why Visual Basic 6?
