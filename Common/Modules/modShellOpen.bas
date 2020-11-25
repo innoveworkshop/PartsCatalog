@@ -30,3 +30,8 @@ Public Sub RunExecutable(hwndParent As Long, strExePath As String, _
         Optional lngShowCmd As Long = SW_SHOWNORMAL)
     ShellExecute hwndParent, "open", strExePath, strParameters, strWorkingDir, lngShowCmd
 End Sub
+
+' Open a URL with the default browser.
+Public Function OpenURL(strURL As String) As Long
+    OpenURL = ShellExecute(0, "open", strURL, vbNullString, vbNullString, SW_SHOWNORMAL)
+End Function
