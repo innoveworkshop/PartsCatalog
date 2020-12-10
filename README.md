@@ -9,6 +9,16 @@ the information about each of the subprojects that make this application
 possible, including some nice **screenshots**.
 
 
+## Database
+
+This program uses an Access 2000 database to store its data and a database
+template can be found under the `Database/` folder. The reason to use such an
+ancient and crappy database is simply because I wanted this program to be
+compatible with old versions of Windows and most importantly be able to be
+synced with Windows CE, and for that the only viable database option was Access
+2000.
+
+
 ## Building
 
 I'm still working on a [NMake](https://docs.microsoft.com/en-us/cpp/build/reference/nmake-reference?view=msvc-160)
