@@ -426,6 +426,45 @@ Public Function LoadComponentDetail(lngID As Long, frmForm As Form) As Boolean
     CloseConnection
 End Function
 
+' Load properties into a MSFlexGrid.
+Public Sub LoadProperties(lngComponentID As Long, grdGrid As MSFlexGrid, _
+        Optional blnCloseExit As Boolean = True)
+    Dim rs As ADODB.Recordset
+    Dim stmt As SQLStatement
+    
+    ' Initialize the objects.
+    Set rs = New ADODB.Recordset
+    Set stmt = New SQLStatement
+    
+    ' Clear the grid.
+    grdGrid.Rows = 2
+    grdGrid.RowData(1) = -1
+    grdGrid.TextMatrix(1, 0) = ""
+    grdGrid.TextMatrix(1, 1) = ""
+    
+    ' Open the database and query it.
+    OpenConnection
+    stmt.Create "SELECT ID, Name, Value FROM Properties WHERE " & _
+        "ComponentID = [ComponentID] ORDER BY Name ASC"
+    stmt.Parameter("ComponentID") = lngComponentID
+    rs.Open stmt.Statement, m_adoConnection, adOpenForwardOnly, adLockReadOnly
+    
+    ' Populate list.
+    grdGrid.Rows = 1
+    Do While Not rs.EOF
+        grdGrid.AddItem rs.Fields("Name") & vbTab & rs.Fields("Value")
+        grdGrid.RowData(grdGrid.Rows - 1) = rs.Fields("ID")
+        rs.MoveNext
+    Loop
+    
+    ' Close recordset and connection.
+    rs.Close
+    Set rs = Nothing
+    If blnCloseExit Then
+        CloseConnection
+    End If
+End Sub
+
 ' Load categories.
 Public Sub LoadCategories(lstBox As Variant, Optional blnCloseExit As Boolean = True)
     Dim rs As ADODB.Recordset

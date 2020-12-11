@@ -666,46 +666,11 @@ Public Sub PopulateFromRecordset(rs As ADODB.Recordset)
     SetStatusMessage "Loaded component packages"
     
     ' Populate the properties grid.
-    If Not IsNull(rs.Fields("Properties")) Then
-        PopulatePropertiesGrid rs.Fields("Properties")
-        SetStatusMessage "Loaded properties"
-    Else
-        grdProperties.Rows = 2
-        grdProperties.TextMatrix(1, 0) = ""
-        grdProperties.TextMatrix(1, 1) = ""
-        SetStatusMessage "No component properties to load"
-    End If
-    
+    LoadProperties ComponentID, grdProperties, False
+    SetStatusMessage "Loaded component properties"
+
     ' Update controls.
     UpdateEnabledControls
-End Sub
-
-' Populates the properties grid.
-Public Sub PopulatePropertiesGrid(strProperties As String)
-    Dim astrProperties() As String
-    Dim astrKeyValue() As String
-    
-    ' Split the properties and preparate the grid for the properties.
-    astrProperties = Split(strProperties, vbTab)
-    If UBound(astrProperties) = 0 Then
-        grdProperties.Rows = UBound(astrProperties) + 2
-    Else
-        grdProperties.Rows = UBound(astrProperties) + 3
-    End If
-    
-    ' Populate the properties.
-    Dim intIndex As Integer
-    For intIndex = 0 To UBound(astrProperties)
-        ' Check if the property is populated.
-        If astrProperties(intIndex) <> "" Then
-            astrKeyValue = Split(astrProperties(intIndex), ": ")
-            grdProperties.TextMatrix(intIndex + 1, 0) = astrKeyValue(0)
-            grdProperties.TextMatrix(intIndex + 1, 1) = astrKeyValue(1)
-        Else
-            grdProperties.TextMatrix(1, 0) = ""
-            grdProperties.TextMatrix(1, 1) = ""
-        End If
-    Next intIndex
 End Sub
 
 ' Encodes the properties grid into a string to be stored in the database.
