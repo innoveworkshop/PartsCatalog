@@ -74,13 +74,15 @@ Attribute VB_Exposed = False
 Option Explicit
 
 ' Private variables.
+Private m_lngID As Long
 Private m_strName As String
 Private m_strValue As String
-Private m_blnSave As Boolean
+Private m_blnChanged As Boolean
 
 ' Shows the dialog as a new property.
 Public Sub ShowNew()
     ' Setup values and controls.
+    ID = -1
     Key = ""
     Value = ""
     Me.Caption = "New Property"
@@ -91,16 +93,26 @@ Public Sub ShowNew()
 End Sub
 
 ' Shows the dialog as a property editor.
-Public Sub ShowEditor(strName As String, strValue As String)
-    ' Setup values and controls.
-    Key = strName
-    Value = strValue
+Public Sub ShowEditor(lngID As Long)
+    ' Setup controls.
+    ID = lngID
     Me.Caption = "Edit Property"
     OKButton.Caption = "Save"
     
-    ' Show the modal dialog.
+    ' Populate the dialog and display as modal.
+    LoadProperty ID, txtName, txtValue
     Show vbModal
 End Sub
+
+' Property ID getter.
+Public Property Get ID() As Long
+    ID = m_lngID
+End Property
+
+' Property ID setter.
+Public Property Let ID(lngID As Long)
+    m_lngID = lngID
+End Property
 
 ' Property name getter.
 Public Property Get Key() As String
@@ -125,31 +137,35 @@ Public Property Let Value(strValue As String)
 End Property
 
 ' Should we save the property?
-Public Property Get Save() As Boolean
-    Save = m_blnSave
+Public Property Get Changed() As Boolean
+    Changed = m_blnChanged
 End Property
 
 ' Set the save property flag.
-Private Property Let Save(blnSave As Boolean)
-    m_blnSave = blnSave
+Private Property Let Changed(blnChanged As Boolean)
+    m_blnChanged = blnChanged
 End Property
 
 ' Cancel button just got clicked.
 Private Sub CancelButton_Click()
-    Save = False
+    Changed = False
     Unload Me
 End Sub
 
 ' Dialog just loaded.
 Private Sub Form_Load()
-    Save = False
+    Changed = False
 End Sub
 
-' Save button got clicked.
+' Changed button got clicked.
 Private Sub OKButton_Click()
+    ' Set the name and value.
     Key = txtName.Text
     Value = txtValue.Text
     
-    Save = True
+    ' TODO: Get ID if new Property.
+    
+    ' Set the changed flag and exit.
+    Changed = True
     Unload Me
 End Sub

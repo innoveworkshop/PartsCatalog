@@ -931,29 +931,19 @@ Private Sub grdProperties_DblClick()
     CentralizeFormInMDIChild dlgProperty, frmMain, Me
 
     ' Determine if we are editing or adding a property.
-    If grdProperties.Row = grdProperties.Rows - 1 Then
+    If grdProperties.RowData(grdProperties.Row) = -1 Then
         ' Empty row clicked. Let's add a new entry.
         dlgProperty.ShowNew
     Else
         ' Edit an existing property.
-        dlgProperty.ShowEditor grdProperties.TextMatrix(grdProperties.Row, 0), _
-            grdProperties.TextMatrix(grdProperties.Row, 1)
+        dlgProperty.ShowEditor grdProperties.RowData(grdProperties.Row)
     End If
     
-    ' Should we save the property?
-    If dlgProperty.Save Then
-        ' Edit the current row.
-        grdProperties.TextMatrix(grdProperties.Row, 0) = dlgProperty.Key
-        grdProperties.TextMatrix(grdProperties.Row, 1) = dlgProperty.Value
-        
-        ' Add a new row in case we added a property.
-        If grdProperties.Row = grdProperties.Rows - 1 Then
-            grdProperties.Rows = grdProperties.Rows + 1
-        End If
-        
-        ' Set status and dirtiness.
+    ' Did anything change in the property?
+    If dlgProperty.Changed Then
+        ' Reload the properties and change the status message.
+        LoadProperties ComponentID, grdProperties
         SetStatusMessage dlgProperty.Key & " property edited"
-        Dirty = True
     End If
     
     Set dlgProperty = Nothing

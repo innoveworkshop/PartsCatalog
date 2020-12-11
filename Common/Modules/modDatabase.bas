@@ -457,6 +457,51 @@ Public Sub LoadProperties(lngComponentID As Long, grdGrid As MSFlexGrid, _
         rs.MoveNext
     Loop
     
+    ' Add empty row.
+    grdGrid.AddItem "" & vbTab & ""
+    grdGrid.RowData(grdGrid.Rows - 1) = -1
+
+    ' Close recordset and connection.
+    rs.Close
+    Set rs = Nothing
+    If blnCloseExit Then
+        CloseConnection
+    End If
+End Sub
+
+' Loads a property into a pair of TextBoxes.
+Public Sub LoadProperty(lngPropertyID As Long, txtName As TextBox, _
+        txtValue As TextBox, Optional blnCloseExit As Boolean = True)
+    Dim rs As ADODB.Recordset
+    Dim stmt As SQLStatement
+    
+    ' Initialize the objects.
+    Set rs = New ADODB.Recordset
+    Set stmt = New SQLStatement
+    
+    ' Clear the text boxes.
+    txtName.Text = ""
+    txtValue.Text = ""
+    
+    ' Open the database and query it.
+    OpenConnection
+    stmt.Create "SELECT ID, Name, Value FROM Properties WHERE " & _
+        "ID = [ID] ORDER BY Name ASC"
+    stmt.Parameter("ID") = lngPropertyID
+    rs.Open stmt.Statement, m_adoConnection, adOpenForwardOnly, adLockReadOnly
+    
+    ' Check if the property ID was valid.
+    If rs.EOF Then
+        MsgBox "There isn't a property with the ID of " & lngPropertyID, _
+            vbOKOnly + vbCritical, "Invalid Property ID"
+        GoTo Finish
+    End If
+    
+    ' Populate the text boxes.
+    txtName.Text = rs.Fields("Name")
+    txtValue.Text = rs.Fields("Value")
+
+Finish:
     ' Close recordset and connection.
     rs.Close
     Set rs = Nothing
