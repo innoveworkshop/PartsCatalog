@@ -166,6 +166,58 @@ Public Sub DeleteComponent(lngID As Long, Optional strName As String = vbNullStr
     End If
 End Sub
 
+' Saves/creates a property to the database. For property creation lngID should be -1.
+Public Function SaveProperty(lngID As Long, strName As String, strValue As String, _
+        lngComponentID As Long) As Long
+    Dim stmt As SQLStatement
+    
+    ' Open the database.
+    OpenConnection
+    
+    ' Setup the statement.
+    Set stmt = New SQLStatement
+    If lngID = -1 Then
+        ' Create the category.
+        stmt.Create "INSERT INTO Properties ([Name], [Value], ComponentID) VALUES " & _
+            "([_Name], [_Value], [ComponentID])"
+    Else
+        ' Update an existing category.
+        stmt.Create "UPDATE Properties SET [Name] = [_Name], [Value] = [_Value], " & _
+            "ComponentID = [ComponentID] WHERE [ID] = [_ID]"
+        stmt.Parameter("_ID") = lngID
+    End If
+    
+    ' Add parameters and execute the operation.
+    stmt.Parameter("_Name") = strName
+    stmt.Parameter("_Value") = strValue
+    stmt.Parameter("ComponentID") = lngComponentID
+    Debug.Print stmt.Statement
+    m_adoConnection.Execute stmt.Statement
+    
+    ' Get the property ID.
+    If lngID = -1 Then
+        Dim rs As ADODB.Recordset
+        Set rs = New ADODB.Recordset
+        
+        ' Get the newly added property ID.
+        Set rs = m_adoConnection.Execute("SELECT @@IDENTITY FROM Properties")
+        If Not rs.EOF Then
+            SaveProperty = rs(0)
+        Else
+            SaveProperty = -1
+        End If
+        
+        ' Clean up recordset.
+        rs.Close
+        Set rs = Nothing
+    Else
+        SaveProperty = lngID
+    End If
+    
+    ' Close the connection.
+    CloseConnection
+End Function
+
 ' Saves/creates a category to the database. For category creation lngID should be -1.
 Public Function SaveCategory(lngID As Long, strName As String) As Long
     Dim stmt As SQLStatement

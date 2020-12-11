@@ -933,10 +933,10 @@ Private Sub grdProperties_DblClick()
     ' Determine if we are editing or adding a property.
     If grdProperties.RowData(grdProperties.Row) = -1 Then
         ' Empty row clicked. Let's add a new entry.
-        dlgProperty.ShowNew
+        dlgProperty.ShowNew ComponentID
     Else
         ' Edit an existing property.
-        dlgProperty.ShowEditor grdProperties.RowData(grdProperties.Row)
+        dlgProperty.ShowEditor ComponentID, grdProperties.RowData(grdProperties.Row)
     End If
     
     ' Did anything change in the property?

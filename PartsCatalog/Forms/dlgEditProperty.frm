@@ -77,12 +77,14 @@ Option Explicit
 Private m_lngID As Long
 Private m_strName As String
 Private m_strValue As String
+Private m_lngComponentID As Long
 Private m_blnChanged As Boolean
 
 ' Shows the dialog as a new property.
-Public Sub ShowNew()
+Public Sub ShowNew(lngComponentID As Long)
     ' Setup values and controls.
     ID = -1
+    ComponentID = lngComponentID
     Key = ""
     Value = ""
     Me.Caption = "New Property"
@@ -93,9 +95,12 @@ Public Sub ShowNew()
 End Sub
 
 ' Shows the dialog as a property editor.
-Public Sub ShowEditor(lngID As Long)
-    ' Setup controls.
+Public Sub ShowEditor(lngComponentID As Long, lngID As Long)
+    ' Store IDs.
     ID = lngID
+    ComponentID = lngComponentID
+    
+    ' Setup controls.
     Me.Caption = "Edit Property"
     OKButton.Caption = "Save"
     
@@ -136,6 +141,16 @@ Public Property Let Value(strValue As String)
     txtValue.Text = strValue
 End Property
 
+' Component ID getter.
+Public Property Get ComponentID() As Long
+    ComponentID = m_lngComponentID
+End Property
+
+' Component ID setter.
+Public Property Let ComponentID(lngComponentID As Long)
+    m_lngComponentID = lngComponentID
+End Property
+
 ' Should we save the property?
 Public Property Get Changed() As Boolean
     Changed = m_blnChanged
@@ -163,7 +178,8 @@ Private Sub OKButton_Click()
     Key = txtName.Text
     Value = txtValue.Text
     
-    ' TODO: Get ID if new Property.
+    ' Save the edited property to the database.
+    ID = SaveProperty(ID, Key, Value, ComponentID)
     
     ' Set the changed flag and exit.
     Changed = True
