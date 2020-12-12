@@ -610,6 +610,12 @@ End Sub
 Private Sub CreateProperty()
     Dim dlgProperty As dlgEditProperty
     
+    ' Check if it's a new component.
+    If IsNewComponent Then
+        MsgBox "Before adding a new property you must save the component.", _
+            vbOKOnly + vbExclamation, "Property Creation"
+    End If
+    
     ' Initialize the dialog and show it as a new property.
     Set dlgProperty = New dlgEditProperty
     CentralizeFormInMDIChild dlgProperty, frmMain, Me
@@ -628,6 +634,12 @@ End Sub
 ' Edits the selected property. Will create a new one if the RowData is -1.
 Private Sub EditProperty()
     Dim dlgProperty As dlgEditProperty
+    
+    ' Check if it's a new component.
+    If IsNewComponent Then
+        MsgBox "Before editing this property you must save the component.", _
+            vbOKOnly + vbExclamation, "Property Edit"
+    End If
     
     ' Initialize the dialog.
     Set dlgProperty = New dlgEditProperty
@@ -657,17 +669,19 @@ Private Sub DeleteSelectedProperty()
     Dim intResponse As Integer
     Dim strName As String
     
-    ' Check if the user actually wants to do this.
-    strName = grdProperties.TextMatrix(grdProperties.Row, 0)
-    intResponse = MsgBox("Are you sure you want to delete the property '" & _
-        strName & "'?", vbYesNo + vbQuestion, "Delete Component Property")
-    If (intResponse = vbYes) And (grdProperties.RowData(grdProperties.Row) > -1) Then
-        DeleteProperty grdProperties.RowData(grdProperties.Row)
-        SetStatusMessage "Property '" & strName & "' deleted"
-    End If
+    If grdProperties.RowData(grdProperties.Row) > -1 Then
+        ' Check if the user actually wants to do this.
+        strName = grdProperties.TextMatrix(grdProperties.Row, 0)
+        intResponse = MsgBox("Are you sure you want to delete the property '" & _
+            strName & "'?", vbYesNo + vbQuestion, "Delete Component Property")
+        If intResponse = vbYes Then
+            DeleteProperty grdProperties.RowData(grdProperties.Row)
+            SetStatusMessage "Property '" & strName & "' deleted"
+        End If
     
-    ' Reload the properties.
-    LoadProperties ComponentID, grdProperties
+        ' Reload the properties.
+        LoadProperties ComponentID, grdProperties
+    End If
 End Sub
 
 ' Saves the associated component.
@@ -702,13 +716,10 @@ Public Sub Save()
         lngPackageID = -1
     End If
     
-    ' Save component and refresh the lists.
+    ' Save the component, refresh the lists, and set dirtiness.
     ComponentID = SaveComponent(ComponentID, txtName.Text, txtQuantity.Text, _
-        txtNotes.Text, lngCategoryID, lngSubCategoryID, lngPackageID, _
-        ComponentTabbedGridProperties(grdProperties))
+        txtNotes.Text, lngCategoryID, lngSubCategoryID, lngPackageID)
     frmPartChooser.RefreshLists
-    
-    ' Set dirtiness.
     Dirty = False
     
     ' Check if we are renaming and make sure to propagate this to the
@@ -719,7 +730,8 @@ Public Sub Save()
     End If
     m_strOriginalName = txtName.Text
     
-    ' Update status bar and the tool bar.
+    ' Update status bar, tool bar, and properties grid.
+    LoadProperties ComponentID, grdProperties
     SetStatusMessage "Component saved"
     UpdateEnabledControls
 End Sub
@@ -782,11 +794,6 @@ Public Sub PopulateFromRecordset(rs As ADODB.Recordset)
     ' Update controls.
     UpdateEnabledControls
 End Sub
-
-' Encodes the properties grid into a string to be stored in the database.
-Public Function EncodePropertiesGrid() As String
-    EncodePropertiesGrid = ""
-End Function
 
 ' Aborts the current operation if the user selects Cancel to unsaved changes.
 Public Function AbortUnsavedChanges() As Boolean
