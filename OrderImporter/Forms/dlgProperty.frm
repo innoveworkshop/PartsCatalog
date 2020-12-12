@@ -6,6 +6,7 @@ Begin VB.Form dlgProperty
    ClientLeft      =   2760
    ClientTop       =   3750
    ClientWidth     =   3015
+   Icon            =   "dlgProperty.frx":0000
    LinkTopic       =   "Form1"
    MaxButton       =   0   'False
    MinButton       =   0   'False
@@ -14,9 +15,9 @@ Begin VB.Form dlgProperty
    ShowInTaskbar   =   0   'False
    Begin VB.ComboBox cmbName 
       Height          =   315
-      ItemData        =   "dlgProperty.frx":0000
+      ItemData        =   "dlgProperty.frx":6852
       Left            =   120
-      List            =   "dlgProperty.frx":000D
+      List            =   "dlgProperty.frx":685F
       TabIndex        =   1
       Top             =   360
       Width           =   2775
