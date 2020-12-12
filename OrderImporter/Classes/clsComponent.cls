@@ -22,7 +22,7 @@ Private m_strName As String
 Private m_lngQuantity As Long
 Private m_strNotes As String
 Private m_strDatasheet As String
-Private m_astrProperties() As String
+Private m_aProperties() As ComponentProperty
 Private m_intCategoryID As Integer
 Private m_intSubCategoryID As Integer
 Private m_intPackageID As Integer
@@ -40,7 +40,13 @@ End Sub
 
 ' Initializes the properties array.
 Public Sub InitializeProperties(intSize As Integer)
-    ReDim m_astrProperties(intSize)
+    Dim intIndex As Integer
+    ReDim m_aProperties(intSize)
+    
+    ' Initialize the array with new properties.
+    For intIndex = 0 To UBound(m_aProperties)
+        Set m_aProperties(intIndex) = New ComponentProperty
+    Next intIndex
 End Sub
 
 ' Export the component to the database and download the datasheet.
@@ -55,7 +61,16 @@ Public Sub Export()
     
     ' Save the component to the database.
     PartID = SaveComponent(PartID, Name, CStr(Quantity), Notes, CategoryID, _
-        SubCategoryID, PackageID, PropertiesAsString)
+        SubCategoryID, PackageID)
+    
+    ' Save component properties to the database.
+    If Not m_aProperties(0).IsEmpty Then
+        Dim intIndex As Integer
+        For intIndex = 0 To UBound(m_aProperties)
+            m_aProperties(intIndex).ComponentID = PartID
+            m_aProperties(intIndex).Save
+        Next intIndex
+    End If
     
     ' Download datasheet.
     If Datasheet <> "" Then
@@ -73,24 +88,26 @@ End Sub
 
 ' Adds a property to the array.
 Public Sub AddProperty(strKey As String, strValue As String)
-    If (UBound(m_astrProperties) > 0) Or (m_astrProperties(0) <> "") Then
-        ReDim Preserve m_astrProperties(UBound(m_astrProperties) + 1)
+    If (UBound(m_aProperties) > 0) Or (Not m_aProperties(0).IsEmpty) Then
+        ReDim Preserve m_aProperties(UBound(m_aProperties) + 1)
     End If
     
-    m_astrProperties(UBound(m_astrProperties)) = strKey & ": " & strValue
+    Set m_aProperties(UBound(m_aProperties)) = New ComponentProperty
+    m_aProperties(UBound(m_aProperties)).Key = strKey
+    m_aProperties(UBound(m_aProperties)).Value = strValue
+    m_aProperties(UBound(m_aProperties)).ComponentID = PartID
 End Sub
 
 ' Edit a property from the array.
 Public Sub EditProperty(strKey As String, strValue As String)
     Dim intIndex As Integer
-    Dim strProperty As String
     
     ' Go through the properties looking for the specified key.
-    For intIndex = 0 To UBound(m_astrProperties)
-        strProperty = m_astrProperties(intIndex)
-        
-        If InStr(strProperty, strKey & ":") Then
-            m_astrProperties(intIndex) = strKey & ": " & strValue
+    For intIndex = 0 To UBound(m_aProperties)
+        If InStr(m_aProperties(intIndex).Key, strKey) Then
+            m_aProperties(intIndex).Key = strKey
+            m_aProperties(intIndex).Value = strValue
+            m_aProperties(intIndex).ComponentID = PartID
             Exit Sub
         End If
     Next intIndex
@@ -107,17 +124,18 @@ Public Sub DeleteProperty(strKey As String)
     Dim intOffset As Integer
     
     ' Check if we are deleting the last available property.
-    If UBound(m_astrProperties) = 0 Then
-        ReDim m_astrProperties(0)
+    If UBound(m_aProperties) = 0 Then
+        ReDim m_aProperties(0)
+        Set m_aProperties(0) = New ComponentProperty
         Exit Sub
     End If
     
     ' Populate the buffer array.
     intOffset = 0
-    ReDim astrBuffer(UBound(m_astrProperties) - 1)
-    For intIndex = 0 To UBound(m_astrProperties)
+    ReDim apropBuffer(UBound(m_aProperties) - 1)
+    For intIndex = 0 To UBound(m_aProperties)
         ' Check if we should delete the property.
-        If InStr(m_astrProperties(intIndex), strKey & ":") Then
+        If InStr(m_aProperties(intIndex).Key, strKey) Then
             ' Add offset to the index.
             intOffset = -1
         Else
@@ -126,77 +144,43 @@ Public Sub DeleteProperty(strKey As String)
             End If
             
             ' Copy a non-deleted property
-            astrBuffer(intIndex + intOffset) = m_astrProperties(intIndex)
+            Set apropBuffer(intIndex + intOffset) = m_aProperties(intIndex)
         End If
     Next intIndex
     
     ' Copy the buffer to the actual properties array.
-    ReDim m_astrProperties(UBound(astrBuffer))
-    For intIndex = 0 To UBound(m_astrProperties)
-        m_astrProperties(intIndex) = astrBuffer(intIndex)
+    ReDim m_aProperties(UBound(apropBuffer))
+    For intIndex = 0 To UBound(m_aProperties)
+        Set m_aProperties(intIndex) = apropBuffer(intIndex)
     Next intIndex
 End Sub
 
 ' Removes invalid properties from the properties array.
 Public Sub RemoveInvalidProperties()
-    Dim astrTemp() As String
+    Dim apropTemp() As ComponentProperty
     Dim intCountValid As Integer
     Dim intIndex As Integer
     
     ' Count valid properties.
     intCountValid = 0
-    For intIndex = 0 To UBound(m_astrProperties)
-        If IsPropertyLineValid(m_astrProperties(intIndex)) Then
+    For intIndex = 0 To UBound(m_aProperties)
+        If m_aProperties(intIndex).IsValid Then
             intCountValid = intCountValid + 1
         End If
     Next intIndex
     
     ' Go through adding valid items to the array.
-    astrTemp = m_astrProperties
-    ReDim m_astrProperties(intCountValid - 1)
+    apropTemp = m_aProperties
+    ReDim m_aProperties(intCountValid - 1)
     Dim intNewIndex As Integer
     intNewIndex = 0
-    For intIndex = 0 To UBound(astrTemp)
-        If IsPropertyLineValid(astrTemp(intIndex)) Then
-            m_astrProperties(intNewIndex) = astrTemp(intIndex)
+    For intIndex = 0 To UBound(apropTemp)
+        If apropTemp(intIndex).IsValid Then
+            Set m_aProperties(intNewIndex) = apropTemp(intIndex)
             intNewIndex = intNewIndex + 1
         End If
     Next intIndex
 End Sub
-
-' Creates a database properties string.
-Private Function PropertiesAsString() As String
-    Dim strProperties As String
-    
-    ' Check if there are any properties to return.
-    If m_astrProperties(0) <> "" Then
-        Dim intIndex As Integer
-        
-        For intIndex = 0 To UBound(m_astrProperties)
-            ' Include the property separator.
-            If intIndex > 0 Then
-                strProperties = strProperties & vbTab
-            End If
-            
-            ' Append the property.
-            strProperties = strProperties & m_astrProperties(intIndex)
-        Next intIndex
-    End If
-    
-    PropertiesAsString = strProperties
-End Function
-
-' Checks if a property line is valid.
-Private Function IsPropertyLineValid(strLine As String) As Boolean
-    If InStr(strLine, ":") <> 0 Then
-        If Right(strLine, 1) <> "-" Then
-            IsPropertyLineValid = True
-            Exit Function
-        End If
-    End If
-    
-    IsPropertyLineValid = False
-End Function
 
 ' Removes invalid file characters from a string, making it filename-safe.
 Public Static Function RemoveInvalidFileCharacters(strName As String) As String
@@ -320,7 +304,7 @@ End Property
 
 ' Property getter.
 Public Property Get Property(intIndex As Integer) As String
-    Property = m_astrProperties(intIndex)
+    Property = m_aProperties(intIndex).LineFormat
 End Property
 
 ' Property setter.
@@ -330,7 +314,7 @@ Public Property Let Property(intIndex As Integer, strProperty As String)
     
     ' Looks like this will just be another invalid property...
     If UBound(astrProperty) < 1 Then
-        m_astrProperties(intIndex) = strProperty
+        Set m_aProperties(intIndex) = New ComponentProperty
         Exit Property
     End If
     
@@ -343,10 +327,12 @@ Public Property Let Property(intIndex As Integer, strProperty As String)
     astrProperty(0) = Replace(astrProperty(0), "%", "")
     astrProperty(0) = Replace(astrProperty(0), ".", "")
     
-    m_astrProperties(intIndex) = astrProperty(0) & ": " & astrProperty(1)
+    Set m_aProperties(intIndex) = New ComponentProperty
+    m_aProperties(intIndex).Key = astrProperty(0)
+    m_aProperties(intIndex).Value = astrProperty(1)
 End Property
 
 ' Properties getter.
-Public Property Get Properties() As String()
-    Properties = m_astrProperties
+Public Property Get Properties() As ComponentProperty()
+    Properties = m_aProperties
 End Property
