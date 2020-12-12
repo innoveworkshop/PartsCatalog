@@ -65,7 +65,7 @@ End Function
 ' Saves/creates a component to the database. For component creation lngID should be -1.
 Public Function SaveComponent(lngID As Long, strName As String, strQuantity As String, _
         strNotes As String, lngCategoryID As Long, lngSubCategoryID As Long, _
-        lngPackageID As Long, strProperties As String) As Long
+        lngPackageID As Long) As Long
     Dim stmt As SQLStatement
     
     ' Open the database.
@@ -76,13 +76,13 @@ Public Function SaveComponent(lngID As Long, strName As String, strQuantity As S
     If lngID = -1 Then
         ' Create the component.
         stmt.Create "INSERT INTO Components (Name, Quantity, Notes, CategoryID, " & _
-            "SubCategoryID, PackageID, Properties) VALUES ([Name], [Quantity], " & _
-            "[Notes], [CategoryID], [SubCategoryID], [PackageID], [Properties])"
+            "SubCategoryID, PackageID) VALUES ([Name], [Quantity], [Notes], " & _
+            "[CategoryID], [SubCategoryID], [PackageID])"
     Else
         ' Update an existing component.
         stmt.Create "UPDATE Components SET Name = [Name], Quantity = [Quantity], " & _
             "Notes = [Notes], CategoryID = [CategoryID], SubCategoryID = [SubCategoryID], " & _
-            "PackageID = [PackageID], Properties = [Properties] WHERE ID = [ID]"
+            "PackageID = [PackageID] WHERE ID = [ID]"
         stmt.Parameter("ID") = lngID
     End If
     
@@ -93,7 +93,6 @@ Public Function SaveComponent(lngID As Long, strName As String, strQuantity As S
     stmt.Parameter("CategoryID") = lngCategoryID
     stmt.Parameter("SubCategoryID") = lngSubCategoryID
     stmt.Parameter("PackageID") = lngPackageID
-    stmt.Parameter("Properties") = strProperties
     
     ' Execute the operation.
     m_adoConnection.Execute stmt.Statement
