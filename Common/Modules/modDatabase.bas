@@ -191,7 +191,6 @@ Public Function SaveProperty(lngID As Long, strName As String, strValue As Strin
     stmt.Parameter("_Name") = strName
     stmt.Parameter("_Value") = strValue
     stmt.Parameter("ComponentID") = lngComponentID
-    Debug.Print stmt.Statement
     m_adoConnection.Execute stmt.Statement
     
     ' Get the property ID.
@@ -217,6 +216,28 @@ Public Function SaveProperty(lngID As Long, strName As String, strValue As Strin
     ' Close the connection.
     CloseConnection
 End Function
+
+' Deletes a property from the database.
+Public Sub DeleteProperty(lngID As Long)
+    Dim stmt As SQLStatement
+    
+    ' Check if we've got an invalid property ID and ignore it.
+    If lngID = -1 Then
+        Exit Sub
+    End If
+    
+    ' Open the database.
+    OpenConnection
+    
+    ' Setup the statement.
+    Set stmt = New SQLStatement
+    stmt.Create "DELETE * FROM Properties Where ID = [ID]"
+    stmt.Parameter("ID") = lngID
+    
+    ' Execute the operation close the connection.
+    m_adoConnection.Execute stmt.Statement
+    CloseConnection
+End Sub
 
 ' Saves/creates a category to the database. For category creation lngID should be -1.
 Public Function SaveCategory(lngID As Long, strName As String) As Long
