@@ -43,7 +43,7 @@ Begin VB.Form frmComponent
       ImageList       =   "imlToolbar"
       _Version        =   393216
       BeginProperty Buttons {66833FE8-8583-11D1-B16A-00C0F0283628} 
-         NumButtons      =   11
+         NumButtons      =   15
          BeginProperty Button1 {66833FEA-8583-11D1-B16A-00C0F0283628} 
             Key             =   "Refresh"
             Object.ToolTipText     =   "Refresh"
@@ -87,10 +87,28 @@ Begin VB.Form frmComponent
             ImageIndex      =   8
          EndProperty
          BeginProperty Button10 {66833FEA-8583-11D1-B16A-00C0F0283628} 
+            Style           =   3
+         EndProperty
+         BeginProperty Button11 {66833FEA-8583-11D1-B16A-00C0F0283628} 
+            Key             =   "AddProperty"
+            Object.ToolTipText     =   "Add Property"
+            ImageIndex      =   9
+         EndProperty
+         BeginProperty Button12 {66833FEA-8583-11D1-B16A-00C0F0283628} 
+            Key             =   "EditProperty"
+            Object.ToolTipText     =   "Edit Property"
+            ImageIndex      =   10
+         EndProperty
+         BeginProperty Button13 {66833FEA-8583-11D1-B16A-00C0F0283628} 
+            Key             =   "DeleteProperty"
+            Object.ToolTipText     =   "Delete Property"
+            ImageIndex      =   11
+         EndProperty
+         BeginProperty Button14 {66833FEA-8583-11D1-B16A-00C0F0283628} 
             Key             =   "Spacer"
             Style           =   4
          EndProperty
-         BeginProperty Button11 {66833FEA-8583-11D1-B16A-00C0F0283628} 
+         BeginProperty Button15 {66833FEA-8583-11D1-B16A-00C0F0283628} 
             Key             =   "KeepOpen"
             Object.ToolTipText     =   "Maintain Window Opened"
             ImageIndex      =   5
@@ -127,7 +145,7 @@ Begin VB.Form frmComponent
       MaskColor       =   12632256
       _Version        =   393216
       BeginProperty Images {2C247F25-8591-11D1-B16A-00C0F0283628} 
-         NumListImages   =   8
+         NumListImages   =   11
          BeginProperty ListImage1 {2C247F27-8591-11D1-B16A-00C0F0283628} 
             Picture         =   "frmComponent.frx":6852
             Key             =   ""
@@ -158,6 +176,18 @@ Begin VB.Form frmComponent
          EndProperty
          BeginProperty ListImage8 {2C247F27-8591-11D1-B16A-00C0F0283628} 
             Picture         =   "frmComponent.frx":34300
+            Key             =   ""
+         EndProperty
+         BeginProperty ListImage9 {2C247F27-8591-11D1-B16A-00C0F0283628} 
+            Picture         =   "frmComponent.frx":3AB62
+            Key             =   ""
+         EndProperty
+         BeginProperty ListImage10 {2C247F27-8591-11D1-B16A-00C0F0283628} 
+            Picture         =   "frmComponent.frx":413C4
+            Key             =   ""
+         EndProperty
+         BeginProperty ListImage11 {2C247F27-8591-11D1-B16A-00C0F0283628} 
+            Picture         =   "frmComponent.frx":47C26
             Key             =   ""
          EndProperty
       EndProperty
@@ -354,6 +384,22 @@ Begin VB.Form frmComponent
       Begin VB.Menu mniDatasheetDownload 
          Caption         =   "Do&wnload..."
          Shortcut        =   {F3}
+      End
+   End
+   Begin VB.Menu mnuProperty 
+      Caption         =   "&Property"
+      Begin VB.Menu mniPropertyAdd 
+         Caption         =   "&Add..."
+         Shortcut        =   {F6}
+      End
+      Begin VB.Menu mniPropertyEdit 
+         Caption         =   "&Edit..."
+      End
+      Begin VB.Menu mniPropertySeparator1 
+         Caption         =   "-"
+      End
+      Begin VB.Menu mniPropertyDelete 
+         Caption         =   "&Delete"
       End
    End
    Begin VB.Menu mnuManage 
@@ -558,6 +604,70 @@ Private Sub DownloadDatasheet()
     
     ' Update controls.
     UpdateEnabledControls
+End Sub
+
+' Creates a new property.
+Private Sub CreateProperty()
+    Dim dlgProperty As dlgEditProperty
+    
+    ' Initialize the dialog and show it as a new property.
+    Set dlgProperty = New dlgEditProperty
+    CentralizeFormInMDIChild dlgProperty, frmMain, Me
+    dlgProperty.ShowNew ComponentID
+    
+    ' Did anything change in the property?
+    If dlgProperty.Changed Then
+        ' Reload the properties and change the status message.
+        LoadProperties ComponentID, grdProperties
+        SetStatusMessage dlgProperty.Key & " property edited"
+    End If
+    
+    Set dlgProperty = Nothing
+End Sub
+
+' Edits the selected property. Will create a new one if the RowData is -1.
+Private Sub EditProperty()
+    Dim dlgProperty As dlgEditProperty
+    
+    ' Initialize the dialog.
+    Set dlgProperty = New dlgEditProperty
+    CentralizeFormInMDIChild dlgProperty, frmMain, Me
+
+    ' Determine if we are editing or adding a property.
+    If grdProperties.RowData(grdProperties.Row) = -1 Then
+        ' Empty row clicked. Let's add a new entry.
+        dlgProperty.ShowNew ComponentID
+    Else
+        ' Edit an existing property.
+        dlgProperty.ShowEditor ComponentID, grdProperties.RowData(grdProperties.Row)
+    End If
+    
+    ' Did anything change in the property?
+    If dlgProperty.Changed Then
+        ' Reload the properties and change the status message.
+        LoadProperties ComponentID, grdProperties
+        SetStatusMessage dlgProperty.Key & " property edited"
+    End If
+    
+    Set dlgProperty = Nothing
+End Sub
+
+' Deletes the selected property.
+Private Sub DeleteSelectedProperty()
+    Dim intResponse As Integer
+    Dim strName As String
+    
+    ' Check if the user actually wants to do this.
+    strName = grdProperties.TextMatrix(grdProperties.Row, 0)
+    intResponse = MsgBox("Are you sure you want to delete the property '" & _
+        strName & "'?", vbYesNo + vbQuestion, "Delete Component Property")
+    If (intResponse = vbYes) And (grdProperties.RowData(grdProperties.Row) > -1) Then
+        DeleteProperty grdProperties.RowData(grdProperties.Row)
+        SetStatusMessage "Property '" & strName & "' deleted"
+    End If
+    
+    ' Reload the properties.
+    LoadProperties ComponentID, grdProperties
 End Sub
 
 ' Saves the associated component.
@@ -924,29 +1034,7 @@ End Sub
 
 ' Properties grid was double clicked.
 Private Sub grdProperties_DblClick()
-    Dim dlgProperty As dlgEditProperty
-    
-    ' Initialize the dialog.
-    Set dlgProperty = New dlgEditProperty
-    CentralizeFormInMDIChild dlgProperty, frmMain, Me
-
-    ' Determine if we are editing or adding a property.
-    If grdProperties.RowData(grdProperties.Row) = -1 Then
-        ' Empty row clicked. Let's add a new entry.
-        dlgProperty.ShowNew ComponentID
-    Else
-        ' Edit an existing property.
-        dlgProperty.ShowEditor ComponentID, grdProperties.RowData(grdProperties.Row)
-    End If
-    
-    ' Did anything change in the property?
-    If dlgProperty.Changed Then
-        ' Reload the properties and change the status message.
-        LoadProperties ComponentID, grdProperties
-        SetStatusMessage dlgProperty.Key & " property edited"
-    End If
-    
-    Set dlgProperty = Nothing
+    EditProperty
 End Sub
 
 ' Component > Delete menu clicked.
@@ -1019,6 +1107,21 @@ Private Sub mniManagePackages_Click()
     frmMain.ManagePackages
 End Sub
 
+' Property > Add menu clicked.
+Private Sub mniPropertyAdd_Click()
+    CreateProperty
+End Sub
+
+' Property > Delete menu clicked.
+Private Sub mniPropertyDelete_Click()
+    DeleteSelectedProperty
+End Sub
+
+' Property > Edit menu clicked.
+Private Sub mniPropertyEdit_Click()
+    EditProperty
+End Sub
+
 ' Image double clicked.
 Private Sub picImage_DblClick()
     SelectImage
@@ -1050,6 +1153,12 @@ Private Sub tlbToolBar_ButtonClick(ByVal Button As MSComctlLib.Button)
             DeleteDatasheet
         Case "DownloadDatasheet"
             DownloadDatasheet
+        Case "AddProperty"
+            CreateProperty
+        Case "EditProperty"
+            EditProperty
+        Case "DeleteProperty"
+            DeleteSelectedProperty
         Case "KeepOpen"
             StayOpen = (Button.Value = tbrPressed)
     End Select
