@@ -50,6 +50,12 @@ Public Property Let Parameter(strKey As String, varValue As Variant)
         Exit Property
     End If
 
+    ' Handle that pesky Null value.
+    If IsNull(varValue) Then
+        m_strStatement = Replace(m_strStatement, "[" & strKey & "]", "NULL")
+        Exit Property
+    End If
+
     m_strStatement = Replace(m_strStatement, "[" & strKey & "]", _
         SanitizeInput(varValue))
 End Property

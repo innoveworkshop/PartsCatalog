@@ -99,6 +99,15 @@ Begin VB.Form frmBOMManager
          Top             =   240
          Width           =   3495
       End
+      Begin VB.Label lblItemID 
+         Alignment       =   1  'Right Justify
+         Caption         =   "00000"
+         Height          =   255
+         Left            =   6240
+         TabIndex        =   28
+         Top             =   5520
+         Width           =   735
+      End
       Begin VB.Label Label4 
          Caption         =   "Reference Designators:"
          Height          =   255
@@ -120,10 +129,10 @@ Begin VB.Form frmBOMManager
          Alignment       =   1  'Right Justify
          Caption         =   "00000"
          Height          =   255
-         Left            =   6480
+         Left            =   6240
          TabIndex        =   13
          Top             =   240
-         Width           =   495
+         Width           =   735
       End
       Begin VB.Label Label2 
          Caption         =   "Component:"
@@ -252,7 +261,48 @@ Attribute VB_Exposed = False
 Option Explicit
 
 Dim m_lngProjectID As Long
-Dim m_lngBOMComponentID As Long
+Dim m_lngBOMItemID As Long
+
+' Populates the project frame.
+Public Sub PopulateProjectFromRecordset(rs As ADODB.Recordset)
+    ' Populate Project frame.
+    lblProjectID.Caption = rs.Fields("ID")
+    txtProjectName.Text = rs.Fields("Name")
+    txtProjectRevision.Text = rs.Fields("Revision")
+    txtProjectDescription.Text = rs.Fields("Description")
+    
+    ' Populate Components frame.
+    LoadProjectBOM lstComponents, False
+
+    ' Update controls.
+    UpdateEnabledControls
+End Sub
+
+' Populates the component pane.
+Public Sub PopulateBOMItemFromRecordset(rs As ADODB.Recordset)
+    Dim astrRefDes() As String
+    Dim intIndex As Integer
+    
+    ' Populate component area.
+    If IsNull(rs.Fields("ComponentID")) Then
+        lblComponentID.Caption = ""
+        ' TODO: Select the no selection option in the combobox.
+    Else
+        lblComponentID.Caption = rs.Fields("ComponentID")
+        ' TODO: Select the component in the combobox.
+    End If
+    
+    ' Populate reference designators.
+    lblItemID.Caption = rs.Fields("ID")
+    astrRefDes = Split(rs.Fields("RefDes"), ", ")
+    lstRefDes.Clear
+    For intIndex = 0 To UBound(astrRefDes)
+        lstRefDes.AddItem astrRefDes(intIndex)
+    Next intIndex
+
+    ' Update controls.
+    UpdateEnabledControls
+End Sub
 
 ' Populates the form with a BOM.
 Private Sub ShowProject(lngProjectID As Long)
@@ -264,8 +314,9 @@ Private Sub ShowProject(lngProjectID As Long)
         txtProjectRevision.Text = ""
         txtProjectDescription.Text = ""
         
-        ' Clear everything in the Components frame.
+        ' Clear everything in the Components frame and update the controls.
         lstComponents.Clear
+        UpdateEnabledControls
         Exit Sub
     End If
     
@@ -273,29 +324,99 @@ Private Sub ShowProject(lngProjectID As Long)
     LoadProjectDetail lngProjectID, Me
 End Sub
 
-' Updates the enabled/disabled controls.
-Private Sub UpdateEnabledControls()
-    cmdProjectSave.Enabled = Not IsNewProject
-    cmdProjectRemove.Enabled = Not IsNewProject
-    fraComponents.Enabled = Not IsNewProject
+' Populates the component panel with the selected item.
+Private Sub ShowItem(lngItemID As Long)
+    ' Check if we are clearing an item.
+    If lngItemID = -1 Then
+        ' Clear everything in the item pane.
+        lblComponentID.Caption = ""
+        lblItemID.Caption = ""
+        txtRefDes.Text = ""
+        lstRefDes.Clear
+        
+        ' Update controls.
+        UpdateEnabledControls
+        Exit Sub
+    End If
+    
+    ' Populate the form.
+    LoadProjectBOMItem lngItemID, Me
 End Sub
 
-' Populates the project frame.
-Public Sub PopulateFromRecordset(rs As ADODB.Recordset)
-    ' Populate Project frame.
-    lblProjectID.Caption = rs.Fields("ID")
-    txtProjectName.Text = rs.Fields("Name")
-    txtProjectRevision.Text = rs.Fields("Revision")
-    txtProjectDescription.Text = rs.Fields("Description")
-
-    ' Update controls.
-    UpdateEnabledControls
+' Updates the enabled/disabled controls.
+Private Sub UpdateEnabledControls()
+    ' Project-related controls.
+    cmdProjectSave.Enabled = Not IsNewProject
+    cmdProjectRemove.Enabled = Not IsNewProject
+    
+    ' Component-related controls.
+    cmdComponentAdd.Enabled = Not IsNewProject
+    cmdRefDesAdd.Enabled = Not IsNewBOMItem
+    cmdRefDesRename.Enabled = (lstRefDes.ListIndex >= 0)
+    cmdRefDesRemove.Enabled = (lstRefDes.ListIndex >= 0)
+    cmdComponentRemove.Enabled = Not IsNewBOMItem
+    cmdComponentSave.Enabled = Not IsNewBOMItem
+    fraComponents.Enabled = Not IsNewProject
 End Sub
 
 ' Checks if we are editing a new project.
 Private Function IsNewProject() As Boolean
     IsNewProject = (ProjectID = -1)
 End Function
+
+' Checks if we are editing a new BOM item.
+Private Function IsNewBOMItem() As Boolean
+    IsNewBOMItem = (BOMItemID = -1)
+End Function
+
+' Add component button clicked.
+Private Sub cmdComponentAdd_Click()
+    Dim intIndex As Integer
+    Dim lngItemID As Long
+    Dim astrRefDes() As String
+    
+    ' Create an empty BOM item.
+    lngItemID = SaveBOMItem(-1, ProjectID, astrRefDes, -1)
+    
+    ' Select the BOM item from the list.
+    LoadProjectBOM lstComponents
+    For intIndex = 0 To lstComponents.ListCount - 1
+        If lstComponents.ItemData(intIndex) = lngItemID Then
+            lstComponents.ListIndex = intIndex
+            Exit Sub
+        End If
+    Next intIndex
+End Sub
+
+' Save component button clicked.
+Private Sub cmdComponentSave_Click()
+    Dim intIndex As Integer
+    Dim lngItemID As Long
+    Dim astrRefDes() As String
+    
+    ' Get the reference designator array.
+    If lstRefDes.ListCount > 0 Then
+        ReDim astrRefDes(lstRefDes.ListCount - 1)
+    
+        For intIndex = 0 To UBound(astrRefDes)
+            astrRefDes(intIndex) = lstRefDes.List(intIndex)
+        Next intIndex
+    End If
+    
+    MsgBox "TODO: Get ID from combobox"
+    
+    ' Create an empty BOM item.
+    lngItemID = SaveBOMItem(BOMItemID, ProjectID, astrRefDes, -1)
+    
+    ' Select the BOM item from the list.
+    LoadProjectBOM lstComponents
+    For intIndex = 0 To lstComponents.ListCount - 1
+        If lstComponents.ItemData(intIndex) = lngItemID Then
+            lstComponents.ListIndex = intIndex
+            Exit Sub
+        End If
+    Next intIndex
+End Sub
 
 ' Add project button clicked.
 Private Sub cmdProjectAdd_Click()
@@ -344,6 +465,35 @@ Private Sub cmdProjectSave_Click()
     Next intIndex
 End Sub
 
+' Add reference designator button clicked.
+Private Sub cmdRefDesAdd_Click()
+    lstRefDes.AddItem txtRefDes.Text
+    lstRefDes.ListIndex = lstRefDes.NewIndex
+End Sub
+
+' Remove reference designator button clicked.
+Private Sub cmdRefDesRemove_Click()
+    ' Check if there's anything selected.
+    If lstRefDes.ListIndex < 0 Then
+        Exit Sub
+    End If
+    
+    ' Remove the selected item and update controls.
+    lstRefDes.RemoveItem lstRefDes.ListIndex
+    UpdateEnabledControls
+End Sub
+
+' Rename reference designator button clicked.
+Private Sub cmdRefDesRename_Click()
+    ' Check if there's anything selected.
+    If lstRefDes.ListIndex < 0 Then
+        Exit Sub
+    End If
+    
+    ' Rename the selected item.
+    lstRefDes.List(lstRefDes.ListIndex) = txtRefDes.Text
+End Sub
+
 ' Form just loaded.
 Private Sub Form_Load()
     ' Reset the project ID.
@@ -352,6 +502,16 @@ Private Sub Form_Load()
     ' Populate the projects and update controls.
     LoadProjects lstProjects
     UpdateEnabledControls
+End Sub
+
+' BOM item list item clicked.
+Private Sub lstComponents_Click()
+    ' Check if there's anything selected.
+    If lstComponents.ListIndex < 0 Then
+        Exit Sub
+    End If
+    
+    BOMItemID = lstComponents.ItemData(lstComponents.ListIndex)
 End Sub
 
 ' Project selection changed.
@@ -365,6 +525,17 @@ Private Sub lstProjects_Click()
     ProjectID = lstProjects.ItemData(lstProjects.ListIndex)
 End Sub
 
+' Reference designator list clicked.
+Private Sub lstRefDes_Click()
+    ' Check if there's anything selected.
+    If lstRefDes.ListIndex < 0 Then
+        Exit Sub
+    End If
+    
+    txtRefDes.Text = lstRefDes.List(lstRefDes.ListIndex)
+    UpdateEnabledControls
+End Sub
+
 ' Project ID getter.
 Public Property Get ProjectID() As Long
     ProjectID = m_lngProjectID
@@ -376,7 +547,7 @@ Public Property Let ProjectID(lngProjectID As Long)
     
     ' Reset the Component ID as well if needed.
     If lngProjectID = -1 Then
-        BOMComponentID = -1
+        BOMItemID = -1
     End If
     
     ' Show the BOM.
@@ -384,11 +555,14 @@ Public Property Let ProjectID(lngProjectID As Long)
 End Property
 
 ' BOM component ID getter.
-Public Property Get BOMComponentID() As Long
-    BOMComponentID = m_lngBOMComponentID
+Public Property Get BOMItemID() As Long
+    BOMItemID = m_lngBOMItemID
 End Property
 
 ' BOM component ID setter.
-Public Property Let BOMComponentID(lngBOMComponentID As Long)
-    m_lngBOMComponentID = lngBOMComponentID
+Public Property Let BOMItemID(lngItemID As Long)
+    m_lngBOMItemID = lngItemID
+    
+    ' Show the component.
+    ShowItem lngItemID
 End Property
