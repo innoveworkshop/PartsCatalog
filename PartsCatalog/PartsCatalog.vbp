@@ -22,6 +22,7 @@ Module=modFormHelper; ..\Common\Modules\modFormHelper.bas
 Module=modSettings; ..\Common\Modules\modSettings.bas
 Module=modShellOpen; ..\Common\Modules\modShellOpen.bas
 ResFile32="Resources\resManifest.res"
+Form=Forms\frmBOMManager.frm
 IconForm="frmMain"
 Startup="Sub Main"
 HelpFile=""

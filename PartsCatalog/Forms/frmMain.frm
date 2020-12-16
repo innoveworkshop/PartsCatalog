@@ -31,7 +31,7 @@ Begin VB.MDIForm frmMain
       MaskColor       =   12632256
       _Version        =   393216
       BeginProperty Images {2C247F25-8591-11D1-B16A-00C0F0283628} 
-         NumListImages   =   7
+         NumListImages   =   8
          BeginProperty ListImage1 {2C247F27-8591-11D1-B16A-00C0F0283628} 
             Picture         =   "frmMain.frx":6852
             Key             =   ""
@@ -60,6 +60,10 @@ Begin VB.MDIForm frmMain
             Picture         =   "frmMain.frx":2DA9E
             Key             =   ""
          EndProperty
+         BeginProperty ListImage8 {2C247F27-8591-11D1-B16A-00C0F0283628} 
+            Picture         =   "frmMain.frx":34300
+            Key             =   ""
+         EndProperty
       EndProperty
    End
    Begin MSComctlLib.Toolbar tlbToolBar 
@@ -78,7 +82,7 @@ Begin VB.MDIForm frmMain
       ImageList       =   "imlToolBar"
       _Version        =   393216
       BeginProperty Buttons {66833FE8-8583-11D1-B16A-00C0F0283628} 
-         NumButtons      =   8
+         NumButtons      =   9
          BeginProperty Button1 {66833FEA-8583-11D1-B16A-00C0F0283628} 
             Key             =   "OpenDatabase"
             Object.ToolTipText     =   "Open Database"
@@ -108,9 +112,14 @@ Begin VB.MDIForm frmMain
             ImageIndex      =   5
          EndProperty
          BeginProperty Button7 {66833FEA-8583-11D1-B16A-00C0F0283628} 
-            Style           =   3
+            Key             =   "BillOfMaterials"
+            Object.ToolTipText     =   "Manage Bill of Materials"
+            ImageIndex      =   8
          EndProperty
          BeginProperty Button8 {66833FEA-8583-11D1-B16A-00C0F0283628} 
+            Style           =   3
+         EndProperty
+         BeginProperty Button9 {66833FEA-8583-11D1-B16A-00C0F0283628} 
             Key             =   "AddComponent"
             Object.ToolTipText     =   "Add Component"
             ImageIndex      =   7
@@ -162,6 +171,9 @@ Begin VB.MDIForm frmMain
       End
       Begin VB.Menu mniManagePackages 
          Caption         =   "&Packages..."
+      End
+      Begin VB.Menu mniManageBOM 
+         Caption         =   "&Bill of Materials..."
       End
       Begin VB.Menu mniManageSeparator1 
          Caption         =   "-"
@@ -223,6 +235,12 @@ End Sub
 Public Sub ManagePackages()
     frmPackageManager.Left = frmPackageManager.Left + frmPartChooser.Width
     frmPackageManager.Show
+End Sub
+
+' Shows the BOM manager.
+Public Sub ManageBillOfMaterials()
+    frmBOMManager.Left = frmBOMManager.Left + frmPartChooser.Width
+    frmBOMManager.Show
 End Sub
 
 ' Shows a component dialog for creating a new component.
@@ -379,6 +397,11 @@ Private Sub mniManageAddComponent_Click()
     NewComponent
 End Sub
 
+' Manage > Bill of Materials menu clicked.
+Private Sub mniManageBOM_Click()
+    ManageBillOfMaterials
+End Sub
+
 ' Manage > Categories menu clicked.
 Private Sub mniManageCategories_Click()
     ManageCategories
@@ -412,6 +435,8 @@ Private Sub tlbToolBar_ButtonClick(ByVal Button As MSComctlLib.Button)
             ManageCategories
         Case "Packages"
             ManagePackages
+        Case "BillOfMaterials"
+            ManageBillOfMaterials
         Case "AddComponent"
             NewComponent
     End Select

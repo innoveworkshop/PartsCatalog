@@ -1,4 +1,3 @@
 VBGROUP 5.0
-Project=PartsCatalog\PartsCatalog.vbp
+StartupProject=PartsCatalog\PartsCatalog.vbp
 Project=OrderImporter\OrderImporter.vbp
-StartupProject=PartsPicker\PartsPicker.vbp

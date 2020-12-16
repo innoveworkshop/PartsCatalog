@@ -1,14 +1,19 @@
 VERSION 5.00
-Begin VB.Form frmMain 
+Begin VB.Form frmBOMManager 
+   BorderStyle     =   3  'Fixed Dialog
    Caption         =   "BOM Manager"
    ClientHeight    =   5790
-   ClientLeft      =   60
-   ClientTop       =   405
+   ClientLeft      =   45
+   ClientTop       =   390
    ClientWidth     =   10935
+   Icon            =   "frmBOMManager.frx":0000
    LinkTopic       =   "Form1"
+   MaxButton       =   0   'False
+   MDIChild        =   -1  'True
+   MinButton       =   0   'False
    ScaleHeight     =   5790
    ScaleWidth      =   10935
-   StartUpPosition =   3  'Windows Default
+   ShowInTaskbar   =   0   'False
    Begin VB.Frame fraComponents 
       Caption         =   "Components"
       Height          =   5535
@@ -87,9 +92,9 @@ Begin VB.Form frmMain
       End
       Begin VB.ListBox lstComponents 
          Height          =   4740
-         ItemData        =   "frmMain.frx":0000
+         ItemData        =   "frmBOMManager.frx":6852
          Left            =   120
-         List            =   "frmMain.frx":0007
+         List            =   "frmBOMManager.frx":6859
          TabIndex        =   10
          Top             =   240
          Width           =   3495
@@ -187,9 +192,9 @@ Begin VB.Form frmMain
    End
    Begin VB.ListBox lstProjects 
       Height          =   3180
-      ItemData        =   "frmMain.frx":001A
+      ItemData        =   "frmBOMManager.frx":686C
       Left            =   120
-      List            =   "frmMain.frx":0021
+      List            =   "frmBOMManager.frx":6873
       TabIndex        =   1
       Top             =   360
       Width           =   3495
@@ -203,13 +208,13 @@ Begin VB.Form frmMain
       Width           =   975
    End
 End
-Attribute VB_Name = "frmMain"
+Attribute VB_Name = "frmBOMManager"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
-''' frmMain
-''' Main form of the BOM Manager application.
+''' frmBOMManager
+''' A form to manage Bill of Materials.
 '''
 ''' Author: Nathan Campos <nathan@innoveworkshop.com>
 
