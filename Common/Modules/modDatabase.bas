@@ -430,7 +430,75 @@ Public Sub DeletePackage(lngID As Long)
     CloseConnection
 End Sub
 
-' Searches for a componeny by name and return its ID if there is one. -1 otherwise.
+' Saves/creates a project to the database. For project creation lngID should be -1.
+Public Function SaveProject(lngID As Long, strName As String, _
+        strRevision As String, strDescription As String) As Long
+    Dim stmt As SQLStatement
+    
+    ' Open the database.
+    OpenConnection
+    
+    ' Setup the statement.
+    Set stmt = New SQLStatement
+    If lngID = -1 Then
+        ' Create the project.
+        stmt.Create "INSERT INTO Projects (Name, Revision, Description) VALUES " & _
+            "([Name], [Revision], [Description])"
+    Else
+        ' Update an existing project.
+        stmt.Create "UPDATE Projects SET Name = [Name], Revision = [Revision], " & _
+            "Description = [Description] WHERE ID = [ID]"
+        stmt.Parameter("ID") = lngID
+    End If
+    
+    ' Add parameters and execute the operation.
+    stmt.Parameter("Name") = strName
+    stmt.Parameter("Revision") = strRevision
+    stmt.Parameter("Description") = strDescription
+    m_adoConnection.Execute stmt.Statement
+    
+    ' Get the project ID.
+    If lngID = -1 Then
+        Dim rs As ADODB.Recordset
+        Set rs = New ADODB.Recordset
+        
+        ' Get the newly added project ID.
+        Set rs = m_adoConnection.Execute("SELECT @@IDENTITY FROM Projects")
+        If Not rs.EOF Then
+            SaveProject = rs(0)
+        Else
+            SaveProject = -1
+        End If
+        
+        ' Clean up recordset.
+        rs.Close
+        Set rs = Nothing
+    Else
+        SaveProject = lngID
+    End If
+    
+    ' Close the connection.
+    CloseConnection
+End Function
+
+' Deletes a project from the database.
+Public Sub DeleteProject(lngID As Long)
+    Dim stmt As SQLStatement
+    
+    ' Open the database.
+    OpenConnection
+    
+    ' Setup the statement.
+    Set stmt = New SQLStatement
+    stmt.Create "DELETE * FROM Projects Where ID = [ID]"
+    stmt.Parameter("ID") = lngID
+    
+    ' Execute the operation close the connection.
+    m_adoConnection.Execute stmt.Statement
+    CloseConnection
+End Sub
+
+' Searches for a component by name and return its ID if there is one. -1 otherwise.
 Public Function FindExistingComponent(strName As String) As Long
     Dim rs As ADODB.Recordset
     Dim stmt As SQLStatement
@@ -708,6 +776,73 @@ Public Sub LoadPackages(lstBox As Variant, Optional blnCloseExit As Boolean = Tr
         CloseConnection
     End If
 End Sub
+
+' Load projects.
+Public Sub LoadProjects(lstBox As Variant, Optional blnCloseExit As Boolean = True)
+    Dim rs As ADODB.Recordset
+    Set rs = New ADODB.Recordset
+    
+    ' Clear the list.
+    lstBox.Clear
+    
+    ' Open the database and query it.
+    OpenConnection
+    rs.Open "SELECT ID, Name, Revision FROM Projects ORDER BY Name ASC", _
+        m_adoConnection, adOpenForwardOnly, adLockReadOnly
+    
+    ' Populate list.
+    Do While Not rs.EOF
+        lstBox.AddItem rs.Fields("Name") & " (Rev " & rs.Fields("Revision") & ")"
+        lstBox.ItemData(lstBox.NewIndex) = rs.Fields("ID")
+        rs.MoveNext
+    Loop
+    
+    ' Close recordset and connection.
+    rs.Close
+    Set rs = Nothing
+    If blnCloseExit Then
+        CloseConnection
+    End If
+End Sub
+
+' Loads a project by its ID and populates a form.
+Public Function LoadProjectDetail(lngID As Long, frmForm As Form) As Boolean
+    Dim rs As ADODB.Recordset
+    Dim stmt As SQLStatement
+    
+    ' Check if the specified Form is the right one.
+    If frmForm.Name <> "frmBOMManager" Then
+        MsgBox "Specified form to have a project loaded is not correct. Expected " & _
+            "'frmBOMManager' got '" & frmForm.Name & "'.", vbOKOnly + vbCritical, _
+            "Programming Error"
+        
+        LoadProjectDetail = False
+        Exit Function
+    End If
+    
+    ' Initialize the objects.
+    Set rs = New ADODB.Recordset
+    Set stmt = New SQLStatement
+    
+    ' Open the database and query it.
+    OpenConnection
+    stmt.Create "SELECT * FROM Projects WHERE ID = [ID]"
+    stmt.Parameter("ID") = lngID
+    rs.Open stmt.Statement, m_adoConnection, adOpenForwardOnly, adLockReadOnly
+    
+    ' Populate list.
+    If Not rs.EOF Then
+        frmForm.PopulateFromRecordset rs
+        LoadProjectDetail = True
+    Else
+        LoadProjectDetail = False
+    End If
+    
+    ' Close recordset and connection.
+    rs.Close
+    Set rs = Nothing
+    CloseConnection
+End Function
 
 ' Opens a predefined database connection.
 Private Sub OpenConnection()

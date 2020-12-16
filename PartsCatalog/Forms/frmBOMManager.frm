@@ -2,7 +2,7 @@ VERSION 5.00
 Begin VB.Form frmBOMManager 
    BorderStyle     =   3  'Fixed Dialog
    Caption         =   "BOM Manager"
-   ClientHeight    =   5790
+   ClientHeight    =   6645
    ClientLeft      =   45
    ClientTop       =   390
    ClientWidth     =   10935
@@ -11,12 +11,12 @@ Begin VB.Form frmBOMManager
    MaxButton       =   0   'False
    MDIChild        =   -1  'True
    MinButton       =   0   'False
-   ScaleHeight     =   5790
+   ScaleHeight     =   6645
    ScaleWidth      =   10935
    ShowInTaskbar   =   0   'False
    Begin VB.Frame fraComponents 
       Caption         =   "Components"
-      Height          =   5535
+      Height          =   6375
       Left            =   3720
       TabIndex        =   9
       Top             =   120
@@ -26,7 +26,7 @@ Begin VB.Form frmBOMManager
          Height          =   375
          Left            =   3720
          TabIndex        =   23
-         Top             =   5040
+         Top             =   5880
          Width           =   3255
       End
       Begin VB.CommandButton cmdComponentRemove 
@@ -34,7 +34,7 @@ Begin VB.Form frmBOMManager
          Height          =   375
          Left            =   1920
          TabIndex        =   22
-         Top             =   5040
+         Top             =   5880
          Width           =   1695
       End
       Begin VB.CommandButton cmdComponentAdd 
@@ -42,7 +42,7 @@ Begin VB.Form frmBOMManager
          Height          =   375
          Left            =   120
          TabIndex        =   21
-         Top             =   5040
+         Top             =   5880
          Width           =   1695
       End
       Begin VB.CommandButton cmdRefDesRemove 
@@ -77,7 +77,7 @@ Begin VB.Form frmBOMManager
          Width           =   1575
       End
       Begin VB.ListBox lstRefDes 
-         Height          =   3180
+         Height          =   3960
          Left            =   3720
          TabIndex        =   16
          Top             =   1800
@@ -91,7 +91,7 @@ Begin VB.Form frmBOMManager
          Width           =   3255
       End
       Begin VB.ListBox lstComponents 
-         Height          =   4740
+         Height          =   5520
          ItemData        =   "frmBOMManager.frx":6852
          Left            =   120
          List            =   "frmBOMManager.frx":6859
@@ -136,41 +136,72 @@ Begin VB.Form frmBOMManager
    End
    Begin VB.Frame fraProject 
       Caption         =   "Project Information"
-      Height          =   1935
+      Height          =   2775
       Left            =   120
       TabIndex        =   2
       Top             =   3720
       Width           =   3495
-      Begin VB.TextBox txtCategoryName 
+      Begin VB.TextBox txtProjectDescription 
+         Height          =   555
+         Left            =   120
+         ScrollBars      =   2  'Vertical
+         TabIndex        =   26
+         Top             =   1080
+         Width           =   3255
+      End
+      Begin VB.TextBox txtProjectRevision 
+         Height          =   315
+         Left            =   2880
+         TabIndex        =   25
+         Top             =   480
+         Width           =   495
+      End
+      Begin VB.TextBox txtProjectName 
          Height          =   315
          Left            =   120
          TabIndex        =   6
          Top             =   480
-         Width           =   3255
+         Width           =   2655
       End
-      Begin VB.CommandButton cmdCategoryAdd 
+      Begin VB.CommandButton cmdProjectAdd 
          Caption         =   "Add"
          Height          =   375
          Left            =   120
          TabIndex        =   5
-         Top             =   1440
+         Top             =   2280
          Width           =   3255
       End
-      Begin VB.CommandButton cmdCategoryRename 
-         Caption         =   "Rename"
+      Begin VB.CommandButton cmdProjectSave 
+         Caption         =   "Save"
          Height          =   375
          Left            =   120
          TabIndex        =   4
-         Top             =   960
+         Top             =   1800
          Width           =   1575
       End
-      Begin VB.CommandButton cmdCategoryRemove 
+      Begin VB.CommandButton cmdProjectRemove 
          Caption         =   "Remove"
          Height          =   375
          Left            =   1800
          TabIndex        =   3
-         Top             =   960
+         Top             =   1800
          Width           =   1575
+      End
+      Begin VB.Label Label6 
+         Caption         =   "Description:"
+         Height          =   255
+         Left            =   120
+         TabIndex        =   27
+         Top             =   840
+         Width           =   975
+      End
+      Begin VB.Label Label5 
+         Caption         =   "Rev:"
+         Height          =   255
+         Left            =   2880
+         TabIndex        =   24
+         Top             =   240
+         Width           =   375
       End
       Begin VB.Label Label3 
          Caption         =   "Name:"
@@ -180,11 +211,11 @@ Begin VB.Form frmBOMManager
          Top             =   240
          Width           =   855
       End
-      Begin VB.Label lblCategoryID 
+      Begin VB.Label lblProjectID 
          Alignment       =   1  'Right Justify
          Caption         =   "000"
          Height          =   255
-         Left            =   2880
+         Left            =   2280
          TabIndex        =   7
          Top             =   240
          Width           =   495
@@ -219,3 +250,145 @@ Attribute VB_Exposed = False
 ''' Author: Nathan Campos <nathan@innoveworkshop.com>
 
 Option Explicit
+
+Dim m_lngProjectID As Long
+Dim m_lngBOMComponentID As Long
+
+' Populates the form with a BOM.
+Private Sub ShowProject(lngProjectID As Long)
+    ' Check if we are clearing a project.
+    If lngProjectID = -1 Then
+        ' Clear everything in the Project frame.
+        lblProjectID.Caption = ""
+        txtProjectName.Text = ""
+        txtProjectRevision.Text = ""
+        txtProjectDescription.Text = ""
+        
+        ' Clear everything in the Components frame.
+        lstComponents.Clear
+        Exit Sub
+    End If
+    
+    ' Populate the form.
+    LoadProjectDetail lngProjectID, Me
+End Sub
+
+' Updates the enabled/disabled controls.
+Private Sub UpdateEnabledControls()
+    cmdProjectSave.Enabled = Not IsNewProject
+    cmdProjectRemove.Enabled = Not IsNewProject
+    fraComponents.Enabled = Not IsNewProject
+End Sub
+
+' Populates the project frame.
+Public Sub PopulateFromRecordset(rs As ADODB.Recordset)
+    ' Populate Project frame.
+    lblProjectID.Caption = rs.Fields("ID")
+    txtProjectName.Text = rs.Fields("Name")
+    txtProjectRevision.Text = rs.Fields("Revision")
+    txtProjectDescription.Text = rs.Fields("Description")
+
+    ' Update controls.
+    UpdateEnabledControls
+End Sub
+
+' Checks if we are editing a new project.
+Private Function IsNewProject() As Boolean
+    IsNewProject = (ProjectID = -1)
+End Function
+
+' Add project button clicked.
+Private Sub cmdProjectAdd_Click()
+    Dim intIndex As Integer
+    
+    ' Create the project, reset the ID.
+    ProjectID = SaveProject(-1, txtProjectName.Text, txtProjectRevision.Text, _
+        txtProjectDescription.Text)
+    
+    ' Populate project list and select the newly added item.
+    LoadProjects lstProjects
+    For intIndex = 0 To lstProjects.ListCount - 1
+        If lstProjects.ItemData(intIndex) = ProjectID Then
+            lstProjects.ListIndex = intIndex
+            Exit Sub
+        End If
+    Next intIndex
+End Sub
+
+' Delete project button clicked.
+Private Sub cmdProjectRemove_Click()
+    ' Delete the project and clear the ID.
+    DeleteProject ProjectID
+    ProjectID = -1
+    
+    ' Reload the list and update controls.
+    LoadProjects lstProjects
+    UpdateEnabledControls
+End Sub
+
+' Rename project button clicked.
+Private Sub cmdProjectSave_Click()
+    Dim intIndex As Integer
+    
+    ' Update the project, reset the ID.
+    ProjectID = SaveProject(ProjectID, txtProjectName.Text, txtProjectRevision.Text, _
+        txtProjectDescription.Text)
+    
+    ' Populate project list and select the renamed item.
+    LoadProjects lstProjects
+    For intIndex = 0 To lstProjects.ListCount - 1
+        If lstProjects.ItemData(intIndex) = ProjectID Then
+            lstProjects.ListIndex = intIndex
+            Exit Sub
+        End If
+    Next intIndex
+End Sub
+
+' Form just loaded.
+Private Sub Form_Load()
+    ' Reset the project ID.
+    ProjectID = -1
+    
+    ' Populate the projects and update controls.
+    LoadProjects lstProjects
+    UpdateEnabledControls
+End Sub
+
+' Project selection changed.
+Private Sub lstProjects_Click()
+    ' Check if there's anything selected.
+    If lstProjects.ListIndex < 0 Then
+        Exit Sub
+    End If
+    
+    ' Update the project ID.
+    ProjectID = lstProjects.ItemData(lstProjects.ListIndex)
+End Sub
+
+' Project ID getter.
+Public Property Get ProjectID() As Long
+    ProjectID = m_lngProjectID
+End Property
+
+' Project ID setter.
+Public Property Let ProjectID(lngProjectID As Long)
+    m_lngProjectID = lngProjectID
+    
+    ' Reset the Component ID as well if needed.
+    If lngProjectID = -1 Then
+        BOMComponentID = -1
+    End If
+    
+    ' Show the BOM.
+    ShowProject lngProjectID
+End Property
+
+' BOM component ID getter.
+Public Property Get BOMComponentID() As Long
+    BOMComponentID = m_lngBOMComponentID
+End Property
+
+' BOM component ID setter.
+Public Property Let BOMComponentID(lngBOMComponentID As Long)
+    m_lngBOMComponentID = lngBOMComponentID
+End Property
