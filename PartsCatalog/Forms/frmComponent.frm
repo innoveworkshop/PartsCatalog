@@ -450,12 +450,8 @@ Private m_blnDirty As Boolean
 
 ' Shows the form keeping some distance from the parts chooser panel.
 Public Sub ShowAligned()
-    ' Move the window if necessary.
-    If Me.Left < (frmPartChooser.Left + frmPartChooser.Width) Then
-        Me.Left = Me.Left + frmPartChooser.Left + frmPartChooser.Width
-    End If
-    
-    ' Set dirtiness.
+    ' Move the window if necessary and set the dirtiness.
+    FormDodgeSidePanel Me, frmPartChooser, frmMain
     Dirty = False
     
     ' Show it.

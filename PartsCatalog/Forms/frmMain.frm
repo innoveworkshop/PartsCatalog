@@ -227,19 +227,19 @@ End Sub
 
 ' Shows the category manager.
 Public Sub ManageCategories()
-    frmCategoryManager.Left = frmCategoryManager.Left + frmPartChooser.Width
+    FormDodgeSidePanel frmCategoryManager, frmPartChooser, frmMain
     frmCategoryManager.Show
 End Sub
 
 ' Shows the package manager.
 Public Sub ManagePackages()
-    frmPackageManager.Left = frmPackageManager.Left + frmPartChooser.Width
+    FormDodgeSidePanel frmPackageManager, frmPartChooser, frmMain
     frmPackageManager.Show
 End Sub
 
 ' Shows the BOM manager.
 Public Sub ManageBillOfMaterials()
-    frmBOMManager.Left = frmBOMManager.Left + frmPartChooser.Width
+    FormDodgeSidePanel frmBOMManager, frmPartChooser, frmMain
     frmBOMManager.Show
 End Sub
 

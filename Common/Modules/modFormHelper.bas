@@ -44,3 +44,26 @@ Public Sub CentralizeFormInMDIChild(frmChild As Form, frmMDIParent As MDIForm, _
         (frmChild.Width / 2)
 End Sub
 
+' If an MDI form is opened behind the side panel nudge it to the right.
+Public Sub FormDodgeSidePanel(frmChild As Form, frmSidePanel As Form, _
+        frmMDIParent As MDIForm)
+    Dim sngLeft As Single
+    Dim sngPastParentEnd As Single
+    
+    ' Check if we need to do something in the first place.
+    If frmChild.Left > (frmSidePanel.Left + frmSidePanel.Width) Then
+        Exit Sub
+    End If
+    
+    ' Calculate positions.
+    sngLeft = frmChild.Left + frmSidePanel.Width
+    sngPastParentEnd = (sngLeft + frmChild.Width) - frmMDIParent.Width
+    
+    ' Check if we need to nudge it back a bit because we've gone too far right.
+    If sngPastParentEnd > 0 Then
+        sngLeft = sngLeft - sngPastParentEnd - 200
+    End If
+    
+    ' Set the childs Left position.
+    frmChild.Left = sngLeft
+End Sub
