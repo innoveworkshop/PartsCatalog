@@ -1,6 +1,6 @@
 VERSION 5.00
 Begin VB.Form frmMain 
-   Caption         =   "Parts Picker"
+   Caption         =   "BOM Manager"
    ClientHeight    =   5790
    ClientLeft      =   60
    ClientTop       =   405
@@ -209,7 +209,7 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 ''' frmMain
-''' Main form of the Parts Picker application.
+''' Main form of the BOM Manager application.
 '''
 ''' Author: Nathan Campos <nathan@innoveworkshop.com>
 
