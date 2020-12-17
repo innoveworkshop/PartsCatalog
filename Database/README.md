@@ -22,3 +22,10 @@ related assets.
     - Datasheets/
 	- Images/
 	- Your Database.mdb
+
+
+## Database Version
+
+In order to maintain the maximum amount of compatibility this database uses the
+Access 2000 format, so you can basically use any version of Microsoft Office
+with it.
