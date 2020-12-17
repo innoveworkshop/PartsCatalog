@@ -79,6 +79,7 @@ Begin VB.Form frmBOMManager
       Begin VB.ListBox lstRefDes 
          Height          =   3960
          Left            =   3720
+         Sorted          =   -1  'True
          TabIndex        =   16
          Top             =   1800
          Width           =   1575
