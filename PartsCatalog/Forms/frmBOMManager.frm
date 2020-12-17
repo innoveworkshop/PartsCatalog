@@ -425,8 +425,12 @@ Private Sub cmdComponentAdd_Click()
     Dim astrRefDes() As String
     
     ' Create an empty BOM item.
-    lngItemID = SaveBOMItem(-1, ProjectID, astrRefDes, _
-        cmbComponent.ItemData(cmbComponent.ListIndex))
+    If cmbComponent.ListCount > 0 Then
+        lngItemID = SaveBOMItem(-1, ProjectID, astrRefDes, _
+            cmbComponent.ItemData(cmbComponent.ListIndex))
+    Else
+        lngItemID = SaveBOMItem(-1, ProjectID, astrRefDes, -1)
+    End If
     
     ' Select the BOM item from the list.
     LoadProjectBOM ProjectID, lstComponents
