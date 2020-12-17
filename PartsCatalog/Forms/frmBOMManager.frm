@@ -388,6 +388,17 @@ Private Sub cmdComponentAdd_Click()
     Next intIndex
 End Sub
 
+' Remove component button clicked.
+Private Sub cmdComponentRemove_Click()
+    ' Delete the item and reset the ID.
+    DeleteBOMItem BOMItemID
+    BOMItemID = -1
+    
+    ' Reload the BOM items and update controls.
+    LoadProjectBOM lstComponents
+    UpdateEnabledControls
+End Sub
+
 ' Save component button clicked.
 Private Sub cmdComponentSave_Click()
     Dim intIndex As Integer
