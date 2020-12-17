@@ -790,6 +790,39 @@ Public Sub LoadSubCategories(lngCatID As Long, lstBox As Variant, _
     End If
 End Sub
 
+' Load all the components available.
+Public Sub LoadAllComponents(lstBox As Variant, Optional blnCloseExit As Boolean = True, _
+        Optional blnAddEmptyEntry As Boolean = False)
+    Dim rs As ADODB.Recordset
+    Set rs = New ADODB.Recordset
+    
+    ' Clear the list and add empty item if needed.
+    lstBox.Clear
+    If blnAddEmptyEntry Then
+        lstBox.AddItem ""
+        lstBox.ItemData(lstBox.NewIndex) = -1
+    End If
+    
+    ' Open the database and query it.
+    OpenConnection
+    rs.Open "SELECT ID, Name FROM Components ORDER BY Name ASC", _
+        m_adoConnection, adOpenForwardOnly, adLockReadOnly
+    
+    ' Populate list.
+    Do While Not rs.EOF
+        lstBox.AddItem rs.Fields("Name")
+        lstBox.ItemData(lstBox.NewIndex) = rs.Fields("ID")
+        rs.MoveNext
+    Loop
+    
+    ' Close recordset and connection.
+    rs.Close
+    Set rs = Nothing
+    If blnCloseExit Then
+        CloseConnection
+    End If
+End Sub
+
 ' Load components based on their category and sub-category IDs.
 Public Sub LoadComponents(lngCatID As Long, lngSubCatID As Long, lstBox As Variant, _
         Optional blnCloseExit As Boolean = True)

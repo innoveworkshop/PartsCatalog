@@ -285,11 +285,9 @@ Public Sub PopulateBOMItemFromRecordset(rs As ADODB.Recordset)
     
     ' Populate component area.
     If IsNull(rs.Fields("ComponentID")) Then
-        lblComponentID.Caption = ""
-        ' TODO: Select the no selection option in the combobox.
+        ReloadComponentsBox -1, False
     Else
-        lblComponentID.Caption = rs.Fields("ComponentID")
-        ' TODO: Select the component in the combobox.
+        ReloadComponentsBox rs.Fields("ComponentID"), False
     End If
     
     ' Populate reference designators.
@@ -335,6 +333,7 @@ Private Sub ShowItem(lngItemID As Long)
         txtRefDes.Text = ""
         lstRefDes.Clear
         lstComponents.Clear
+        cmbComponent.Clear
         
         ' Update controls.
         UpdateEnabledControls
@@ -343,6 +342,24 @@ Private Sub ShowItem(lngItemID As Long)
     
     ' Populate the form.
     LoadProjectBOMItem lngItemID, Me
+End Sub
+
+' Reloads the components ComboBox.
+Private Sub ReloadComponentsBox(Optional lngSelectedID As Long = -1, _
+        Optional blnCloseRSonExit As Boolean = True)
+    Dim intIndex As Integer
+    
+    ' Load components into ComboBox.
+    LoadAllComponents cmbComponent, blnCloseRSonExit, True
+    
+    ' Selected the previously selected item.
+    cmbComponent.ListIndex = 0
+    For intIndex = 0 To cmbComponent.ListCount - 1
+        If cmbComponent.ItemData(intIndex) = lngSelectedID Then
+            cmbComponent.ListIndex = intIndex
+            Exit Sub
+        End If
+    Next intIndex
 End Sub
 
 ' Updates the enabled/disabled controls.
@@ -354,6 +371,7 @@ Private Sub UpdateEnabledControls()
     ' Component-related controls.
     cmdComponentAdd.Enabled = Not IsNewProject
     cmdRefDesAdd.Enabled = Not IsNewBOMItem
+    cmbComponent.Enabled = Not IsNewBOMItem
     cmdRefDesRename.Enabled = (lstRefDes.ListIndex >= 0)
     cmdRefDesRemove.Enabled = (lstRefDes.ListIndex >= 0)
     cmdComponentRemove.Enabled = Not IsNewBOMItem
@@ -371,6 +389,18 @@ Private Function IsNewBOMItem() As Boolean
     IsNewBOMItem = (BOMItemID = -1)
 End Function
 
+' Component relationship selection changed.
+Private Sub cmbComponent_Click()
+    ' Check if we should clear the labels or populate them with data.
+    If cmbComponent.ItemData(cmbComponent.ListIndex) = -1 Then
+        lblComponentID.Caption = ""
+        lblDescription.Caption = ""
+    Else
+        lblComponentID.Caption = cmbComponent.ItemData(cmbComponent.ListIndex)
+        lblDescription.Caption = "TODO: Component Description"
+    End If
+End Sub
+
 ' Add component button clicked.
 Private Sub cmdComponentAdd_Click()
     Dim intIndex As Integer
@@ -378,7 +408,8 @@ Private Sub cmdComponentAdd_Click()
     Dim astrRefDes() As String
     
     ' Create an empty BOM item.
-    lngItemID = SaveBOMItem(-1, ProjectID, astrRefDes, -1)
+    lngItemID = SaveBOMItem(-1, ProjectID, astrRefDes, _
+        cmbComponent.ItemData(cmbComponent.ListIndex))
     
     ' Select the BOM item from the list.
     LoadProjectBOM ProjectID, lstComponents
@@ -416,10 +447,9 @@ Private Sub cmdComponentSave_Click()
         Next intIndex
     End If
     
-    MsgBox "TODO: Get ID from combobox"
-    
     ' Create an empty BOM item.
-    lngItemID = SaveBOMItem(BOMItemID, ProjectID, astrRefDes, -1)
+    lngItemID = SaveBOMItem(BOMItemID, ProjectID, astrRefDes, _
+        cmbComponent.ItemData(cmbComponent.ListIndex))
     
     ' Select the BOM item from the list.
     LoadProjectBOM ProjectID, lstComponents
@@ -480,8 +510,10 @@ End Sub
 
 ' Add reference designator button clicked.
 Private Sub cmdRefDesAdd_Click()
-    lstRefDes.AddItem txtRefDes.Text
-    lstRefDes.ListIndex = lstRefDes.NewIndex
+    If cmdRefDesAdd.Enabled Then
+        lstRefDes.AddItem txtRefDes.Text
+        lstRefDes.ListIndex = lstRefDes.NewIndex
+    End If
 End Sub
 
 ' Remove reference designator button clicked.
@@ -512,7 +544,8 @@ Private Sub Form_Load()
     ' Reset the project ID.
     ProjectID = -1
     
-    ' Populate the projects and update controls.
+    ' Populate the projects, components, and update controls.
+    ReloadComponentsBox
     LoadProjects lstProjects
     UpdateEnabledControls
 End Sub
