@@ -545,7 +545,6 @@ Private Sub Form_Load()
     ProjectID = -1
     
     ' Populate the projects, components, and update controls.
-    ReloadComponentsBox
     LoadProjects lstProjects
     UpdateEnabledControls
 End Sub

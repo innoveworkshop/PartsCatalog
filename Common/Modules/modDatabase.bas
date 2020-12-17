@@ -799,7 +799,7 @@ Public Sub LoadAllComponents(lstBox As Variant, Optional blnCloseExit As Boolean
     ' Clear the list and add empty item if needed.
     lstBox.Clear
     If blnAddEmptyEntry Then
-        lstBox.AddItem ""
+        lstBox.AddItem "No Component Associated"
         lstBox.ItemData(lstBox.NewIndex) = -1
     End If
     
