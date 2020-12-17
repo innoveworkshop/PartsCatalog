@@ -262,9 +262,13 @@ Option Explicit
 
 Dim m_lngProjectID As Long
 Dim m_lngBOMItemID As Long
+Dim m_blnRunningQuery As Boolean
 
 ' Populates the project frame.
 Public Sub PopulateProjectFromRecordset(rs As ADODB.Recordset)
+    ' Protect us from closing the database connection.
+    RunningQuery = True
+    
     ' Populate Project frame.
     lblProjectID.Caption = rs.Fields("ID")
     txtProjectName.Text = rs.Fields("Name")
@@ -273,9 +277,11 @@ Public Sub PopulateProjectFromRecordset(rs As ADODB.Recordset)
     
     ' Populate Components frame.
     LoadProjectBOM ProjectID, lstComponents, False
+    RunningQuery = True
 
     ' Update controls.
     UpdateEnabledControls
+    RunningQuery = False
 End Sub
 
 ' Populates the component pane.
@@ -283,12 +289,8 @@ Public Sub PopulateBOMItemFromRecordset(rs As ADODB.Recordset)
     Dim astrRefDes() As String
     Dim intIndex As Integer
     
-    ' Populate component area.
-    If IsNull(rs.Fields("ComponentID")) Then
-        ReloadComponentsBox -1, False
-    Else
-        ReloadComponentsBox rs.Fields("ComponentID"), False
-    End If
+    ' Protect us from closing the database connection.
+    RunningQuery = True
     
     ' Populate reference designators.
     lblItemID.Caption = rs.Fields("ID")
@@ -297,9 +299,17 @@ Public Sub PopulateBOMItemFromRecordset(rs As ADODB.Recordset)
     For intIndex = 0 To UBound(astrRefDes)
         lstRefDes.AddItem astrRefDes(intIndex)
     Next intIndex
+    
+    ' Populate component area.
+    If IsNull(rs.Fields("ComponentID")) Then
+        ReloadComponentsBox -1, False
+    Else
+        ReloadComponentsBox rs.Fields("ComponentID"), False
+    End If
 
     ' Update controls.
     UpdateEnabledControls
+    RunningQuery = False
 End Sub
 
 ' Populates the form with a BOM.
@@ -313,6 +323,7 @@ Private Sub ShowProject(lngProjectID As Long)
         txtProjectDescription.Text = ""
         
         ' Clear everything in the Components frame and update the controls.
+        lblDescription.Caption = ""
         lstRefDes.Clear
         lstComponents.Clear
         UpdateEnabledControls
@@ -329,6 +340,7 @@ Private Sub ShowItem(lngItemID As Long)
     If lngItemID = -1 Then
         ' Clear everything in the item pane.
         lblComponentID.Caption = ""
+        lblDescription.Caption = ""
         lblItemID.Caption = ""
         txtRefDes.Text = ""
         lstRefDes.Clear
@@ -391,13 +403,17 @@ End Function
 
 ' Component relationship selection changed.
 Private Sub cmbComponent_Click()
+    Dim lngComponentID As Long
+    
     ' Check if we should clear the labels or populate them with data.
     If cmbComponent.ItemData(cmbComponent.ListIndex) = -1 Then
         lblComponentID.Caption = ""
         lblDescription.Caption = ""
     Else
-        lblComponentID.Caption = cmbComponent.ItemData(cmbComponent.ListIndex)
-        lblDescription.Caption = "TODO: Component Description"
+        lngComponentID = cmbComponent.ItemData(cmbComponent.ListIndex)
+        lblComponentID.Caption = lngComponentID
+        lblDescription.Caption = GetComponentDescription(lngComponentID, _
+            Not RunningQuery)
     End If
 End Sub
 
@@ -541,7 +557,9 @@ End Sub
 
 ' Form just loaded.
 Private Sub Form_Load()
-    ' Reset the project ID.
+    ' Reset stuff.
+    RunningQuery = False
+    lblDescription.Caption = ""
     ProjectID = -1
     
     ' Populate the projects, components, and update controls.
@@ -581,6 +599,15 @@ Private Sub lstRefDes_Click()
     UpdateEnabledControls
 End Sub
 
+' Checks for key presses in the reference designator TextBox.
+Private Sub txtRefDes_KeyPress(KeyAscii As Integer)
+    ' Detect Enter key press and execute the Add command.
+    If KeyAscii = 13 Then
+        cmdRefDesAdd_Click
+        KeyAscii = 0
+    End If
+End Sub
+
 ' Project ID getter.
 Public Property Get ProjectID() As Long
     ProjectID = m_lngProjectID
@@ -608,11 +635,12 @@ Public Property Let BOMItemID(lngItemID As Long)
     ShowItem lngItemID
 End Property
 
-' Checks for key presses in the reference designator TextBox.
-Private Sub txtRefDes_KeyPress(KeyAscii As Integer)
-    ' Detect Enter key press and execute the Add command.
-    If KeyAscii = 13 Then
-        cmdRefDesAdd_Click
-        KeyAscii = 0
-    End If
-End Sub
+' Do we have a database currently open?
+Public Property Get RunningQuery() As Boolean
+    RunningQuery = m_blnRunningQuery
+End Property
+
+' Decide if we are operating on a database.
+Public Property Let RunningQuery(blnRunningQuery As Boolean)
+    m_blnRunningQuery = blnRunningQuery
+End Property

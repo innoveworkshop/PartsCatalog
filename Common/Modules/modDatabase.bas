@@ -603,6 +603,37 @@ Public Function FindExistingComponent(strName As String) As Long
     CloseConnection
 End Function
 
+' Gets a component description by its ID. If the component doesn't exist returns "".
+Public Function GetComponentDescription(lngID As Long, _
+        Optional blnCloseExit As Boolean = True) As String
+    Dim rs As ADODB.Recordset
+    Dim stmt As SQLStatement
+    
+    ' Initialize the objects.
+    Set rs = New ADODB.Recordset
+    Set stmt = New SQLStatement
+    
+    ' Open the database and query it.
+    OpenConnection
+    stmt.Create "SELECT Notes FROM Components WHERE ID = [ID]"
+    stmt.Parameter("ID") = lngID
+    rs.Open stmt.Statement, m_adoConnection, adOpenForwardOnly, adLockReadOnly
+    
+    ' Return the component description if found.
+    If Not rs.EOF Then
+        GetComponentDescription = rs.Fields("Notes")
+    Else
+        GetComponentDescription = ""
+    End If
+    
+    ' Close recordset and connection.
+    rs.Close
+    Set rs = Nothing
+    If blnCloseExit Then
+        CloseConnection
+    End If
+End Function
+
 ' Loads a component by its ID and populates a form.
 Public Function LoadComponentDetail(lngID As Long, frmForm As Form) As Boolean
     Dim rs As ADODB.Recordset
