@@ -922,17 +922,25 @@ Public Function LoadProjectDetail(lngID As Long, frmForm As Form) As Boolean
 End Function
 
 ' Load project components.
-Public Sub LoadProjectBOM(lstBox As Variant, Optional blnCloseExit As Boolean = True)
+Public Sub LoadProjectBOM(lngProjectID As Long, lstBox As Variant, _
+        Optional blnCloseExit As Boolean = True)
     Dim rs As ADODB.Recordset
+    Dim stmt As SQLStatement
     Set rs = New ADODB.Recordset
     
     ' Clear the list.
     lstBox.Clear
     
+    ' Initialize the objects.
+    Set rs = New ADODB.Recordset
+    Set stmt = New SQLStatement
+    
     ' Open the database and query it.
     OpenConnection
-    rs.Open "SELECT ID, RefDes FROM BillOfMaterials ORDER BY RefDes ASC", _
-        m_adoConnection, adOpenForwardOnly, adLockReadOnly
+    stmt.Create "SELECT ID, RefDes FROM BillOfMaterials WHERE ProjectID = [ProjectID] " & _
+        "ORDER BY RefDes ASC"
+    stmt.Parameter("ProjectID") = lngProjectID
+    rs.Open stmt.Statement, m_adoConnection, adOpenForwardOnly, adLockReadOnly
     
     ' Populate list.
     Do While Not rs.EOF

@@ -272,7 +272,7 @@ Public Sub PopulateProjectFromRecordset(rs As ADODB.Recordset)
     txtProjectDescription.Text = rs.Fields("Description")
     
     ' Populate Components frame.
-    LoadProjectBOM lstComponents, False
+    LoadProjectBOM ProjectID, lstComponents, False
 
     ' Update controls.
     UpdateEnabledControls
@@ -315,6 +315,7 @@ Private Sub ShowProject(lngProjectID As Long)
         txtProjectDescription.Text = ""
         
         ' Clear everything in the Components frame and update the controls.
+        lstRefDes.Clear
         lstComponents.Clear
         UpdateEnabledControls
         Exit Sub
@@ -333,6 +334,7 @@ Private Sub ShowItem(lngItemID As Long)
         lblItemID.Caption = ""
         txtRefDes.Text = ""
         lstRefDes.Clear
+        lstComponents.Clear
         
         ' Update controls.
         UpdateEnabledControls
@@ -379,7 +381,7 @@ Private Sub cmdComponentAdd_Click()
     lngItemID = SaveBOMItem(-1, ProjectID, astrRefDes, -1)
     
     ' Select the BOM item from the list.
-    LoadProjectBOM lstComponents
+    LoadProjectBOM ProjectID, lstComponents
     For intIndex = 0 To lstComponents.ListCount - 1
         If lstComponents.ItemData(intIndex) = lngItemID Then
             lstComponents.ListIndex = intIndex
@@ -395,7 +397,7 @@ Private Sub cmdComponentRemove_Click()
     BOMItemID = -1
     
     ' Reload the BOM items and update controls.
-    LoadProjectBOM lstComponents
+    LoadProjectBOM ProjectID, lstComponents
     UpdateEnabledControls
 End Sub
 
@@ -420,7 +422,7 @@ Private Sub cmdComponentSave_Click()
     lngItemID = SaveBOMItem(BOMItemID, ProjectID, astrRefDes, -1)
     
     ' Select the BOM item from the list.
-    LoadProjectBOM lstComponents
+    LoadProjectBOM ProjectID, lstComponents
     For intIndex = 0 To lstComponents.ListCount - 1
         If lstComponents.ItemData(intIndex) = lngItemID Then
             lstComponents.ListIndex = intIndex
@@ -556,12 +558,8 @@ End Property
 Public Property Let ProjectID(lngProjectID As Long)
     m_lngProjectID = lngProjectID
     
-    ' Reset the Component ID as well if needed.
-    If lngProjectID = -1 Then
-        BOMItemID = -1
-    End If
-    
-    ' Show the BOM.
+    ' Reset the Component ID and show the BOM.
+    BOMItemID = -1
     ShowProject lngProjectID
 End Property
 
@@ -577,3 +575,12 @@ Public Property Let BOMItemID(lngItemID As Long)
     ' Show the component.
     ShowItem lngItemID
 End Property
+
+' Checks for key presses in the reference designator TextBox.
+Private Sub txtRefDes_KeyPress(KeyAscii As Integer)
+    ' Detect Enter key press and execute the Add command.
+    If KeyAscii = 13 Then
+        cmdRefDesAdd_Click
+        KeyAscii = 0
+    End If
+End Sub
