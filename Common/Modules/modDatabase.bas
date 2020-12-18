@@ -525,7 +525,7 @@ Public Function SaveBOMItem(lngID As Long, lngProjectID As Long, _
         stmt.Parameter("Quantity") = 0
         stmt.Parameter("RefDes") = ""
     Else
-        stmt.Parameter("Quantity") = UBound(astrRefDes)
+        stmt.Parameter("Quantity") = UBound(astrRefDes) + 1
         stmt.Parameter("RefDes") = Join(astrRefDes, ", ")
     End If
     
