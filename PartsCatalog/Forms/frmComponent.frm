@@ -737,13 +737,13 @@ Public Sub PopulateFromRecordset(rs As ADODB.Recordset)
     Dim intIndex As Integer
     
     ' Store the component ID.
-    ComponentID = rs.Fields("ID")
+    ComponentID = rs.Fields("ComponentID")
     
     ' Set text fields.
     m_strOriginalName = rs.Fields("Name")
     txtName.Text = rs.Fields("Name")
     txtQuantity.Text = rs.Fields("Quantity")
-    txtNotes.Text = rs.Fields("Notes")
+    txtNotes.Text = rs.Fields("Description")
     SetStatusMessage "Loaded text fields"
     
     ' Set the categories.

@@ -271,7 +271,7 @@ Public Sub PopulateProjectFromRecordset(rs As ADODB.Recordset)
     RunningQuery = True
     
     ' Populate Project frame.
-    lblProjectID.Caption = rs.Fields("ID")
+    lblProjectID.Caption = rs.Fields("ProjectID")
     txtProjectName.Text = rs.Fields("Name")
     txtProjectRevision.Text = rs.Fields("Revision")
     txtProjectDescription.Text = rs.Fields("Description")
@@ -294,7 +294,7 @@ Public Sub PopulateBOMItemFromRecordset(rs As ADODB.Recordset)
     RunningQuery = True
     
     ' Populate reference designators.
-    lblItemID.Caption = rs.Fields("ID")
+    lblItemID.Caption = rs.Fields("ItemID")
     astrRefDes = Split(rs.Fields("RefDes"), ", ")
     lstRefDes.Clear
     For intIndex = 0 To UBound(astrRefDes)

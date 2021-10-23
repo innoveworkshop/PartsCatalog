@@ -75,21 +75,21 @@ Public Function SaveComponent(lngID As Long, strName As String, strQuantity As S
     Set stmt = New SQLStatement
     If lngID = -1 Then
         ' Create the component.
-        stmt.Create "INSERT INTO Components (Name, Quantity, Notes, CategoryID, " & _
-            "SubCategoryID, PackageID) VALUES ([Name], [Quantity], [Notes], " & _
+        stmt.Create "INSERT INTO Components (Name, Quantity, Description, CategoryID, " & _
+            "SubCategoryID, PackageID) VALUES ([Name], [Quantity], [Description], " & _
             "[CategoryID], [SubCategoryID], [PackageID])"
     Else
         ' Update an existing component.
         stmt.Create "UPDATE Components SET Name = [Name], Quantity = [Quantity], " & _
-            "Notes = [Notes], CategoryID = [CategoryID], SubCategoryID = [SubCategoryID], " & _
-            "PackageID = [PackageID] WHERE ID = [ID]"
+            "Description = [Description], CategoryID = [CategoryID], SubCategoryID = [SubCategoryID], " & _
+            "PackageID = [PackageID] WHERE ComponentID = [ID]"
         stmt.Parameter("ID") = lngID
     End If
     
     ' Add parameters.
     stmt.Parameter("Name") = strName
     stmt.Parameter("Quantity") = CLng(strQuantity)
-    stmt.Parameter("Notes") = strNotes
+    stmt.Parameter("Description") = strNotes
     stmt.Parameter("CategoryID") = lngCategoryID
     stmt.Parameter("SubCategoryID") = lngSubCategoryID
     stmt.Parameter("PackageID") = lngPackageID
@@ -130,7 +130,7 @@ Public Function UpdateComponentQuantity(lngID As Long, lngQuantity As Long) As L
     
     ' Setup the statement.
     Set stmt = New SQLStatement
-    stmt.Create "UPDATE Components SET Quantity = [Quantity] WHERE ID = [ID]"
+    stmt.Create "UPDATE Components SET Quantity = [Quantity] WHERE ComponentID = [ID]"
     stmt.Parameter("ID") = lngID
     stmt.Parameter("Quantity") = lngQuantity
     
@@ -151,7 +151,7 @@ Public Sub DeleteComponent(lngID As Long, Optional strName As String = vbNullStr
     
     ' Setup the statement.
     Set stmt = New SQLStatement
-    stmt.Create "DELETE * FROM Components Where ID = [ID]"
+    stmt.Create "DELETE * FROM Components Where ComponentID = [ID]"
     stmt.Parameter("ID") = lngID
     
     ' Execute the operation close the connection.
@@ -182,7 +182,7 @@ Public Function SaveProperty(lngID As Long, strName As String, strValue As Strin
     Else
         ' Update an existing category.
         stmt.Create "UPDATE Properties SET [Name] = [_Name], [Value] = [_Value], " & _
-            "ComponentID = [ComponentID] WHERE [ID] = [_ID]"
+            "ComponentID = [ComponentID] WHERE [PropertyID] = [_ID]"
         stmt.Parameter("_ID") = lngID
     End If
     
@@ -230,7 +230,7 @@ Public Sub DeleteProperty(lngID As Long)
     
     ' Setup the statement.
     Set stmt = New SQLStatement
-    stmt.Create "DELETE * FROM Properties Where ID = [ID]"
+    stmt.Create "DELETE * FROM Properties Where ComponentID = [ID]"
     stmt.Parameter("ID") = lngID
     
     ' Execute the operation close the connection.
@@ -252,7 +252,7 @@ Public Function SaveCategory(lngID As Long, strName As String) As Long
         stmt.Create "INSERT INTO Categories (Name) VALUES ([Name])"
     Else
         ' Update an existing category.
-        stmt.Create "UPDATE Categories SET Name = [Name] WHERE ID = [ID]"
+        stmt.Create "UPDATE Categories SET Name = [Name] WHERE CategoryID = [ID]"
         stmt.Parameter("ID") = lngID
     End If
     
@@ -293,7 +293,7 @@ Public Sub DeleteCategory(lngID As Long)
     
     ' Setup the statement.
     Set stmt = New SQLStatement
-    stmt.Create "DELETE * FROM Categories Where ID = [ID]"
+    stmt.Create "DELETE * FROM Categories Where CategoryID = [ID]"
     stmt.Parameter("ID") = lngID
     
     ' Execute the operation close the connection.
@@ -317,7 +317,7 @@ Public Function SaveSubCategory(lngID As Long, lngCategoryID, strName As String)
     Else
         ' Update an existing sub-category.
         stmt.Create "UPDATE SubCategories SET Name = [Name], ParentID = [ParentID] " & _
-            "WHERE ID = [ID]"
+            "WHERE SubCategoryID = [ID]"
         stmt.Parameter("ID") = lngID
     End If
     
@@ -359,7 +359,7 @@ Public Sub DeleteSubCategory(lngID As Long)
     
     ' Setup the statement.
     Set stmt = New SQLStatement
-    stmt.Create "DELETE * FROM SubCategories Where ID = [ID]"
+    stmt.Create "DELETE * FROM SubCategories Where SubCategoryID = [ID]"
     stmt.Parameter("ID") = lngID
     
     ' Execute the operation close the connection.
@@ -381,7 +381,7 @@ Public Function SavePackage(lngID As Long, strName As String) As Long
         stmt.Create "INSERT INTO Packages (Name) VALUES ([Name])"
     Else
         ' Update an existing package.
-        stmt.Create "UPDATE Packages SET Name = [Name] WHERE ID = [ID]"
+        stmt.Create "UPDATE Packages SET Name = [Name] WHERE PackageID = [ID]"
         stmt.Parameter("ID") = lngID
     End If
     
@@ -422,7 +422,7 @@ Public Sub DeletePackage(lngID As Long)
     
     ' Setup the statement.
     Set stmt = New SQLStatement
-    stmt.Create "DELETE * FROM Packages Where ID = [ID]"
+    stmt.Create "DELETE * FROM Packages Where PackageID = [ID]"
     stmt.Parameter("ID") = lngID
     
     ' Execute the operation close the connection.
@@ -447,7 +447,7 @@ Public Function SaveProject(lngID As Long, strName As String, _
     Else
         ' Update an existing project.
         stmt.Create "UPDATE Projects SET Name = [Name], Revision = [Revision], " & _
-            "Description = [Description] WHERE ID = [ID]"
+            "Description = [Description] WHERE ProjectID = [ID]"
         stmt.Parameter("ID") = lngID
     End If
     
@@ -490,7 +490,7 @@ Public Sub DeleteProject(lngID As Long)
     
     ' Setup the statement.
     Set stmt = New SQLStatement
-    stmt.Create "DELETE * FROM Projects Where ID = [ID]"
+    stmt.Create "DELETE * FROM Projects Where ProjectID = [ID]"
     stmt.Parameter("ID") = lngID
     
     ' Execute the operation close the connection.
@@ -510,13 +510,13 @@ Public Function SaveBOMItem(lngID As Long, lngProjectID As Long, _
     Set stmt = New SQLStatement
     If lngID = -1 Then
         ' Create the project.
-        stmt.Create "INSERT INTO BillOfMaterials (Quantity, RefDes, ComponentID, " & _
+        stmt.Create "INSERT INTO BillOfMaterialsItems (Quantity, RefDes, ComponentID, " & _
             "ProjectID) VALUES ([Quantity], [RefDes], [ComponentID], [ProjectID])"
     Else
         ' Update an existing project.
-        stmt.Create "UPDATE BillOfMaterials SET Quantity = [Quantity], " & _
+        stmt.Create "UPDATE BillOfMaterialsItems SET Quantity = [Quantity], " & _
             "RefDes = [RefDes], ComponentID = [ComponentID], " & _
-            "ProjectID = [ProjectID] WHERE ID = [ID]"
+            "ProjectID = [ProjectID] WHERE ItemID = [ID]"
         stmt.Parameter("ID") = lngID
     End If
     
@@ -526,7 +526,7 @@ Public Function SaveBOMItem(lngID As Long, lngProjectID As Long, _
         stmt.Parameter("RefDes") = ""
     Else
         stmt.Parameter("Quantity") = UBound(astrRefDes) + 1
-        stmt.Parameter("RefDes") = Join(astrRefDes, ", ")
+        stmt.Parameter("RefDes") = Join(astrRefDes, " ")
     End If
     
     ' Add parameters and execute the operation.
@@ -567,7 +567,7 @@ Public Sub DeleteBOMItem(lngID As Long)
     
     ' Setup the statement.
     Set stmt = New SQLStatement
-    stmt.Create "DELETE * FROM BillOfMaterials Where ID = [ID]"
+    stmt.Create "DELETE * FROM BillOfMaterials Where ItemID = [ID]"
     stmt.Parameter("ID") = lngID
     
     ' Execute the operation close the connection.
@@ -586,13 +586,13 @@ Public Function FindExistingComponent(strName As String) As Long
     
     ' Open the database and query it.
     OpenConnection
-    stmt.Create "SELECT ID FROM Components WHERE Name = [Name]"
+    stmt.Create "SELECT ComponentID FROM Components WHERE Name = [Name]"
     stmt.Parameter("Name") = strName
     rs.Open stmt.Statement, m_adoConnection, adOpenForwardOnly, adLockReadOnly
     
     ' Return the component ID if found.
     If Not rs.EOF Then
-        FindExistingComponent = rs.Fields("ID")
+        FindExistingComponent = rs.Fields("ComponentID")
     Else
         FindExistingComponent = -1
     End If
@@ -615,13 +615,13 @@ Public Function GetComponentDescription(lngID As Long, _
     
     ' Open the database and query it.
     OpenConnection
-    stmt.Create "SELECT Notes FROM Components WHERE ID = [ID]"
+    stmt.Create "SELECT Description FROM Components WHERE ComponentID = [ID]"
     stmt.Parameter("ID") = lngID
     rs.Open stmt.Statement, m_adoConnection, adOpenForwardOnly, adLockReadOnly
     
     ' Return the component description if found.
     If Not rs.EOF Then
-        GetComponentDescription = rs.Fields("Notes")
+        GetComponentDescription = rs.Fields("Description")
     Else
         GetComponentDescription = ""
     End If
@@ -656,7 +656,7 @@ Public Function LoadComponentDetail(lngID As Long, frmForm As Form) As Boolean
     
     ' Open the database and query it.
     OpenConnection
-    stmt.Create "SELECT * FROM Components WHERE ID = [ID]"
+    stmt.Create "SELECT * FROM Components WHERE ComponentID = [ID]"
     stmt.Parameter("ID") = lngID
     rs.Open stmt.Statement, m_adoConnection, adOpenForwardOnly, adLockReadOnly
     
@@ -692,7 +692,7 @@ Public Sub LoadProperties(lngComponentID As Long, grdGrid As MSFlexGrid, _
     
     ' Open the database and query it.
     OpenConnection
-    stmt.Create "SELECT ID, Name, Value FROM Properties WHERE " & _
+    stmt.Create "SELECT PropertyID, Name, Value FROM Properties WHERE " & _
         "ComponentID = [ComponentID] ORDER BY Name ASC"
     stmt.Parameter("ComponentID") = lngComponentID
     rs.Open stmt.Statement, m_adoConnection, adOpenForwardOnly, adLockReadOnly
@@ -701,7 +701,7 @@ Public Sub LoadProperties(lngComponentID As Long, grdGrid As MSFlexGrid, _
     grdGrid.Rows = 1
     Do While Not rs.EOF
         grdGrid.AddItem rs.Fields("Name") & vbTab & rs.Fields("Value")
-        grdGrid.RowData(grdGrid.Rows - 1) = rs.Fields("ID")
+        grdGrid.RowData(grdGrid.Rows - 1) = rs.Fields("PropertyID")
         rs.MoveNext
     Loop
     
@@ -733,9 +733,9 @@ Public Sub LoadProperty(lngPropertyID As Long, txtName As TextBox, _
     
     ' Open the database and query it.
     OpenConnection
-    stmt.Create "SELECT ID, Name, Value FROM Properties WHERE " & _
-        "ID = [ID] ORDER BY Name ASC"
-    stmt.Parameter("ID") = lngPropertyID
+    stmt.Create "SELECT PropertyID, Name, Value FROM Properties WHERE " & _
+        "PropertyID = [ID] ORDER BY Name ASC"
+    stmt.Parameter("PropertyID") = lngPropertyID
     rs.Open stmt.Statement, m_adoConnection, adOpenForwardOnly, adLockReadOnly
     
     ' Check if the property ID was valid.
@@ -768,13 +768,13 @@ Public Sub LoadCategories(lstBox As Variant, Optional blnCloseExit As Boolean = 
     
     ' Open the database and query it.
     OpenConnection
-    rs.Open "SELECT ID, Name FROM Categories ORDER BY Name ASC", _
+    rs.Open "SELECT CategoryID, Name FROM Categories ORDER BY Name ASC", _
         m_adoConnection, adOpenForwardOnly, adLockReadOnly
     
     ' Populate list.
     Do While Not rs.EOF
         lstBox.AddItem rs.Fields("Name")
-        lstBox.ItemData(lstBox.NewIndex) = rs.Fields("ID")
+        lstBox.ItemData(lstBox.NewIndex) = rs.Fields("CategoryID")
         rs.MoveNext
     Loop
     
@@ -801,7 +801,7 @@ Public Sub LoadSubCategories(lngCatID As Long, lstBox As Variant, _
     
     ' Open the database and query it.
     OpenConnection
-    stmt.Create "SELECT ID, Name FROM SubCategories WHERE ParentID = [ParentID] " & _
+    stmt.Create "SELECT SubCategoryID, Name FROM SubCategories WHERE ParentID = [ParentID] " & _
         "ORDER BY Name ASC"
     stmt.Parameter("ParentID") = lngCatID
     rs.Open stmt.Statement, m_adoConnection, adOpenForwardOnly, adLockReadOnly
@@ -809,7 +809,7 @@ Public Sub LoadSubCategories(lngCatID As Long, lstBox As Variant, _
     ' Populate list.
     Do While Not rs.EOF
         lstBox.AddItem rs.Fields("Name")
-        lstBox.ItemData(lstBox.NewIndex) = rs.Fields("ID")
+        lstBox.ItemData(lstBox.NewIndex) = rs.Fields("SubCategoryID")
         rs.MoveNext
     Loop
     
@@ -836,13 +836,13 @@ Public Sub LoadAllComponents(lstBox As Variant, Optional blnCloseExit As Boolean
     
     ' Open the database and query it.
     OpenConnection
-    rs.Open "SELECT ID, Name FROM Components ORDER BY Name ASC", _
+    rs.Open "SELECT ComponentID, Name FROM Components ORDER BY Name ASC", _
         m_adoConnection, adOpenForwardOnly, adLockReadOnly
     
     ' Populate list.
     Do While Not rs.EOF
         lstBox.AddItem rs.Fields("Name")
-        lstBox.ItemData(lstBox.NewIndex) = rs.Fields("ID")
+        lstBox.ItemData(lstBox.NewIndex) = rs.Fields("ComponentID")
         rs.MoveNext
     Loop
     
@@ -869,7 +869,7 @@ Public Sub LoadComponents(lngCatID As Long, lngSubCatID As Long, lstBox As Varia
     
     ' Open the database and query it.
     OpenConnection
-    stmt.Create "SELECT ID, Name FROM Components WHERE CategoryID = [CategoryID] " & _
+    stmt.Create "SELECT ComponentID, Name FROM Components WHERE CategoryID = [CategoryID] " & _
         " AND SubCategoryID = [SubCategoryID] ORDER BY Name ASC"
     stmt.Parameter("CategoryID") = lngCatID
     stmt.Parameter("SubCategoryID") = lngSubCatID
@@ -878,7 +878,7 @@ Public Sub LoadComponents(lngCatID As Long, lngSubCatID As Long, lstBox As Varia
     ' Populate list.
     Do While Not rs.EOF
         lstBox.AddItem rs.Fields("Name")
-        lstBox.ItemData(lstBox.NewIndex) = rs.Fields("ID")
+        lstBox.ItemData(lstBox.NewIndex) = rs.Fields("ComponentID")
         rs.MoveNext
     Loop
     
@@ -900,13 +900,13 @@ Public Sub LoadPackages(lstBox As Variant, Optional blnCloseExit As Boolean = Tr
     
     ' Open the database and query it.
     OpenConnection
-    rs.Open "SELECT ID, Name FROM Packages ORDER BY Name ASC", _
+    rs.Open "SELECT PackageID, Name FROM Packages ORDER BY Name ASC", _
         m_adoConnection, adOpenForwardOnly, adLockReadOnly
     
     ' Populate list.
     Do While Not rs.EOF
         lstBox.AddItem rs.Fields("Name")
-        lstBox.ItemData(lstBox.NewIndex) = rs.Fields("ID")
+        lstBox.ItemData(lstBox.NewIndex) = rs.Fields("PackageID")
         rs.MoveNext
     Loop
     
@@ -928,13 +928,13 @@ Public Sub LoadProjects(lstBox As Variant, Optional blnCloseExit As Boolean = Tr
     
     ' Open the database and query it.
     OpenConnection
-    rs.Open "SELECT ID, Name, Revision FROM Projects ORDER BY Name ASC", _
+    rs.Open "SELECT ProjectID, Name, Revision FROM Projects ORDER BY Name ASC", _
         m_adoConnection, adOpenForwardOnly, adLockReadOnly
     
     ' Populate list.
     Do While Not rs.EOF
         lstBox.AddItem rs.Fields("Name") & " (Rev " & rs.Fields("Revision") & ")"
-        lstBox.ItemData(lstBox.NewIndex) = rs.Fields("ID")
+        lstBox.ItemData(lstBox.NewIndex) = rs.Fields("ProjectID")
         rs.MoveNext
     Loop
     
@@ -967,8 +967,8 @@ Public Function LoadProjectDetail(lngID As Long, frmForm As Form) As Boolean
     
     ' Open the database and query it.
     OpenConnection
-    stmt.Create "SELECT * FROM Projects WHERE ID = [ID]"
-    stmt.Parameter("ID") = lngID
+    stmt.Create "SELECT * FROM Projects WHERE ProjectID = [ID]"
+    stmt.Parameter("ProjectID") = lngID
     rs.Open stmt.Statement, m_adoConnection, adOpenForwardOnly, adLockReadOnly
     
     ' Populate list.
@@ -1001,7 +1001,7 @@ Public Sub LoadProjectBOM(lngProjectID As Long, lstBox As Variant, _
     
     ' Open the database and query it.
     OpenConnection
-    stmt.Create "SELECT ID, RefDes FROM BillOfMaterials WHERE ProjectID = [ProjectID] " & _
+    stmt.Create "SELECT ItemID, RefDes FROM BillOfMaterialsItems WHERE ProjectID = [ProjectID] " & _
         "ORDER BY RefDes ASC"
     stmt.Parameter("ProjectID") = lngProjectID
     rs.Open stmt.Statement, m_adoConnection, adOpenForwardOnly, adLockReadOnly
@@ -1009,7 +1009,7 @@ Public Sub LoadProjectBOM(lngProjectID As Long, lstBox As Variant, _
     ' Populate list.
     Do While Not rs.EOF
         lstBox.AddItem rs.Fields("RefDes")
-        lstBox.ItemData(lstBox.NewIndex) = rs.Fields("ID")
+        lstBox.ItemData(lstBox.NewIndex) = rs.Fields("ItemID")
         rs.MoveNext
     Loop
     
@@ -1042,8 +1042,8 @@ Public Function LoadProjectBOMItem(lngID As Long, frmForm As Form) As Boolean
     
     ' Open the database and query it.
     OpenConnection
-    stmt.Create "SELECT * FROM BillOfMaterials WHERE ID = [ID]"
-    stmt.Parameter("ID") = lngID
+    stmt.Create "SELECT * FROM BillOfMaterialsItems WHERE ItemID = [ID]"
+    stmt.Parameter("ItemID") = lngID
     rs.Open stmt.Statement, m_adoConnection, adOpenForwardOnly, adLockReadOnly
     
     ' Populate list.
@@ -1075,8 +1075,13 @@ Private Sub OpenConnection()
     
     ' Setup connection.
     Set m_adoConnection = New ADODB.Connection
-    m_adoConnection.Provider = "Microsoft.Jet.OLEDB.4.0"
-    m_adoConnection.ConnectionString = "Data Source = " & m_strDatabasePath & ";"
+    'm_adoConnection.Provider = "Microsoft.Jet.OLEDB.4.0"
+    'm_adoConnection.ConnectionString = "Data Source = " & m_strDatabasePath & ";"
+    'm_adoConnection.ConnectionString = "Data Source=mulberry.farm.lan,1433;" & _
+    '    "Network Library=DBMSSOCN;Initial Catalog=PartsCatalog;User ID=partscatalog;Password=PartCat@2021;"
+    m_adoConnection.ConnectionString = "Provider=SQLNCLI11;Data Source=tcp:mulberry.farm.lan,1433;" & _
+        "Initial Catalog=PartsCatalog;Application Name=" & App.EXEName & ";Trusted_Connection=Yes;" & _
+        "Encrypt=no;"
     
     ' Open it.
     m_adoConnection.Open

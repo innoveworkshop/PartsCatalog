@@ -210,13 +210,13 @@ Public Sub PopulateFromRecordset(rs As ADODB.Recordset)
     Dim intIndex As Integer
     
     ' Store the component ID and quantity.
-    ID = rs.Fields("ID")
+    ID = rs.Fields("ComponentID")
     Quantity = rs.Fields("Quantity")
     
     ' Set text fields.
     txtName.Text = rs.Fields("Name")
     txtQuantity.Text = rs.Fields("Quantity")
-    txtNotes.Text = rs.Fields("Notes")
+    txtNotes.Text = rs.Fields("Description")
     
     ' Set the categories.
     cmbSubCategory.Clear
